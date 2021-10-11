@@ -14,4 +14,4 @@ Back to Nature2D. The library is divided into different segments. The core, whic
 
 # `Engine`
 
-The Engine or the core of the library 
+The Engine or the core of the library handles all the RigidBodies, constraints and points. It's responsible for the simulation of these elements and handling all tasks related to the library. Physics is simulated every RenderStepped with the following structure:
