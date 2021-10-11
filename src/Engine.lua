@@ -167,4 +167,16 @@ function Engine:SetPhysicalProperty(property: string, value)
 	end
 end
 
+function Engine:GetBodyById(id: string)
+	if not typeof(id) == "string" then error("Invalid Argument #1. 'id' must be a string", 2) end
+	
+	for _, b in ipairs(self.bodies) do 
+		if b.id == id then 
+			return b
+		end
+	end
+	
+	return;
+end
+
 return Engine
