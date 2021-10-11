@@ -14,3 +14,5 @@ It's user friendly and supports all UI Elements! RigidBodies and constraints can
 ```bash
 $ git clone https://github.com/jaipack17/Nature2D.git
 ```
+* **Roblox Model** - Nature2D is available on the Roblox asset store for free. You can get the model through the following link.
+Soon:tm:
