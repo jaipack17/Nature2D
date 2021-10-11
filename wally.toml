@@ -1,8 +1,0 @@
-[package]
-name = "jaipack17/Nature2D"
-description = "Create versatile physics simulations and mechanics with Guis all in Roblox!"
-realm = "shared"
-registry = "https://github.com/UpliftGames/wally-index"
-version = "0.0.1"
-
-[dependencies]
