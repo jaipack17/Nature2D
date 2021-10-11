@@ -4,3 +4,9 @@ To get familiar with Nature2D and quickly adopt it into your codebase, you may g
 
 # Workflow
 
+Before diving into the api, it is important to know how the library really comes together and do what its supposed to do. The library uses methods of [Verlet Integration](https://en.wikipedia.org/wiki/Verlet_integration) and Convex Hull Collisions (Separating Axis Theorem) to simulate physics. I have detailed the math and working of both of those methods on the Devforum and Github with code snippets! If you'd want to explore more about them, go through the following links!
+* [Devforum - Verlet Integration](https://devforum.roblox.com/t/the-beauty-of-verlet-integration-2d-ragdolls/1467651/)
+* [Github - Verlet Integration](https://github.com/jaipack17/write-ups/tree/main/Verlet%20Integration)
+* [Devforum - 2D Collisions](https://devforum.roblox.com/t/detecting-and-responding-to-2d-collisions-fundamentals-techniques/1484368)
+* [Github - 2D Collisions](https://github.com/jaipack17/write-ups/tree/main/2D%20Collisions)
+
