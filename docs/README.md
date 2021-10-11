@@ -53,3 +53,32 @@ Constraints keep two points together in place and maintain uniform distance betw
 * [`Constraint.new()`]()
 * [`Constraint:Constrain`]()
 * [`Constraint:Render()`]()
+
+# `RigidBody`
+
+RigidBodies are formed by Constraints, Points and UI Elements! These RigidBodies are highly flexible to meet all your use cases! RigidBodies can be customized and custom physical properties can be defined for them. By default they abide by the universal physical properties of the engine. RigidBodies as of now cannot have different masses. An update has been planned to support this.
+
+### API
+
+* [`RigidBody.new()`]()
+* [`RigidBody:CreateProjection()`]()
+* [`RigidBody:DetectCollision()`]()
+* [`RigidBody:Update()`]()
+* [`RigidBody:Render()`]()
+* [`RigidBody:Destroy()`]()
+* [`RigidBody:Rotate()`]()
+* [`RigidBody:SetPosition()`]()
+* [`RigidBody:SetSize()`]()
+* [`RigidBody:Anchor()`]()
+* [`RigidBody:Unanchor()`]()
+* [`RigidBody:CanCollide()`]()
+* [`RigidBody:GetFrame()`]()
+* [`RigidBody:GetId()`]()
+* [`RigidBody:GetVertices()`]()
+* [`RigidBody:GetConstraints()`]()
+* [`RigidBody:SetLifeSpan()`]()
+* [`RigidBody:KeepInCanvas()`]
+
+<hr/>
+
+This introduction should give you a brief understanding of how everything works. Continue reading furthur by clicking links above or exploring the API, examples and placefiles!
