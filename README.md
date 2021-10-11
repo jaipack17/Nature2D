@@ -6,4 +6,6 @@ Nature2D is a vast 2D physics library designed for and on [Roblox](https://www.r
 
 It's user friendly and supports all UI Elements! RigidBodies and constraints can potentially be made with almost all UI elements, from Frames to TextBoxes! Collision detection and response are also handled for all UI elements by default. Wanna' see it in action? Here's a wrecking ball made with Nature2D!
 
-<img src="https://github.com/jaipack17/Nature2D/blob/master/wrecking%20ball%20example.gif?raw=true" />
+<div align="center">
+    <img src="https://github.com/jaipack17/Nature2D/blob/master/wrecking%20ball%20example.gif?raw=true" />
+</div>
