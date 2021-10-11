@@ -77,7 +77,7 @@ RigidBodies are formed by Constraints, Points and UI Elements! These RigidBodies
 * [`RigidBody:GetVertices()`]()
 * [`RigidBody:GetConstraints()`]()
 * [`RigidBody:SetLifeSpan()`]()
-* [`RigidBody:KeepInCanvas()`]
+* [`RigidBody:KeepInCanvas()`]()
 
 <hr/>
 
