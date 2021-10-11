@@ -28,3 +28,7 @@ To get familiar with the library, you can go through the documentation! Document
   * [api](https://github.com/jaipack17/Nature2D/tree/master/docs/api)<br/>
   * [examples](https://github.com/jaipack17/Nature2D/tree/master/docs/examples)<br/>
   * [placefiles](https://github.com/jaipack17/Nature2D/tree/master/docs/placefiles)<br/>
+
+# Contributions
+
+If you encounter bugs or would like to support this project by improving the code, adding new features or fixing bugs - Feel free to open issues and pull requests!
