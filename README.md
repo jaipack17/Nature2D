@@ -24,7 +24,7 @@ Soon:tm:
 To get familiar with the library, you can go through the documentation! Documentation is available both at (Soon:tm:) and the repository.
 
 [docs](https://github.com/jaipack17/Nature2D/tree/master/docs)<br/>
-  |- [index.md](https://github.com/jaipack17/Nature2D/blob/master/docs/README.md)<br/>
-  |- [api](https://github.com/jaipack17/Nature2D/tree/master/docs/api)<br/>
-  |- [examples](https://github.com/jaipack17/Nature2D/tree/master/docs/examples)<br/>
-  |- [placefiles](https://github.com/jaipack17/Nature2D/tree/master/docs/placefiles)<br/>
+  * [index.md](https://github.com/jaipack17/Nature2D/blob/master/docs/README.md)<br/>
+  * [api](https://github.com/jaipack17/Nature2D/tree/master/docs/api)<br/>
+  * [examples](https://github.com/jaipack17/Nature2D/tree/master/docs/examples)<br/>
+  * [placefiles](https://github.com/jaipack17/Nature2D/tree/master/docs/placefiles)<br/>
