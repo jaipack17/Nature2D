@@ -1,6 +1,4 @@
 # API
-
-# Contents
 * [Engine](#engine)
 
 # `Engine`
