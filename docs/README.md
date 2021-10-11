@@ -21,6 +21,13 @@ The Engine or the core of the library handles all the RigidBodies, constraints a
 All tasks are performed in order as seen in the picture above.
 
 ### API
-* [`.init()`]()
-* [`:CreateCanvas()`]()
+* [`Engine.init()`]()
+* [`Engine:CreateCanvas()`]()
+* [`Engine:CreateRigidBody()`]()
+* [`Engine:CreateConstraints()`]()
+* [`Engine:SetPhysicalProperty()`]()
+* [`Engine:Start()`]()
+* [`Engine:Stop()`]()
+* [`Engine:GetBodies()`]()
+* [`Engine:GetBodyById()`]()
 
