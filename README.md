@@ -11,6 +11,6 @@ It's user friendly and supports all UI Elements! RigidBodies and constraints can
 # Configuration
 
 * **Using the CLI** - You can clone the repository on your local device and start experimenting!
-```
+```bash
 $ git clone https://github.com/jaipack17/Nature2D.git
 ```
