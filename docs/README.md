@@ -31,3 +31,15 @@ All tasks are performed in order as seen in the picture above.
 * [`Engine:GetBodies()`]()
 * [`Engine:GetBodyById()`]()
 
+# `Point`
+
+Points are what make the rigid bodies behave like real world entities! Points are responsible for the movement of the RigidBodies and Constraints! These points have a velocity and acceleration that make them move around a canvas! These points are not rendered on the screen by default and it is advisable to keep it that way. Points don't need to be created manually unless creating custom Constraints. By default points are handled by the core (Engine) itself!
+
+### API
+
+* [`Point.new()`]()
+* [`Point:ApplyForce()`]()
+* [`Point:Update()`]()
+* [`Point:KeepInCanvas()`]()
+* [`Point:Render()`]()
+* [`Point:SetConfig()`]()
