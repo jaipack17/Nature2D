@@ -6,3 +6,11 @@
 
 # Ignore lock files
 *.lock
+
+# Added by cargo
+
+/target
+
+node_modules
+package.json
+package-lock.json
