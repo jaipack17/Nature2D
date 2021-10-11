@@ -43,3 +43,13 @@ Points are what make the rigid bodies behave like real world entities! Points ar
 * [`Point:KeepInCanvas()`]()
 * [`Point:Render()`]()
 * [`Point:SetConfig()`]()
+
+# `Constraint`
+
+Constraints keep two points together in place and maintain uniform distance between the two! Constraints and Points together join to keep a RigidBody in place hence making both Points and Constraints a vital part of the library. Custom constraints such as Ropes, Rods, Bridges and chains can also be made! Points of two rigid bodies can be connected with constraints, two individual points can also be connected with constraints to form Ropes etc. Although flexible API is not yet available to make these constraints, you can still use [`Engine:CreateConstraint()`]() which is still in Beta, to create constraints.
+
+### API
+
+* [`Constraint.new()`]()
+* [`Constraint:Constrain`]()
+* [`Constraint:Render()`]()
