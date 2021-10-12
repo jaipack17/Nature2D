@@ -8,7 +8,7 @@ This method is used to initialize basic configurations of the engine and allocat
 
 ## `Engine:CreateCanvas()`
 
-This function is used to initialize boundaries to which all bodies and constraints obey. An object cannot go past this boundary. By default this canvas is set to the initial screen size (workspace.CurrentCamera.ViewportSize). In order to let bodies go past this boundary use the [`Engine:KeepInCanvas`]() method. If you wish to render Constraints and Points on screen. Set a frame with the same size as the canvas to `engine.canvas.frame`.
+This function is used to initialize boundaries to which all bodies and constraints obey. An object cannot go past this boundary. By default this canvas is set to the initial screen size (workspace.CurrentCamera.ViewportSize). In order to let bodies go past this boundary use the [`Engine:KeepInCanvas()`]() method. If you wish to render Constraints and Points on screen. Set a frame with the same size as the canvas to `engine.canvas.frame`.
 
 * parameters - `topLeft: AbsolutePosition (Vector2), size: AbsoluteSize (Vector2)`
 * returns - `nil`
