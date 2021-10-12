@@ -226,6 +226,14 @@ function RigidBody:DetectCollision(other)
 	return { true, collision }; 
 end
 
+function RigidBody:ApplyForce(force: Vector2)
+	if not typeof(force) == "Vector2" then error("Invalid Argument #1. 'force' must be a Vector2", 2) end
+	
+	for _, v in ipairs(self:GetVertices()) do 
+		v:ApplyForce(force)
+	end
+end
+
 function RigidBody:Update()
 	self.center = CalculateCenter(self.vertices)
 	
