@@ -63,6 +63,7 @@ RigidBodies are formed by Constraints, Points and UI Elements! These RigidBodies
 * [`RigidBody.new()`]()
 * [`RigidBody:CreateProjection()`]()
 * [`RigidBody:DetectCollision()`]()
+* [`RigidBody:ApplyForce`]()
 * [`RigidBody:Update()`]()
 * [`RigidBody:Render()`]()
 * [`RigidBody:Destroy()`]()
