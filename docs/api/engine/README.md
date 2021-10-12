@@ -12,11 +12,25 @@ This function is used to initialize boundaries to which all bodies and constrain
 
 * parameters - `topLeft: AbsolutePosition (Vector2), size: AbsoluteSize (Vector2)`
 * returns - `nil`
-
-Also check out:
-* [`Engine:KeepInCanvas`]()
-* [`[EVENT] RigidBody.CanvasEdgeTouched`]()
+* Also check out:
+  * [`Engine:KeepInCanvas`]()
+  * [`[EVENT] RigidBody.CanvasEdgeTouched`]()
 
 ## `Engine:CreateRigidBody()`
 
 This method is used to turn a normal UI element into a physical entity.
+
+* parameters - `frame: GuiObject, collidable: boolean, anchored: boolean`
+* returns - `metatable (RigidBody)`
+* Supported UI Elements
+  * Frame
+  * ScrollingFrame
+  * ImageButton
+  * ImageLabel
+  * TextLabel
+  * TextBox
+  * TextButton
+  * VideoFrame
+  * ViewportFrame
+* Also Check out:
+  * [API - RigidBody]()
