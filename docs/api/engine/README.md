@@ -8,13 +8,13 @@ This method is used to initialize basic configurations of the engine and allocat
 
 ## `Engine:CreateCanvas()`
 
-This function is used to initialize boundaries to which all bodies and constraints obey. An object cannot go past this boundary. By default this canvas is set to the initial screen size (workspace.CurrentCamera.ViewportSize). In order to let bodies go past this boundary use the [`Engine:KeepInCanvas()`]() method. If you wish to render Constraints and Points on screen. Set a frame with the same size as the canvas to `engine.canvas.frame`.
+This function is used to initialize boundaries to which all bodies and constraints obey. An object cannot go past this boundary. By default this canvas is set to the initial screen size (workspace.CurrentCamera.ViewportSize). In order to let bodies go past this boundary use the [`RigidBody:KeepInCanvas()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodykeepincanvas) method. If you wish to render Constraints and Points on screen. Set a frame with the same size as the canvas to `engine.canvas.frame`.
 
 * parameters - `topLeft: AbsolutePosition (Vector2), size: AbsoluteSize (Vector2)`
 * returns - `nil`
 * Also check out:
-  * [`Engine:KeepInCanvas`]()
-  * [`[EVENT] RigidBody.CanvasEdgeTouched`]()
+  * [`RigidBody:KeepInCanvas`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodykeepincanvas)
+  * [`[EVENT] RigidBody.CanvasEdgeTouched`](https://github.com/jaipack17/Nature2D/blob/master/docs/api/rigidbody/README.md#rigidbodycanvasedgetouched)
 
 ## `Engine:CreateRigidBody()`
 
@@ -33,7 +33,7 @@ This method is used to turn a normal UI element into a physical entity.
   * VideoFrame
   * ViewportFrame
 * Also Check out:
-  * [API - RigidBody]()
+  * [API - RigidBody](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody)
 
 ## `Engine:CreateConstraint()`
 
@@ -42,7 +42,7 @@ This method is used to create non collidable constraints that hold together two 
 * parameters - `point1: Point, point2: Point, visible: boolean, thickness: number`
 * returns - `Constraint`
 * Also Check out:
-  * [API - Point]()
+  * [API - Point](https://github.com/jaipack17/Nature2D/tree/master/docs/api/point)
 
 ## `Engine:Start()`
 
@@ -53,7 +53,7 @@ This method is used to start simulating rigid bodies and constraints. This metho
 
 ## `Engine:Stop()`
 
-This method is used to stop simulating rigid bodies and constraints. All connections created when `Engine:Start()` is called, are disconnected.
+This method is used to stop simulating rigid bodies and constraints. All connections created when [`Engine:Start()`](#enginestart) is called, are disconnected.
 
 ## `Engine:SetPhysicalProperty()`
 
@@ -77,4 +77,4 @@ This method is used to fetch an individual rigid body from its ID. Every RigidBo
 * parameters - `id: string`
 * returns - `RigidBody`
 * Also Check out:
-  * [`RigidBody:GetId()`]()
+  * [`RigidBody:GetId()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodygetid)
