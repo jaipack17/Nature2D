@@ -150,7 +150,7 @@ This event is fired when the RigidBody collides with another RigidBody. This eve
 
 * returns - `RigidBodyID: number`
 * Also Check out:
-  * [`Engine:GetBodyById()`]()
+  * [`Engine:GetBodyById()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/engine#enginegetbodybyid)
 
 ## `RigidBody.CanvasEdgeTouched`
 
