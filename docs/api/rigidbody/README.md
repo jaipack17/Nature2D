@@ -143,3 +143,17 @@ This method determines if the RigidBody stays inside the engine's canvas at all 
 
 * parameters - `keepInCanvas: boolean`
 * returns - `nil`
+
+## `RigidBody.Touched`
+
+This event is fired when the RigidBody collides with another RigidBody. This event returns the unique ID of the other RigidBody.
+
+* returns - `RigidBodyID: number`
+* Also Check out:
+  * [`Engine:GetBodyById()`]()
+
+## `RigidBody.CanvasEdgeTouched`
+
+This event is fired when the RigidBody collides with the engine's canvas' boundary. 
+
+* returns - `nil`
