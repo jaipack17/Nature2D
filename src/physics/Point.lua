@@ -22,7 +22,7 @@ type pointConfig = {
 	keepInCanvas: boolean
 }
 
-function Point.new(pos: Vector2, canvas: Frame, engine: engineConfig, config: pointConfig)
+function Point.new(pos: Vector2, canvas: canvas, engine: engineConfig, config: pointConfig)
 	local self = setmetatable({
 		Parent = nil,
 		frame = nil,
@@ -120,10 +120,6 @@ function Point:Render()
 	if self.keepInCanvas then 
 		self:KeepInCanvas()
 	end
-end
-
-function Point:SetConfig(property: string, value)
-	self[property] = value
 end
 
 return Point
