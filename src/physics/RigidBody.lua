@@ -60,7 +60,7 @@ local function UpdateVertices(frame, vertices, engine)
 	end
 end
 
-function RigidBody.new(frame: GuiObject, m: number, collidable: boolean, anchored: boolean, engine) 	
+function RigidBody.new(frame: GuiObject, collidable: boolean, anchored: boolean, engine) 	
 	local vertices = {}
 	local edges = {}
 	
@@ -113,7 +113,7 @@ function RigidBody.new(frame: GuiObject, m: number, collidable: boolean, anchore
 		edges = edges,
 		frame = frame,
 		anchored = anchored,
-		mass = m,
+		mass = 1,
 		collidable = collidable,
 		center = frame.AbsolutePosition + frame.AbsoluteSize/2,
 		engine = engine,
