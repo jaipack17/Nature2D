@@ -60,7 +60,7 @@ local function UpdateVertices(frame, vertices, engine)
 	end
 end
 
-function RigidBody.new(frame: GuiObject, collidable: boolean, anchored: boolean, engine) 	
+function RigidBody.new(frame: GuiObject, m: number, collidable: boolean, anchored: boolean, engine) 	
 	local vertices = {}
 	local edges = {}
 	
@@ -113,7 +113,7 @@ function RigidBody.new(frame: GuiObject, collidable: boolean, anchored: boolean,
 		edges = edges,
 		frame = frame,
 		anchored = anchored,
-		mass = 1,
+		mass = m,
 		collidable = collidable,
 		center = frame.AbsolutePosition + frame.AbsoluteSize/2,
 		engine = engine,
@@ -229,7 +229,7 @@ end
 function RigidBody:ApplyForce(force: Vector2)
 	if not typeof(force) == "Vector2" then error("Invalid Argument #1. 'force' must be a Vector2", 2) end
 	
-	for _, v in ipairs(self:GetVertices()) do 
+	for _, v in ipairs(self.vertices) do 
 		v:ApplyForce(force)
 	end
 end
