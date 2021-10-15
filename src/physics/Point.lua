@@ -22,7 +22,7 @@ type pointConfig = {
 	keepInCanvas: boolean
 }
 
-function Point.new(pos: Vector2, canvas: canvas, engine: engineConfig, config: pointConfig)
+function Point.new(pos: Vector2, canvas, engine: engineConfig, config: pointConfig)
 	local self = setmetatable({
 		Parent = nil,
 		frame = nil,
@@ -92,7 +92,7 @@ function Point:KeepInCanvas()
 	end
 	
 	if collision then 
-		if self.Parent.Parent then 
+		if self.Parent and self.Parent.Parent then 
 			self.Parent.Parent.CanvasEdgeTouched:Fire()
 		end
 	end
@@ -120,6 +120,10 @@ function Point:Render()
 	if self.keepInCanvas then 
 		self:KeepInCanvas()
 	end
+end
+
+function Point:SetConfig(property: string, value)
+	self[property] = value
 end
 
 return Point
