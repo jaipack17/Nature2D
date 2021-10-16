@@ -21,15 +21,15 @@ The Engine or the core of the library handles all the RigidBodies, constraints a
 All tasks are performed in order as seen in the picture above.
 
 ### API
-* [`Engine.init()`]()
-* [`Engine:CreateCanvas()`]()
-* [`Engine:CreateRigidBody()`]()
-* [`Engine:CreateConstraints()`]()
-* [`Engine:SetPhysicalProperty()`]()
-* [`Engine:Start()`]()
-* [`Engine:Stop()`]()
-* [`Engine:GetBodies()`]()
-* [`Engine:GetBodyById()`]()
+* [`Engine.init()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/engine#engineinit)
+* [`Engine:CreateCanvas()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/engine#enginecreatecanvas)
+* [`Engine:CreateRigidBody()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/engine#enginecreaterigidbody)
+* [`Engine:CreateConstraints()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/engine#enginecreateconstraint)
+* [`Engine:SetPhysicalProperty()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/engine#enginesetphysicalproperty)
+* [`Engine:Start()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/engine#enginestart)
+* [`Engine:Stop()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/engine#enginestop)
+* [`Engine:GetBodies()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/engine#enginegetbodies)
+* [`Engine:GetBodyById()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/engine#enginegetbodybyid)
 
 # `Point`
 
@@ -37,12 +37,11 @@ Points are what make the rigid bodies behave like real world entities! Points ar
 
 ### API
 
-* [`Point.new()`]()
-* [`Point:ApplyForce()`]()
-* [`Point:Update()`]()
-* [`Point:KeepInCanvas()`]()
-* [`Point:Render()`]()
-* [`Point:SetConfig()`]()
+* [`Point.new()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/point#pointnew)
+* [`Point:ApplyForce()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/point#pointapplyforce)
+* [`Point:Update()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/point#pointupdate)
+* [`Point:KeepInCanvas()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/point#pointkeepincanvas)
+* [`Point:Render()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/point#pointrender)
 
 # `Constraint`
 
@@ -50,9 +49,9 @@ Constraints keep two points together in place and maintain uniform distance betw
 
 ### API
 
-* [`Constraint.new()`]()
-* [`Constraint:Constrain`]()
-* [`Constraint:Render()`]()
+* [`Constraint.new()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/constraint#constraintnew)
+* [`Constraint:Constrain`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/constraint#constraintconstrain)
+* [`Constraint:Render()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/constraint#constraintrender)
 
 # `RigidBody`
 
@@ -60,25 +59,27 @@ RigidBodies are formed by Constraints, Points and UI Elements! These RigidBodies
 
 ### API
 
-* [`RigidBody.new()`]()
-* [`RigidBody:CreateProjection()`]()
-* [`RigidBody:DetectCollision()`]()
-* [`RigidBody:ApplyForce`]()
-* [`RigidBody:Update()`]()
-* [`RigidBody:Render()`]()
-* [`RigidBody:Destroy()`]()
-* [`RigidBody:Rotate()`]()
-* [`RigidBody:SetPosition()`]()
-* [`RigidBody:SetSize()`]()
-* [`RigidBody:Anchor()`]()
-* [`RigidBody:Unanchor()`]()
-* [`RigidBody:CanCollide()`]()
-* [`RigidBody:GetFrame()`]()
-* [`RigidBody:GetId()`]()
-* [`RigidBody:GetVertices()`]()
-* [`RigidBody:GetConstraints()`]()
-* [`RigidBody:SetLifeSpan()`]()
-* [`RigidBody:KeepInCanvas()`]()
+* [`RigidBody.new()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodynew)
+* [`RigidBody:CreateProjection()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodycreateprojection)
+* [`RigidBody:DetectCollision()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodydetectcollision)
+* [`RigidBody:ApplyForce`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodyapplyforce)
+* [`RigidBody:Update()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodyupdate)
+* [`RigidBody:Render()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodyrender)
+* [`RigidBody:Destroy()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodydestroy)
+* [`RigidBody:Rotate()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodyrotate)
+* [`RigidBody:SetPosition()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodysetposition)
+* [`RigidBody:SetSize()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodysetsize)
+* [`RigidBody:Anchor()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodyanchor)
+* [`RigidBody:Unanchor()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodyunanchor)
+* [`RigidBody:CanCollide()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodycancollide)
+* [`RigidBody:GetFrame()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodygetframe)
+* [`RigidBody:GetId()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodygetid)
+* [`RigidBody:GetVertices()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodygetvertices)
+* [`RigidBody:GetConstraints()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodygetconstraints)
+* [`RigidBody:SetLifeSpan()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodysetlifespan)
+* [`RigidBody:KeepInCanvas()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodykeepincanvas)
+* [`RigidBody.Touched`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodytouched)
+* [`RigidBody.CanvasEdgeTouched`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodycanvasedgetouched)
 
 <hr/>
 
