@@ -289,6 +289,10 @@ end
 function RigidBody:SetPosition(newPosition: Vector2)
 	if not typeof(newPosition) == "Vector2" then error("Invalid Argument #1. 'newPosition' must be a Vector2.") end
 	
+	if self.anchored and self.anchorRotation then 
+		self.anchorRotation = newRotation
+	end
+
 	local oldPosition = self.frame.Position
 	self.frame.Position = UDim2.new(0, newPosition.X, 0, newPosition.Y)
 	UpdateVertices(self.frame, self.vertices, self.engine)
