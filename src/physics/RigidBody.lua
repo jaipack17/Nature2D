@@ -278,6 +278,10 @@ end
 function RigidBody:Rotate(newRotation: number)
 	if not typeof(newRotation) == "number" then error("Invalid Argument #1. 'newRotation' must be a number.") end
 	
+	if self.anchored and self.anchorRotation then 
+		self.anchorRotation = newRotation
+	end
+
 	local oldRotation = self.frame.Rotation
 	self.frame.Position = self.anchored and UDim2.new(0, self.anchorPos.x, 0, self.anchorPos.y) or UDim2.new(0, self.center.x, 0, self.center.y)
 	self.frame.Rotation = newRotation
@@ -289,8 +293,8 @@ end
 function RigidBody:SetPosition(newPosition: Vector2)
 	if not typeof(newPosition) == "Vector2" then error("Invalid Argument #1. 'newPosition' must be a Vector2.") end
 	
-	if self.anchored and self.anchorRotation then 
-		self.anchorRotation = newRotation
+	if self.anchored and self.anchorPos then 
+		self.anchorPos = newPosition
 	end
 
 	local oldPosition = self.frame.Position
