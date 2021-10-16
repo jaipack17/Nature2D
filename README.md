@@ -19,12 +19,23 @@ $ git clone https://github.com/jaipack17/Nature2D.git
 * **Roblox Model** - Nature2D is available on the Roblox asset store for free. You can get the model through the following link.<br/>
 Soon:tm:
 
+To get started:
+```lua
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Nature2D = require(ReplicatedStorage.Nature2D.Engine)
+
+local engine = Nature2D.init(screenGuiInstance)
+--[[
+   Code here, check out the API and examples under docs/api and docs/examples!
+]]--
+```
+
 # Documentation 
 
 To get familiar with the library, you can go through the documentation! Documentation is available both at (Soon:tm:) and the repository.
 
 [docs](https://github.com/jaipack17/Nature2D/tree/master/docs)<br/>
-  * [index.md](https://github.com/jaipack17/Nature2D/blob/master/docs/README.md)<br/>
+  * [getting started](https://github.com/jaipack17/Nature2D/blob/master/docs/README.md)<br/>
   * [api](https://github.com/jaipack17/Nature2D/tree/master/docs/api)<br/>
   * [examples](https://github.com/jaipack17/Nature2D/tree/master/docs/examples)<br/>
   * [placefiles](https://github.com/jaipack17/Nature2D/tree/master/docs/placefiles)<br/>
