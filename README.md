@@ -4,9 +4,11 @@
 
 # About
 
-Nature2D is a 2D physics library designed for and on [Roblox](https://www.roblox.com/)! Ever wanted to create 2D games but step back because Roblox doesn't have a built-in 2D physics engine? Use Nature2D to create versatile and smooth simulations and mechanics for your 2D games with minimum effort! Nature2D primarily uses methods of [Verlet Integration](https://en.wikipedia.org/wiki/Verlet_integration) and [Convex Hull collisions](https://en.wikipedia.org/wiki/Hyperplane_separation_theorem)! 
+Nature2D is a 2D physics library designed for and on Roblox! Ever wanted to create 2D games but step back because Roblox doesn't have a built-in 2D physics engine? Use Nature2D to create versatile and smooth simulations and mechanics for your 2D games with minimum effort! Nature2D primarily uses methods of [Verlet Integration](https://en.wikipedia.org/wiki/Verlet_integration) and [Convex Hull collisions](https://en.wikipedia.org/wiki/Hyperplane_separation_theorem).
 
-It's user friendly and supports all UI Elements! RigidBodies and constraints can potentially be made with almost all UI elements, from Frames to TextBoxes! Collision detection and response are also handled for all UI elements by default. Wanna' see it in action? Here's a wrecking ball made with Nature2D!
+It's user friendly and supports all UI Elements. RigidBodies and constraints can potentially be made with almost all UI elements, from Frames to TextBoxes. Collision detection and response are also handled for all UI elements by default.
+
+Create almost anything you can imagine. From bouncy boxes to destructible structures, even character movement in no time. Here's a wrecking ball connected to an invisible constraint knocking a few boxes off of the blue platform.
 
 <img src="https://github.com/jaipack17/Nature2D/blob/master/wrecking%20ball%20example.gif?raw=true" />
 
