@@ -17,7 +17,8 @@ It's user friendly and supports all UI Elements! RigidBodies and constraints can
 $ git clone https://github.com/jaipack17/Nature2D.git
 ```
 * **Roblox Model** - Nature2D is available on the Roblox asset store for free. You can get the model through the following link.<br/>
-Soon:tm:
+
+https://www.roblox.com/library/7625799164/Nature2D
 
 To get started:
 ```lua
@@ -32,7 +33,7 @@ local engine = Nature2D.init(screenGuiInstance)
 
 # Documentation 
 
-To get familiar with the library, you can go through the documentation! Documentation is available both at (Soon:tm:) and the repository.
+To get familiar with the library, you can go through the documentation.
 
 [docs](https://github.com/jaipack17/Nature2D/tree/master/docs)<br/>
   * [getting started](https://github.com/jaipack17/Nature2D/blob/master/docs/README.md)<br/>
