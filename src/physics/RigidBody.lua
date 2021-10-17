@@ -198,7 +198,7 @@ function RigidBody:DetectCollision(other)
 
 	collision.depth = minDist
 
-	if collision.edge.Parent ~= other then
+	if collision.edge and collision.edge.Parent ~= other then
 		local Temp = other
 		other = self
 		self = Temp
@@ -234,7 +234,7 @@ function RigidBody:ApplyForce(force: Vector2)
 	end
 end
 
-function RigidBody:Update()
+function RigidBody:Update(dt: number)
 	self.center = CalculateCenter(self.vertices)
 	
 	for i = 1, #self.vertices + #self.edges do 
@@ -243,7 +243,7 @@ function RigidBody:Update()
 		if edge then 
 			self.edges[(#self.vertices + #self.edges) + 1 - i]:Constrain()
 		else 
-			self.vertices[i]:Update()
+			self.vertices[i]:Update(dt)
 		end
 	end
 end
@@ -251,10 +251,6 @@ end
 function RigidBody:Render()
 	if self.lifeSpan and os.time() - self.spawnedAt >= self.lifeSpan then 
 		self:Destroy()
-	end
-	
-	for _, vertex in ipairs(self.vertices) do
-		if not vertex.selectable then vertex.snap = self.anchored end
 	end
 	
 	if self.anchored then 
@@ -281,7 +277,7 @@ function RigidBody:Rotate(newRotation: number)
 	if self.anchored and self.anchorRotation then 
 		self.anchorRotation = newRotation
 	end
-
+	
 	local oldRotation = self.frame.Rotation
 	self.frame.Position = self.anchored and UDim2.new(0, self.anchorPos.x, 0, self.anchorPos.y) or UDim2.new(0, self.center.x, 0, self.center.y)
 	self.frame.Rotation = newRotation
@@ -296,7 +292,7 @@ function RigidBody:SetPosition(newPosition: Vector2)
 	if self.anchored and self.anchorPos then 
 		self.anchorPos = newPosition
 	end
-
+	
 	local oldPosition = self.frame.Position
 	self.frame.Position = UDim2.new(0, newPosition.X, 0, newPosition.Y)
 	UpdateVertices(self.frame, self.vertices, self.engine)
@@ -318,12 +314,20 @@ function RigidBody:Anchor()
 	self.anchored = true
 	self.anchorRotation = self.frame.Rotation
 	self.anchorPos = self.center
+	
+	for _, vertex in ipairs(self.vertices) do
+		if not vertex.selectable then vertex.snap = self.anchored end
+	end
 end
 
 function RigidBody:Unanchor()
 	self.anchored = false
 	self.anchorRotation = nil
 	self.anchorPos = nil
+	
+	for _, vertex in ipairs(self.vertices) do
+		if not vertex.selectable then vertex.snap = self.anchored end
+	end
 end
 
 function RigidBody:CanCollide(collidable: boolean)
@@ -356,6 +360,22 @@ function RigidBody:KeepInCanvas(keepInCanvas: boolean)
 	if not typeof(keepInCanvas) == "boolean" then error("Invalid Argument #1. 'keepInCanvas' must be a number.") end
 	for _, p in ipairs(self.vertices) do 
 		p.keepInCanvas = keepInCanvas
+	end
+end
+
+function RigidBody:SetFriction(friction: number)
+	if not typeof(friction) == "number" then error("Invalid Argument #1. Friction must be a number. 0-1 is advisable.", 2) end
+	
+	for _, p in ipairs(self.vertices) do
+		p.friction = friction
+	end
+end
+
+function RigidBody:SetGravity(force: Vector2)
+	if not typeof(force) == "Vector2" then error("Invalid Argument #1. Gravity must be a Vector2.", 2) end
+
+	for _, p in ipairs(self.vertices) do
+		p.gravity = force
 	end
 end
 
