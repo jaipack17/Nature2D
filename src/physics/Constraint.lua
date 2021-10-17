@@ -1,5 +1,6 @@
 local line = require(script.Parent.Parent.utils.Line)
 local Globals = require(script.Parent.Parent.constants.Globals)
+local https = game:GetService("HttpService")
 
 local Constraint = {}
 Constraint.__index = Constraint
@@ -17,8 +18,10 @@ type segmentConfig = {
 	support: boolean
 }
 
-function Constraint.new(p1, p2, canvas, config: segmentConfig)
+function Constraint.new(p1, p2, canvas, config: segmentConfig, engine)
 	local self = setmetatable({
+		id = https:GenerateGUID(false),
+		engine = engine,
 		Parent = nil,
 		frame = nil,
 		canvas = canvas,
@@ -60,5 +63,22 @@ function Constraint:Render()
 	end
 end
 
-return Constraint
+function Constraint:GetLength()
+	return (self.point2.pos - self.point1.pos).magnitude
+end
 
+function Constraint:Destroy()
+	if self.engine then 
+		if self.frame then 
+			self.frame:Destroy()
+		end
+		
+		for i, c in ipairs(self.engine.constraints) do 
+			if c.id == self.id then 
+				table.remove(self.engine.constraints, i)
+			end
+		end
+	end
+end
+
+return Constraint
