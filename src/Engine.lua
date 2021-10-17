@@ -63,9 +63,9 @@ function Engine:Start()
 	if #self.bodies == 0 then warn("No rigid bodies found on start") end
 		
 	local connection;
-	connection = RunService.RenderStepped:Connect(function()
+	connection = RunService.RenderStepped:Connect(function(dt)
 		for _, body in ipairs(self.bodies) do 
-			body:Update()
+			body:Update(dt)
 			for _, other in ipairs(self.bodies) do 
 				if body.id ~= other.id and (body.collidable and other.collidable) then
 					local result = body:DetectCollision(other)
@@ -83,10 +83,10 @@ function Engine:Start()
 		
 		if #self.constraints > 0 then 
 			for _, constraint in ipairs(self.constraints) do 
-				constraint.point1:Update()
-				constraint.point2:Update()
-				constraint.point1:Render()
-				constraint.point2:Render()
+				constraint.point1:Update(dt)
+				constraint.point2:Update(dt)
+				constraint.point1:Render(dt)
+				constraint.point2:Render(dt)
 				constraint:Constrain()
 				constraint:Render()
 			end			
@@ -125,13 +125,19 @@ function Engine:CreateConstraint(point1, point2, visible: boolean, thickness: nu
 		render = visible, 
 		thickness = thickness,
 		support = true
-	})
+	}, self)
 	
 	self.constraints[#self.constraints + 1] = newConstraint
+	
+	return newConstraint
 end
 
 function Engine:GetBodies()
 	return self.bodies
+end
+
+function Engine:GetConstraints()
+	return self.constraints
 end
 
 function Engine:CreateCanvas(topLeft: Vector2, size: Vector2)
@@ -176,6 +182,18 @@ function Engine:GetBodyById(id: string)
 		end
 	end
 	
+	return;
+end
+
+function Engine:GetConstraintById(id: string)
+	if not typeof(id) == "string" then error("Invalid Argument #1. 'id' must be a string", 2) end
+
+	for _, c in ipairs(self.constraints) do 
+		if c.id == id then 
+			return c
+		end
+	end
+
 	return;
 end
 
