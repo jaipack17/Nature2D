@@ -23,22 +23,16 @@ $ git clone https://github.com/jaipack17/Nature2D.git
 
 https://www.roblox.com/library/7625799164/Nature2D
 
-* **Using wally** - Use [wally](https://github.com/UpliftGames/wally), the package manager for roblox to install Nature2D in your external code editor! This requires wally to be installed on your device.<br/>
-Example `wally.toml`:
+* **Using wally** - Use [wally](https://github.com/UpliftGames/wally), a package manager for roblox to install Nature2D in your external code editor! This requires wally to be installed on your device. Then, add Nature2D to the dependencies listed in your `wally.toml` file!<br/>
 ```toml
-[package]
-name = "scope/name"
-version = "0.1.0"
-registry = "https://github.com/UpliftGames/wally-index"
-realm = "shared"
-
 [dependencies]
-Nature2D = "jaipack17/nature2d@0.0.1" # replace 0.0.1 with the latest version of Nature2D!
+Nature2D = "jaipack17/nature2d@0.0.2"
 ```
-Run `wally install` in the CLI!
+After that, Run `wally install` in the CLI! Nature2D should be installed in your root directory. If you encounter any errors or problems installing Nature2D using wally, [open an issue!](https://github.com/jaipack17/Nature2D/issues)
 
+<hr/>
 
-To get started:
+**To get started:**
 ```lua
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Nature2D = require(ReplicatedStorage.Nature2D.Engine)
