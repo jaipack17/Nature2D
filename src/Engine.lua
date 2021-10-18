@@ -42,6 +42,7 @@ function Engine.init(screengui: ScreenGui)
 	local self = setmetatable({
 		bodies = {},
 		constraints = {},
+		points = {},
 		connection = nil,
 		gravity = Globals.engineInit.gravity,
 		friction = Globals.engineInit.friction,
@@ -83,13 +84,16 @@ function Engine:Start()
 		
 		if #self.constraints > 0 then 
 			for _, constraint in ipairs(self.constraints) do 
-				constraint.point1:Update(dt)
-				constraint.point2:Update(dt)
-				constraint.point1:Render(dt)
-				constraint.point2:Render(dt)
 				constraint:Constrain()
 				constraint:Render()
 			end			
+		end
+		
+		if #self.points > 0 then 
+			for _, point in ipairs(self.points) do 
+				point:Update()
+				point:Render()
+			end
 		end
 	end)
 	
@@ -112,6 +116,21 @@ function Engine:CreateRigidBody(frame: GuiObject, collidable: boolean, anchored:
 	self.bodies[#self.bodies + 1] = newBody
 	
 	return newBody
+end
+
+function Engine:CreatePoint(position: Vector2, visible: boolean)
+	if not typeof(position) == "Vector2" then error("Invalid Argument #1. 'position' must be a Vector2 value", 2) end
+	if not typeof(visible) == "boolean" then error("Invalid Argument #2. 'visible' must be a boolean", 2) end
+	
+	local newPoint = Point.new(position, self.canvas, self, {
+		snap = false, 
+		selectable = false, 
+		render = visible,
+		keepInCanvas = true
+	})
+	self.points[#self.points + 1] = newPoint
+	
+	return newPoint
 end
 
 function Engine:CreateConstraint(point1, point2, visible: boolean, thickness: number)
@@ -140,12 +159,20 @@ function Engine:GetConstraints()
 	return self.constraints
 end
 
-function Engine:CreateCanvas(topLeft: Vector2, size: Vector2)
+function Engine:GetPoints()
+        return self.points
+end
+
+function Engine:CreateCanvas(topLeft: Vector2, size: Vector2, frame: Frame)
 	if not typeof(topLeft) == "Vector2" then error("Invalid Argument #1. 'topLeft' must be a Vector2", 2) end
 	if not typeof(size) == "Vector2" then error("Invalid Argument #2. 'size' must be a Vector2", 2) end
 	
 	self.canvas.absolute = topLeft
 	self.canvas.size = size
+	
+	if frame and frame:IsA("Frame") then 
+		self.canvas.frame = frame
+	end
 end
 
 function Engine:SetPhysicalProperty(property: string, value)
