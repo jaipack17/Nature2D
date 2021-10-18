@@ -3,7 +3,7 @@
 ## v0.0.2 - Custom Point Support, Configuration Methods and More!
 
 * Installation through Wally! Nature2D can now be installed using [Wally](https://github.com/UpliftGames/wally), the package manager for Roblox. This requires wally to be installed on your device. In order to install Nature2D, add a dependency to your `wally.toml` file
-   * https://doy2mn9upadnk.cloudfront.net/uploads/default/original/4X/3/4/8/348c3d6c9436a92cf44160b9e8aee5b2a5933193.png
+   * ![dependency](https://doy2mn9upadnk.cloudfront.net/uploads/default/original/4X/3/4/8/348c3d6c9436a92cf44160b9e8aee5b2a5933193.png)
 
    * After you have added the dependency, run `wally install` in the command line. A "Packages" directory is created containing the library. You can now use Nature2D in your external editor using wally!
 
@@ -15,7 +15,7 @@
   * `Engine:CreatePoint()`
   * `Engine:GetPoints()` 
 * Added new Configuration methods to Constraints
-   * `Constraint:Stroke()`
+   * `Constraint:Stroke()` 
 * Added new Configuration methods to Points
    * `Point:SetRadius()`
    * `Point:Stroke()`
