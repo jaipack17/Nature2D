@@ -36,7 +36,9 @@ function Point.new(pos: Vector2, canvas, engine: engineConfig, config: pointConf
 		snap = config.snap,
 		selectable = config.selectable,
 		render = config.render,
-		keepInCanvas = config.keepInCanvas
+		keepInCanvas = config.keepInCanvas,
+		color = nil,
+		radius = Globals.point.radius
 	}, Point)
 	
 	return self 
@@ -46,7 +48,7 @@ function Point:ApplyForce(force)
 	self.forces += force
 end
 
-function Point:Update()
+function Point:Update(dt: number)
 	if not self.snap then
 		self:ApplyForce(self.gravity)
 
@@ -103,9 +105,10 @@ function Point:Render()
 		if not self.frame then 
 			local p = Instance.new("Frame")
 			local border = Instance.new("UICorner")
+			local r = self.radius or Globals.point.radius
 			
-			p.BackgroundColor3 = Globals.point.color
-			p.Size = UDim2.new(0, Globals.point.radius * 2, 0, Globals.point.radius * 2)
+			p.BackgroundColor3 = self.color or Globals.point.color
+			p.Size = UDim2.new(0, r * 2, 0, r * 2)
 			p.Parent = self.canvas.frame
 			
 			border.CornerRadius = Globals.point.uicRadius
@@ -122,8 +125,19 @@ function Point:Render()
 	end
 end
 
-function Point:SetConfig(property: string, value)
-	self[property] = value
+function Point:SetRadius(radius: number)
+	if not typeof(radius) == "number" then error("Invalid Argument #1. 'radius' must be a number", 2) end 
+	self.radius = radius
+end
+
+function Point:Stroke(color: Color3)
+	if not typeof(color) == "Color3" then error("Invalid Argument #1. 'color' must be a Color3 value", 2) end 
+	self.color = color
+end
+
+function Point:Snap(snap: boolean)
+	if not typeof(snap) == "boolean" then error("Invalid Argument #1. 'snap' must be a boolean", 2) end 
+	self.snap = snap
 end
 
 return Point
