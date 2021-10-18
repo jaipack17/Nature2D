@@ -30,7 +30,8 @@ function Constraint.new(p1, p2, canvas, config: segmentConfig, engine)
 		restLength = config.restLength or (p2.pos - p1.pos).magnitude,
 		render = config.render,
 		thickness = config.thickness,
-		support = config.support
+		support = config.support,
+		color = nil,
 	}, Constraint)
 	
 	return self	
@@ -55,16 +56,24 @@ end
 
 function Constraint:Render()
 	if self.render and self.canvas.frame then
+		local thickness = self.thickness or Globals.constraint.thickness
+		local color = self.color or Globals.constraint.color
+		
 		if not self.frame then 
-			self.frame = line(self.point1.pos, self.point2.pos, self.canvas.frame, self.thickness or Globals.constraint.thickness, Globals.constraint.color)
+			self.frame = line(self.point1.pos, self.point2.pos, self.canvas.frame, thickness, color)
 		end
 		
-		line(self.point1.pos, self.point2.pos, self.canvas.frame, self.thickness or Globals.constraint.thickness, Globals.constraint.color, self.frame)
+		line(self.point1.pos, self.point2.pos, self.canvas.frame, thickness, color, self.frame)
 	end
 end
 
 function Constraint:GetLength()
 	return (self.point2.pos - self.point1.pos).magnitude
+end
+
+function Constraint:Stroke(color: Color3)
+	if not typeof(color) == "Color3" then error("Invalid Argument #1. 'color' must be a Color3 value", 2) end 
+	self.color = color
 end
 
 function Constraint:Destroy()
