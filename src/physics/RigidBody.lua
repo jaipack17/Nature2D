@@ -257,7 +257,7 @@ function RigidBody:Render()
 		self:SetPosition(self.anchorPos)
 		self:Rotate(self.anchorRotation)
 	else 
-		self.frame.Rotation = math.deg(math.atan2((self.vertices[1].pos - self.vertices[2].pos).y, (self.vertices[1].pos - self.vertices[2].pos).x))
+		self.frame.Rotation = math.deg(math.atan2((self.vertices[2].pos - self.vertices[1].pos).y, (self.vertices[2].pos - self.vertices[1].pos).x))
 		self.frame.Position = UDim2.new(0, self.center.x - self.frame.AbsoluteSize.x/2, 0, self.center.y - self.frame.AbsoluteSize.y/2)		
 	end
 end
