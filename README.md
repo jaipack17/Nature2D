@@ -30,7 +30,9 @@ Nature2D = "jaipack17/nature2d@0.0.2"
 ```
 After that, Run `wally install` in the CLI! Nature2D should be installed in your root directory. If you encounter any errors or problems installing Nature2D using wally, [open an issue!](https://github.com/jaipack17/Nature2D/issues)
 
-To get started:
+<hr/>
+
+**To get started:**
 ```lua
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Nature2D = require(ReplicatedStorage.Nature2D.Engine)
