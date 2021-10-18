@@ -22,8 +22,8 @@ $ git clone https://github.com/jaipack17/Nature2D.git
 
 https://www.roblox.com/library/7625799164/Nature2D
 
-* **Using wally** - Use [wally](https://github.com/UpliftGames/wally), the package manager for roblox to install Nature2D in your external code editor! This requires wally to be installed on your device.
-Example: `wally.toml`:
+* **Using wally** - Use [wally](https://github.com/UpliftGames/wally), the package manager for roblox to install Nature2D in your external code editor! This requires wally to be installed on your device.<br/>
+Example `wally.toml`:
 ```toml
 [package]
 name = "scope/name"
