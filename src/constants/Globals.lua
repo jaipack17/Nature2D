@@ -10,13 +10,14 @@ return {
 		},
 	},
 	universalMass = 1,
+	speed = 55,
 	properties = {
 		"gravity",
 		"friction",
 		"collisionmultiplier",
 	},
 	constraint = {
-		color = Color3.new(1),
+		color = Color3.new(1, 1, 1),
 		thickness = 4,
 	},
 	point = {

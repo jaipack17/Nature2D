@@ -91,7 +91,7 @@ function Engine:Start()
 		
 		if #self.points > 0 then 
 			for _, point in ipairs(self.points) do 
-				point:Update()
+				point:Update(dt)
 				point:Render()
 			end
 		end

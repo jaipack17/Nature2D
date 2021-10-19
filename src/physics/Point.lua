@@ -51,14 +51,13 @@ end
 function Point:Update(dt: number)
 	if not self.snap then
 		self:ApplyForce(self.gravity)
-
+		
 		local velocity = self.pos 
 		velocity -= self.oldPos
-		velocity += self.forces 
-
+		velocity += self.forces * dt * Globals.speed
 		velocity *= self.friction 
-						
-		self.oldPos = self.pos 
+		
+		self.oldPos = self.pos
 		self.pos += velocity
 		self.forces *= 0
 	end
