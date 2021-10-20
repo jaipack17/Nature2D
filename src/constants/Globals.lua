@@ -1,3 +1,7 @@
+--[[
+	List of commonly used variables all around the library
+]]--
+
 return {
 	engineInit = {
 		gravity = Vector2.new(0, .3),

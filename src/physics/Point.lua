@@ -1,8 +1,17 @@
+--[[
+	Points are what make the rigid bodies behave like real world entities. 
+	Points are responsible for the movement of the RigidBodies and Constraints.
+]]--
+
 local Globals = require(script.Parent.Parent.constants.Globals)
 local throwTypeError = require(script.Parent.Parent.debug.TypeErrors)
 
 local Point = {}
 Point.__index = Point
+
+--[[
+	Type Definitions
+]]--
 
 type engineConfig = {
 	gravity: Vector2,
@@ -23,6 +32,14 @@ type pointConfig = {
 	render: boolean,
 	keepInCanvas: boolean
 }
+
+--[[
+	This method is used to initialize a new Point.
+
+	[METHOD]: Point.new()
+	[PARAMETERS]: pos: Vector2, canvas, engine: engineConfig, config: pointConfig
+	[RETURNS]: Point
+]]--
 
 function Point.new(pos: Vector2, canvas, engine: engineConfig, config: pointConfig)
 	local self = setmetatable({
@@ -47,9 +64,25 @@ function Point.new(pos: Vector2, canvas, engine: engineConfig, config: pointConf
 	return self 
 end
 
+--[[
+	This method is used to apply a force to the Point. 
+	
+	[METHOD]: Point:ApplyForce()
+	[PARAMETERS]: force: Vector2
+	[RETURNS]: nil
+]]--
+
 function Point:ApplyForce(force)
 	self.forces += force
 end
+
+--[[
+	This method is used to apply external forces like gravity and is responsible for moving the point.
+	
+	[METHOD]: Point:Update()
+	[PARAMETERS]: dt: number
+	[RETURNS]: nil
+]]--
 
 function Point:Update(dt: number)
 	if not self.snap then
@@ -65,6 +98,14 @@ function Point:Update(dt: number)
 		self.forces *= 0
 	end
 end
+
+--[[
+	This method is used to keep the point in the engine's canvas. Any point that goes past the canvas, is positioned correctly and the direction of its flipped is reversed accordingly. 
+	
+	[METHOD]: Point:KeepInCanvas()
+	[PARAMETERS]: none
+	[RETURNS]: nil
+]]--
 
 function Point:KeepInCanvas()
 	local vx = self.pos.x - self.oldPos.x;
@@ -102,6 +143,14 @@ function Point:KeepInCanvas()
 	end
 end
 
+--[[
+	This method is used to update the position and appearance of the Point on screen.
+	
+	[METHOD]: Point:Render()
+	[PARAMETERS]: none
+	[RETURNS]: nil
+]]--
+
 function Point:Render()
 	if self.render then 
 		if not self.frame then 
@@ -127,15 +176,41 @@ function Point:Render()
 	end
 end
 
+--[[
+	This method is used to determine the radius of the point.
+	
+	[METHOD]: Point:SetRadius()
+	[PARAMETERS]: radius: number
+	[RETURNS]: nil
+]]--
+
+
 function Point:SetRadius(radius: number)
 	throwTypeError("radius", radius, 1, "number")
 	self.radius = radius
 end
 
+--[[
+	This method is used to determine the color of the point on screen. By default this is set to (RED) Color3.new(1, 0, 0).
+	
+	[METHOD]: Point:Stroke()
+	[PARAMETERS]: color: Color3
+	[RETURNS]: nil
+]]--
+
 function Point:Stroke(color: Color3)
 	throwTypeError("color", color, 1, "Color3")
 	self.color = color
 end
+
+--[[
+	This method determines if the point remains anchored. If set to false, the point is unanchored.
+	
+	[METHOD]: Point:Snap()
+	[PARAMETERS]: snap: boolean
+	[RETURNS]: nil
+]]--
+
 
 function Point:Snap(snap: boolean)
 	throwTypeError("snap", snap, 1, "boolean")

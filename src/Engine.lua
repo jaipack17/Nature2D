@@ -1,3 +1,8 @@
+--[[
+	The Engine or the core of the library handles all the RigidBodies, constraints and points. 
+	It's responsible for the simulation of these elements and handling all tasks related to the library.
+]]--
+
 local RigidBody = require(script.Parent.physics.RigidBody)
 local Point = require(script.Parent.physics.Point)
 local Constraint = require(script.Parent.physics.Constraint)
@@ -9,6 +14,12 @@ local RunService = game:GetService("RunService")
 
 local Engine = {}
 Engine.__index = Engine
+
+--[[
+	[PRIVATE]
+
+	Collision Response: This methid is responsible for separating two rigidbodies if they collide with each other.
+]]--
 
 local function CollisionResponse(body, other, isColliding, Collision, dt)
 	if not isColliding then return end
@@ -38,6 +49,16 @@ local function CollisionResponse(body, other, isColliding, Collision, dt)
 	end	
 end
 
+--[[
+	[PUBLIC]
+
+	This method is used to initialize basic configurations of the engine and allocate memory for future tasks.
+
+	[METHOD]: Engine.init()
+	[PARAMETERS]: screengui: ScreenGui 
+	[RETURNS]: Engine
+]]--
+
 function Engine.init(screengui: ScreenGui)
 	if not typeof(screengui) == "ScreenGui" then error("Invalid Argument #1. 'screengui' must be a ScreenGui.", 2) end
 	
@@ -61,6 +82,14 @@ function Engine.init(screengui: ScreenGui)
 	
 	return self
 end
+
+--[[
+	This method is used to start simulating rigid bodies and constraints.
+	
+	[METHOD]: Engine:Start()
+	[PARAMETERS]: none 
+	[RETURNS]: nil
+]]--
  
 function Engine:Start()
 	if not self.canvas then throwException("error", "NO_CANVAS_FOUND") end
@@ -103,12 +132,28 @@ function Engine:Start()
 	self.connection = connection
 end
 
+--[[
+	This method is used to stop simulating rigid bodies and constraints.
+	
+	[METHOD]: Engine:Stop()
+	[PARAMETERS]: none 
+	[RETURNS]: nil
+]]--
+
 function Engine:Stop()
 	if self.connection then 
 		self.connection:Disconnect()
 		self.connection = nil
 	end
 end
+
+--[[
+	This method is used to turn a normal UI element into a physical entity.
+
+	[METHOD]: Engine:CreateRigidBody()
+	[PARAMETERS]: frame: GuiObject, collidable: boolean, anchored: boolean
+	[RETURNS]: RigidBody
+]]--
 
 function Engine:CreateRigidBody(frame: GuiObject, collidable: boolean, anchored: boolean)
 	if not typeof(frame) == "GuiObject" then error("Invalid Argument #1. 'frame' must be a GuiObject", 2) end
@@ -120,6 +165,14 @@ function Engine:CreateRigidBody(frame: GuiObject, collidable: boolean, anchored:
 	
 	return newBody
 end
+
+--[[
+	This method is used to create a custom point in the Engine. It can be used to create custom constraints.
+
+	[METHOD]: Engine:CreatePoint()
+	[PARAMETERS]: position: Vector2, visible: boolean
+	[RETURNS]: Point
+]]--
 
 function Engine:CreatePoint(position: Vector2, visible: boolean)
 	throwTypeError("position", position, 1, "Vector2")
@@ -135,6 +188,14 @@ function Engine:CreatePoint(position: Vector2, visible: boolean)
 	
 	return newPoint
 end
+
+--[[
+	This method is used to create non collidable constraints that hold together two points.
+
+	[METHOD]: Engine:CreateConstraint()
+	[PARAMETERS]: point1: Point, point2: Point, visible: boolean, thickness: number
+	[RETURNS]: Constraint
+]]--
 
 function Engine:CreateConstraint(point1, point2, visible: boolean, thickness: number)
 	throwTypeError("visible", visible, 3, "boolean")
@@ -154,17 +215,50 @@ function Engine:CreateConstraint(point1, point2, visible: boolean, thickness: nu
 	return newConstraint
 end
 
+--[[
+	This method is used to fetch all RigidBodies that have been created. Ones that have been destroyed, won't be fetched.
+
+	[METHOD]: Engine:GetBodies()
+	[PARAMETERS]: none
+	[RETURNS]: bodies: table
+]]--
+
 function Engine:GetBodies()
 	return self.bodies
 end
+
+--[[
+	This method is used to fetch all Constraints that have been created. Ones that have been destroyed, won't be fetched.
+
+	[METHOD]: Engine:GetConstraints()
+	[PARAMETERS]: none
+	[RETURNS]: constraints: table
+]]--
 
 function Engine:GetConstraints()
 	return self.constraints
 end
 
+--[[
+	This method is used to fetch all Points that have been created. 
+
+	[METHOD]: Engine:GetPoints()
+	[PARAMETERS]: none
+	[RETURNS]: points: table
+]]--
+
 function Engine:GetPoints()
 	return self.points
 end
+
+--[[
+	This function is used to initialize boundaries to which all bodies and constraints obey. An object cannot go past this boundary.
+
+	[METHOD]: Engine:CreateCanvas()
+	[PARAMETERS]: topLeft: Vector2, size: Vector2, frame: Frame | nil
+	[RETURNS]: nil
+]]--
+
 
 function Engine:CreateCanvas(topLeft: Vector2, size: Vector2, frame: Frame)
 	throwTypeError("topLeft", topLeft, 1, "Vector2")
@@ -178,10 +272,26 @@ function Engine:CreateCanvas(topLeft: Vector2, size: Vector2, frame: Frame)
 	end
 end
 
+--[[
+	This method is used to determine the simulation speed of the engine. By default the simulation speed is set to 55.
+	
+	[METHOD]: Engine:SetSimulationSpeed()
+	[PARAMETERS]: speed: number
+	[RETURNS]: nil
+]]--
+
 function Engine:SetSimulationSpeed(speed: number)
 	throwTypeError("speed", speed, 1, "number")
 	self.speed = speed
 end
+
+--[[
+	This method is used to configure universal physical properties possessed by all rigid bodies and constraints. 
+	
+	[METHOD]: Engine:SetPhysicalProperty()
+	[PARAMETERS]: property: string, value
+	[RETURNS]: nil
+]]--
 
 function Engine:SetPhysicalProperty(property: string, value)
 	throwTypeError("property", property, 1, "string")
@@ -211,6 +321,14 @@ function Engine:SetPhysicalProperty(property: string, value)
 	end
 end
 
+--[[
+	This method is used to fetch an individual rigid body from its ID.
+
+	[METHOD]: Engine:GetBodyById()
+	[PARAMETERS]: id: string
+	[RETURNS]: RigidBody
+]]--
+
 function Engine:GetBodyById(id: string)
 	throwTypeError("id", id, 1, "string")
 	
@@ -222,6 +340,14 @@ function Engine:GetBodyById(id: string)
 	
 	return;
 end
+
+--[[
+	This method is used to fetch an individual constraint body from its ID. 
+	
+	[METHOD]: Engine:GetConstraintById()
+	[PARAMETERS]: id: string
+	[RETURNS]: Constraint
+]]--
 
 function Engine:GetConstraintById(id: string)
 	throwTypeError("id", id, 1, "string")

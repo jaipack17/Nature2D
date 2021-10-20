@@ -1,3 +1,8 @@
+--[[
+	This utility is used to render a constraint on the screen.
+]]--
+
+
 local Globals = require(script.Parent.Parent.constants.Globals)
 
 local function draw(hyp: number, origin: Vector2, thickness: number, parent, color: Color3, l) 

@@ -1,3 +1,7 @@
+--[[
+	Handling exceptions
+]]--
+
 local TYPES = {
 	NO_CANVAS_FOUND = "[Nature2D]: No canvas found, initialize the engine's canvas using Engine:CreateCanvas().",
 	NO_RIGIDBODIES_FOUND = "[Nature2D]: No rigid bodies found on start.",
