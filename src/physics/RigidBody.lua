@@ -1,6 +1,7 @@
 local Point = require(script.Parent.Point)
 local Constraint = require(script.Parent.Constraint)
 local Globals = require(script.Parent.Parent.constants.Globals)
+local throwTypeError = require(script.Parent.Parent.debug.TypeErrors)
 
 local HttpService = game:GetService("HttpService")
 
@@ -164,70 +165,74 @@ function RigidBody:CreateProjection(Axis, Min, Max)
 end
 
 function RigidBody:DetectCollision(other)
-	self.center = CalculateCenter(self.vertices)
+	if self.frame and other.frame then 
+		self.center = CalculateCenter(self.vertices)
+
+		local minDist = math.huge
+		local collision = {
+			axis = nil,
+			depth = nil,
+			edge = nil,
+			vertex = nil
+		}
+
+		for i = 1, #self.edges + #other.edges, 1 do
+			local edge = i <= #self.edges and self.edges[i] or other.edges[i - #self.edges]
+
+			if not edge.support then 
+				local axis = Vector2.new(edge.point1.pos.Y - edge.point2.pos.Y, edge.point2.pos.X - edge.point1.pos.X).Unit
+
+				local MinA, MinB, MaxA, MaxB
+				MinA, MaxA = self:CreateProjection(axis, MinA, MaxA)
+				MinB, MaxB = other:CreateProjection(axis, MinB, MaxB)
+
+				local dist = CalculatePenetration(MinA, MaxA, MinB, MaxB)
+
+				if dist > 0 then 
+					return { false, {} }
+				elseif math.abs(dist) < minDist then
+					minDist = math.abs(dist) 
+					collision.axis = axis
+					collision.edge = edge
+				end		
+			end
+		end
+
+		collision.depth = minDist
+
+		if collision.edge and collision.edge.Parent ~= other then
+			local Temp = other
+			other = self
+			self = Temp
+		end
+
+		local centerDif = self.center - other.center
+		local dot = collision.axis.x * centerDif.x + collision.axis.y * centerDif.y
+
+		if dot < 0 then 
+			collision.axis *= -1
+		end	
+
+		local minMag = math.huge 
+
+		for i = 1, #self.vertices, 1 do
+			local dif =  self.vertices[i].pos - other.center
+			local dist = collision.axis.x * dif.x + collision.axis.y * dif.y
+
+			if dist < minMag then
+				minMag = dist
+				collision.vertex = self.vertices[i]
+			end
+		end
+
+		return { true, collision }; 	
+	end
 	
-	local minDist = math.huge
-	local collision = {
-		axis = nil,
-		depth = nil,
-		edge = nil,
-		vertex = nil
-	}
-
-	for i = 1, #self.edges + #other.edges, 1 do
-		local edge = i <= #self.edges and self.edges[i] or other.edges[i - #self.edges]
-		
-		if not edge.support then 
-			local axis = Vector2.new(edge.point1.pos.Y - edge.point2.pos.Y, edge.point2.pos.X - edge.point1.pos.X).Unit
-
-			local MinA, MinB, MaxA, MaxB
-			MinA, MaxA = self:CreateProjection(axis, MinA, MaxA)
-			MinB, MaxB = other:CreateProjection(axis, MinB, MaxB)
-
-			local dist = CalculatePenetration(MinA, MaxA, MinB, MaxB)
-
-			if dist > 0 then 
-				return { false, {} }
-			elseif math.abs(dist) < minDist then
-				minDist = math.abs(dist) 
-				collision.axis = axis
-				collision.edge = edge
-			end		
-		end
-	end
-
-	collision.depth = minDist
-
-	if collision.edge and collision.edge.Parent ~= other then
-		local Temp = other
-		other = self
-		self = Temp
-	end
-
-	local centerDif = self.center - other.center
-	local dot = collision.axis.x * centerDif.x + collision.axis.y * centerDif.y
-
-	if dot < 0 then 
-		collision.axis *= -1
-	end	
-
-	local minMag = math.huge 
-
-	for i = 1, #self.vertices, 1 do
-		local dif =  self.vertices[i].pos - other.center
-		local dist = collision.axis.x * dif.x + collision.axis.y * dif.y
-
-		if dist < minMag then
-			minMag = dist
-			collision.vertex = self.vertices[i]
-		end
-	end
-
-	return { true, collision }; 
+	return { false, {} }
 end
 
 function RigidBody:ApplyForce(force: Vector2)
-	if not typeof(force) == "Vector2" then error("Invalid Argument #1. 'force' must be a Vector2", 2) end
+	throwTypeError("force", force, 1, "Vector2")
 	
 	for _, v in ipairs(self.vertices) do 
 		v:ApplyForce(force)
@@ -272,8 +277,8 @@ function RigidBody:Destroy()
 end
 
 function RigidBody:Rotate(newRotation: number)
-	if not typeof(newRotation) == "number" then error("Invalid Argument #1. 'newRotation' must be a number.") end
-	
+	throwTypeError("newRotation", newRotation, 1, "number")
+
 	if self.anchored and self.anchorRotation then 
 		self.anchorRotation = newRotation
 	end
@@ -287,8 +292,8 @@ function RigidBody:Rotate(newRotation: number)
 end
 
 function RigidBody:SetPosition(newPosition: Vector2)
-	if not typeof(newPosition) == "Vector2" then error("Invalid Argument #1. 'newPosition' must be a Vector2.") end
-	
+	throwTypeError("newPosition", newPosition, 1, "Vector2")
+
 	if self.anchored and self.anchorPos then 
 		self.anchorPos = newPosition
 	end
@@ -301,8 +306,8 @@ function RigidBody:SetPosition(newPosition: Vector2)
 end
 
 function RigidBody:SetSize(newSize: Vector2)
-	if not typeof(newSize) == "Vector2" then error("Invalid Argument #1. 'newSize' must be a Vector2.") end
-
+	throwTypeError("newSize", newSize, 1, "Vector2")
+	
 	local oldSize = self.frame.Size
 	self.frame.Size = UDim2.new(0, newSize.X, 0, newSize.Y)
 	UpdateVertices(self.frame, self.vertices, self.engine)
@@ -331,7 +336,7 @@ function RigidBody:Unanchor()
 end
 
 function RigidBody:CanCollide(collidable: boolean)
-	if not typeof(collidable) == "boolean" then error("Invalid Argument #1. 'collidable' must be a boolean.") end
+	throwTypeError("collidable", collidable, 1, "boolean")
 	self.collidable = collidable
 end
 
@@ -352,19 +357,20 @@ function RigidBody:GetConstraints()
 end
 
 function RigidBody:SetLifeSpan(seconds: number)
-	if not typeof(seconds) == "number" then error("Invalid Argument #1. 'seconds' must be a number.") end
+	throwTypeError("seconds", seconds, 1, "number")
 	self.lifeSpan = seconds
 end
 
 function RigidBody:KeepInCanvas(keepInCanvas: boolean)
-	if not typeof(keepInCanvas) == "boolean" then error("Invalid Argument #1. 'keepInCanvas' must be a number.") end
+	throwTypeError("keepInCanvas", keepInCanvas, 1, "boolean")
+	
 	for _, p in ipairs(self.vertices) do 
 		p.keepInCanvas = keepInCanvas
 	end
 end
 
 function RigidBody:SetFriction(friction: number)
-	if not typeof(friction) == "number" then error("Invalid Argument #1. Friction must be a number. 0-1 is advisable.", 2) end
+	throwTypeError("friction", friction, 1, "number")
 	
 	for _, p in ipairs(self.vertices) do
 		p.friction = friction
@@ -372,7 +378,7 @@ function RigidBody:SetFriction(friction: number)
 end
 
 function RigidBody:SetGravity(force: Vector2)
-	if not typeof(force) == "Vector2" then error("Invalid Argument #1. Gravity must be a Vector2.", 2) end
+	throwTypeError("force", force, 1, "Vector2")
 
 	for _, p in ipairs(self.vertices) do
 		p.gravity = force

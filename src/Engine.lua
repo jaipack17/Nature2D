@@ -2,13 +2,15 @@ local RigidBody = require(script.Parent.physics.RigidBody)
 local Point = require(script.Parent.physics.Point)
 local Constraint = require(script.Parent.physics.Constraint)
 local Globals = require(script.Parent.constants.Globals)
+local throwException = require(script.Parent.debug.Exceptions)
+local throwTypeError = require(script.Parent.debug.TypeErrors)
 
 local RunService = game:GetService("RunService")
 
 local Engine = {}
 Engine.__index = Engine
 
-local function CollisionResponse(body, other, isColliding, Collision)
+local function CollisionResponse(body, other, isColliding, Collision, dt)
 	if not isColliding then return end
 	
 	body.Touched:Fire(other.id)
@@ -27,8 +29,8 @@ local function CollisionResponse(body, other, isColliding, Collision)
 	local factor = 1/(t^2 + (1 - t)^2)
 	
 	if not Collision.edge.Parent.anchored then 
-		p1.pos -= penetration * ((1 - t) * factor/2)
-		p2.pos -= penetration * (t * factor/2)			
+		p1.pos -= penetration * ((1 - t) * factor/2) * dt * 60
+		p2.pos -= penetration * (t * factor/2)
 	end	
 	
 	if not Collision.vertex.Parent.Parent.anchored then 	
@@ -49,6 +51,7 @@ function Engine.init(screengui: ScreenGui)
 		bounce = Globals.engineInit.bounce,
 		timeSteps = Globals.engineInit.timeSteps,
 		path = screengui,
+		speed = Globals.speed,
 		canvas = {
 			frame = nil,
 			topLeft = Globals.engineInit.canvas.topLeft,
@@ -60,9 +63,9 @@ function Engine.init(screengui: ScreenGui)
 end
  
 function Engine:Start()
-	if not self.canvas then error("No canvas found, initialize the engine's canvas using Engine:CreateCanvas()", 2) end
-	if #self.bodies == 0 then warn("No rigid bodies found on start") end
-		
+	if not self.canvas then throwException("error", "NO_CANVAS_FOUND") end
+	if #self.bodies == 0 then throwException("warn", "NO_RIGIDBODIES_FOUND") end
+	
 	local connection;
 	connection = RunService.RenderStepped:Connect(function(dt)
 		for _, body in ipairs(self.bodies) do 
@@ -73,7 +76,7 @@ function Engine:Start()
 					local isColliding = result[1]
 					local Collision = result[2]
 					
-					CollisionResponse(body, other, isColliding, Collision)
+					CollisionResponse(body, other, isColliding, Collision, dt)
 				end
 			end
 			for _, vertex in ipairs(body.vertices) do
@@ -109,9 +112,9 @@ end
 
 function Engine:CreateRigidBody(frame: GuiObject, collidable: boolean, anchored: boolean)
 	if not typeof(frame) == "GuiObject" then error("Invalid Argument #1. 'frame' must be a GuiObject", 2) end
-	if not typeof(collidable) == "boolean" then error("Invalid Argument #2. 'collidable' must be a boolean", 2) end
-	if not typeof(anchored) == "boolean" then error("Invalid Argument #3. 'anchored' must be a boolean", 2) end	
-	
+	throwTypeError("collidable", collidable, 2, "boolean")
+	throwTypeError("anchored", anchored, 3, "boolean")
+
 	local newBody = RigidBody.new(frame, Globals.universalMass, collidable, anchored, self)
 	self.bodies[#self.bodies + 1] = newBody
 	
@@ -119,8 +122,8 @@ function Engine:CreateRigidBody(frame: GuiObject, collidable: boolean, anchored:
 end
 
 function Engine:CreatePoint(position: Vector2, visible: boolean)
-	if not typeof(position) == "Vector2" then error("Invalid Argument #1. 'position' must be a Vector2 value", 2) end
-	if not typeof(visible) == "boolean" then error("Invalid Argument #2. 'visible' must be a boolean", 2) end
+	throwTypeError("position", position, 1, "Vector2")
+	throwTypeError("visible", visible, 2, "boolean")
 	
 	local newPoint = Point.new(position, self.canvas, self, {
 		snap = false, 
@@ -134,8 +137,8 @@ function Engine:CreatePoint(position: Vector2, visible: boolean)
 end
 
 function Engine:CreateConstraint(point1, point2, visible: boolean, thickness: number)
-	if not typeof(visible) == "boolean" then error("Invalid Argument #3. 'visible' must be a boolean", 2) end
-	if not typeof(thickness) == "number" then error("Invalid Argument #4. 'thickness' must be a number", 2) end
+	throwTypeError("visible", visible, 3, "boolean")
+	throwTypeError("thickness", thickness, 4, "number")
 	
 	local dist = (point2.pos - point1.pos).magnitude
 	
@@ -160,12 +163,12 @@ function Engine:GetConstraints()
 end
 
 function Engine:GetPoints()
-        return self.points
+	return self.points
 end
 
 function Engine:CreateCanvas(topLeft: Vector2, size: Vector2, frame: Frame)
-	if not typeof(topLeft) == "Vector2" then error("Invalid Argument #1. 'topLeft' must be a Vector2", 2) end
-	if not typeof(size) == "Vector2" then error("Invalid Argument #2. 'size' must be a Vector2", 2) end
+	throwTypeError("topLeft", topLeft, 1, "Vector2")
+	throwTypeError("size", size, 2, "Vector2")
 	
 	self.canvas.absolute = topLeft
 	self.canvas.size = size
@@ -175,8 +178,13 @@ function Engine:CreateCanvas(topLeft: Vector2, size: Vector2, frame: Frame)
 	end
 end
 
+function Engine:SetSimulationSpeed(speed: number)
+	throwTypeError("speed", speed, 1, "number")
+	self.speed = speed
+end
+
 function Engine:SetPhysicalProperty(property: string, value)
-	if not typeof(property) == "string" then error("Invalid Argument #1. Property must be a string", 2) end
+	throwTypeError("property", property, 1, "string")
 	
 	local properties = Globals.properties
 	
@@ -184,24 +192,27 @@ function Engine:SetPhysicalProperty(property: string, value)
 		for _, b in ipairs(self.bodies) do 
 			for _, v in ipairs(b:GetVertices()) do 
 				if string.lower(property) == "collisionmultiplier" then 
-					if not typeof(value) == "number" then error("Invalid Argument #2. CollisionMultiplier must be a number. 0-1 is advisable.", 2) end
+					throwTypeError("value", value, 2, "number")
+					self.bounce = value
 					v.bounce = value
 				elseif string.lower(property) == "gravity" then 
-					if not typeof(value) == "Vector2" then error("Invalid Argument #2. Gravity must be a Vector2.", 2) end
+					throwTypeError("value", value, 2, "Vector2")
+					self.gravity = value
 					v.gravity = value
-				elseif string.lower(property) == "friction" then 
-					if not typeof(value) == "number" then error("Invalid Argument #2. Friction must be a number. 0-1 is advisable.", 2) end
+				elseif string.lower(property) == "friction" then 					
+					throwTypeError("value", value, 2, "number")
+					self.friction = value
 					v.friction = value
 				end
 			end
 		end
 	else
-		error("Invalid Argument #1. Property not found", 2)
+		throwException("error", "PROPERTY_NOT_FOUND")
 	end
 end
 
 function Engine:GetBodyById(id: string)
-	if not typeof(id) == "string" then error("Invalid Argument #1. 'id' must be a string", 2) end
+	throwTypeError("id", id, 1, "string")
 	
 	for _, b in ipairs(self.bodies) do 
 		if b.id == id then 
@@ -213,8 +224,8 @@ function Engine:GetBodyById(id: string)
 end
 
 function Engine:GetConstraintById(id: string)
-	if not typeof(id) == "string" then error("Invalid Argument #1. 'id' must be a string", 2) end
-
+	throwTypeError("id", id, 1, "string")
+	
 	for _, c in ipairs(self.constraints) do 
 		if c.id == id then 
 			return c

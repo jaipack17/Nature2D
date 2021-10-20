@@ -1,4 +1,5 @@
 local Globals = require(script.Parent.Parent.constants.Globals)
+local throwTypeError = require(script.Parent.Parent.debug.TypeErrors)
 
 local Point = {}
 Point.__index = Point
@@ -6,7 +7,8 @@ Point.__index = Point
 type engineConfig = {
 	gravity: Vector2,
 	friction: number,
-	bounce: number
+	bounce: number,
+	speed: number,
 }
 
 type canvas = {
@@ -26,6 +28,7 @@ function Point.new(pos: Vector2, canvas, engine: engineConfig, config: pointConf
 	local self = setmetatable({
 		Parent = nil,
 		frame = nil,
+		engine = engine,
 		canvas = canvas,
 		oldPos = pos,
 		pos = pos,
@@ -54,7 +57,7 @@ function Point:Update(dt: number)
 		
 		local velocity = self.pos 
 		velocity -= self.oldPos
-		velocity += self.forces * dt * Globals.speed
+		velocity += self.forces * dt * self.engine.speed
 		velocity *= self.friction 
 		
 		self.oldPos = self.pos
@@ -125,17 +128,17 @@ function Point:Render()
 end
 
 function Point:SetRadius(radius: number)
-	if not typeof(radius) == "number" then error("Invalid Argument #1. 'radius' must be a number", 2) end 
+	throwTypeError("radius", radius, 1, "number")
 	self.radius = radius
 end
 
 function Point:Stroke(color: Color3)
-	if not typeof(color) == "Color3" then error("Invalid Argument #1. 'color' must be a Color3 value", 2) end 
+	throwTypeError("color", color, 1, "Color3")
 	self.color = color
 end
 
 function Point:Snap(snap: boolean)
-	if not typeof(snap) == "boolean" then error("Invalid Argument #1. 'snap' must be a boolean", 2) end 
+	throwTypeError("snap", snap, 1, "boolean")
 	self.snap = snap
 end
 

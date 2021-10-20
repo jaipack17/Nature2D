@@ -1,5 +1,6 @@
 local line = require(script.Parent.Parent.utils.Line)
 local Globals = require(script.Parent.Parent.constants.Globals)
+local throwTypeError = require(script.Parent.Parent.debug.TypeErrors)
 local https = game:GetService("HttpService")
 
 local Constraint = {}
@@ -72,7 +73,7 @@ function Constraint:GetLength()
 end
 
 function Constraint:Stroke(color: Color3)
-	if not typeof(color) == "Color3" then error("Invalid Argument #1. 'color' must be a Color3 value", 2) end 
+	throwTypeError("color", color, 1, "Color3")
 	self.color = color
 end
 
