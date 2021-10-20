@@ -1,5 +1,19 @@
 # Releases
 
+## v0.0.4 - Engine:SetSimulationSpeed() & Documentation
+
+* Updated API-References for RigidBodies, Constraints, Points and Engine in response to this and previous updates.
+* Documented source code with comments.
+* Better error handling and error messages
+* Added new Methods to Engine
+   * `Engine:SetSimulationSpeed()`
+
+## v0.0.3 - Frame-rate Independent!
+
+**Earlier:** Simulations running on different frame rates had a difference in their speeds. A simulation running on 60fps would run faster than that of a simulation running at 30fps.
+
+**Now:** Frame-rate no longer affects simulations. A RigidBody covering a distance of 10 units in a simulation running at 30fps and a simulation running 60fps will take almost the same time to reach the destination. 
+
 ## v0.0.2 - Custom Point Support, Configuration Methods and More!
 
 * Installation through Wally! Nature2D can now be installed using [Wally](https://github.com/UpliftGames/wally), the package manager for Roblox. This requires wally to be installed on your device. In order to install Nature2D, add a dependency to your `wally.toml` file
