@@ -35,6 +35,15 @@ This method is used to turn a normal UI element into a physical entity.
 * Also Check out:
   * [API - RigidBody](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody)
 
+## `Engine:CreatePoint()`
+
+This method is used to create a custom point in the Engine. It can be used to create custom constraints.
+
+* parameters - `position: Vector2, visible: boolean`
+* returns - `Point`
+* Also Check out:
+  * [API - Point](https://github.com/jaipack17/Nature2D/tree/master/docs/api/point)
+
 ## `Engine:CreateConstraint()`
 
 This method is used to create non collidable constraints that hold together two points. This can be used to create ropes or hold two rigid bodies together. In order to create a constraint, it is a must to have 2 points to connect the constraint with.
@@ -63,12 +72,33 @@ This method is used to configure universal physical properties possessed by all 
 * returns - `nil`
 * valid properties - `"Gravity": Vector2, "Friction": number, "CollisionMultiplier": number`
 
+## `Engine:SetSimulationSpeed`
+
+This method is used to determine the simulation speed of the engine. By default the simulation speed is set to 55.
+
+* parameters - `speed: number`
+* returns `nil`
+
 ## `Engine:GetBodies()`
 
 This method is used to fetch all RigidBodies that have been created. Ones that have been destroyed, won't be fetched.
 
 * parameters - `none`
 * returns - `RigidBodies: table`
+
+## `Engine:GetConstraints()`
+
+This method is used to fetch all Constraints that have been created. Ones that have been destroyed, won't be fetched.
+
+* parameters - `none`
+* returns - `Constraints: table`
+
+## `Engine:GetPoints()`
+
+This method is used to fetch all Points that have been created. 
+
+* parameters - `none`
+* returns - `Points: table`
 
 ## `Engine:GetBodyById()`
 
@@ -78,3 +108,10 @@ This method is used to fetch an individual rigid body from its ID. Every RigidBo
 * returns - `RigidBody`
 * Also Check out:
   * [`RigidBody:GetId()`](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodygetid)
+
+## `Engine:GetConstraintById()`
+
+This method is used to fetch an individual constraint body from its ID. 
+
+* parameters - `id: string`
+* returns - `Constraint`

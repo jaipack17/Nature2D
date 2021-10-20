@@ -43,7 +43,7 @@ This method is used to apply an external force on the rigid body.
 
 This method updates the positions of the RigidBody's points and constraints.
 
-* parameters - `none`
+* parameters - `dt: number`
 * returns - `nil`
 
 ## `RigidBody:Render()`
@@ -142,6 +142,20 @@ This method is used to set the RigidBody's life span. Life span is determined by
 This method determines if the RigidBody stays inside the engine's canvas at all times. If set to false, the RigidBody will be able to go past the engine's canvas (boundaries).
 
 * parameters - `keepInCanvas: boolean`
+* returns - `nil`
+
+## `RigidBody:SetFriction()`
+
+This method sets a custom frictional damp value just for the RigidBody. The RigidBody no longer abides by the engine's universal friction.
+
+* parameters - `friction: number`
+* returns - `nil`
+
+## `RigidBody:SetGravity()`
+
+This method sets a custom gravitational force just for the RigidBody. The RigidBody no longer abides by the engine's universal gravity.
+
+* parameters - `gravity: Vector2`
 * returns - `nil`
 
 ## `RigidBody.Touched`

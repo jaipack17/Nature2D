@@ -44,7 +44,7 @@ This method is used to apply a force to the Point. (Automatically handled by the
 
 This method is used to apply external forces like gravity and is responsible for moving the point. (Automatically handled by the engine for RigidBodies and constraints)
 
-* parameters - `none`
+* parameters - `dt: number`
 * returns - `nil`
 
 ## `Point:KeepInCanvas()`
@@ -60,3 +60,24 @@ This method is used to update the position and appearance of the Point on screen
 
 * parameters - `none`
 * returns - `nil`
+
+## `Point:SetRadius()`
+
+This method is used to determine the radius of the point.
+
+* parameters - `radius: number`
+* returns `nil`
+
+## `Point:Stroke()`
+
+This method is used to determine the color of the point on screen. By default this is set to (RED) Color3.new(1, 0, 0).
+
+* parameters - `color: Color3`
+* returns `nil`
+
+## `Point:Snap()`
+
+This method determines if the point remains anchored. If set to false, the point is unanchored.
+
+* parameters - `snap: boolean`
+* returns `nil`

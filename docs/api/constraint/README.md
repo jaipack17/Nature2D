@@ -39,3 +39,24 @@ This method is used to update the position and appearance of the constraint on s
 
 * parameters - `none`
 * returns - `nil`
+
+## `Constraint:GetLength()`
+
+This method returns the current distance between the two points of a constraint.
+
+* parameters - `none`
+* returns - `distance: number`
+
+## `Constraint:Stroke()`
+
+This method is used to change the color of a constraint. By default a constraint's color is set to the default value of (WHITE) Color3.new(1, 1, 1).
+
+* parameters - `color: Color3`
+* returns - `nil`
+
+## `Constraint:Destroy()`
+
+This method destroys the constraint. Its UI element is no longer rendered on screen and the constraint is removed from the engine. This is irreversible.
+
+* parameters - `none`
+* returns - `nil`
