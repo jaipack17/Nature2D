@@ -5,6 +5,7 @@
 * Updated API-References for RigidBodies, Constraints, Points and Engine in response to this and previous updates.
 * Documented source code with comments.
 * Better error handling and error messages
+* Fixed Engine:SetPhysicalProperty() bug where updating a physical property before creating a rigidbody did not change the properties for the rigidbody.
 * Added new Methods to Engine
    * `Engine:SetSimulationSpeed()`
 
