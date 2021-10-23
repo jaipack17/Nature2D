@@ -170,4 +170,4 @@ This event is fired when the RigidBody collides with another RigidBody. This eve
 
 This event is fired when the RigidBody collides with the engine's canvas' boundary. 
 
-* returns - `nil`
+* returns - `edge: string`
