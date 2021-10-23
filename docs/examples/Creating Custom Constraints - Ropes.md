@@ -1,0 +1,52 @@
+# Creating Custom Constraints - Ropes
+
+In this example, we create custom constraints, mainly a RigidBody hanging on a rope firmly. We'll also simulate the RigidBody by applying wind forces to it. The final result will look like the following:
+
+<hr/>
+
+Firstly, we require the module and initialize the engine. It is important to set a frame for the canvas if we wish to render constraints on screen.
+
+```lua
+local canvas = path.to.canvasFrame
+local Nature2D = require(game:GetService("ReplicatedStorage").Nature2D.Engine)
+
+local viewport = workspace.CurrentCamera.ViewportSize
+
+local Engine = Nature2D.init(script.Parent)
+Engine:SetPhysicalProperty("CollisionMultiplier", 0.1)
+Engine:CreateCanvas(Vector2.new(0, 0), viewport, canvas)
+```
+
+Next, we choose an anchor point, this is the point the rope hangs on from.
+
+```lua
+local Anchor = Engine:CreatePoint(Vector2.new(viewport.X/2, 0), false) -- visible: false
+Anchor:KeepInCanvas(false)
+Anchor:Snap() -- prevent the point from changing positions
+```
+
+We then create a RigidBody and connect the anchor and the RigidBody with a constraint.
+
+```lua
+local RigidBodyFrame = path.to.UIElement
+local Body = Engine:CreateRigidBody(RigidBodyFrame, true, false) -- anchored: false
+
+local TopLeftCorner = Body:GetVertices()[1]
+local Rope = Engine:CreateConstraint(Anchor, TopLeftCorner, true, 3) -- visible: true, thickness: 3
+Rope:Stroke(Color3.new(1, 1, 1)) -- set constraint color to white
+```
+
+We now apply random wind forces to the RigidBody to complete the simulation!
+
+```lua
+Engine:Start() -- start the simulation
+
+while task.wait(.3) do
+   local random = Random.new()
+   Body:ApplyForce(Vector2.new(random:NextNumber(0, 1), 0)) -- apply a random wind force
+end
+```
+
+There you go! You now have a simulation with custom constraints. These constraints can also be used to connect multiple RigidBodies with each other as well as to create custom RigidBodies and SoftBodies!
+
+<hr/>
