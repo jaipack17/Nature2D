@@ -1,5 +1,23 @@
 # Releases
 
+## v0.0.5 - Fixes and New Stuff!
+
+* The library now utilizes sleitnick's Signal class instead of bindable events.
+  * `RigidBody.CanvasEdgeTouched:Connect()`
+  * `RigidBody.Touched:Connect()`
+* Bug Fixes
+  * Error Handling
+* Improved code - Removed bad practices 
+* RigidBody.CanvasEdgeTouched event returns the edge the RigidBody collides with.
+* Added new methods to Engine
+  * Engine:GetCurrentCanvas() - [Documentation](https://github.com/jaipack17/Nature2D/blob/master/docs/api/engine/README.md#enginegetcurrentcanvas)
+  
+<hr/>
+
+Added new example which covers the concept of creating Custom Constraints, where we create the following simulation of a RigidBody hanging from a rope, and wind forces being applied on it.
+
+![rope](https://user-images.githubusercontent.com/74130881/138543851-c4871e17-f51e-4b5b-9d11-0fc63a32de02.gif)
+
 ## v0.0.4 - Engine:SetSimulationSpeed() & Documentation
 
 * Updated API-References for RigidBodies, Constraints, Points and Engine in response to this and previous updates.
