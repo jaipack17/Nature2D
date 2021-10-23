@@ -116,7 +116,7 @@ This method is used to fetch an individual constraint body from its ID.
 * parameters - `id: string`
 * returns - `Constraint`
 
-## Engine:GetCurrentCanvas()
+## `Engine:GetCurrentCanvas()`
 
 Returns current canvas the engine adheres to.
 
