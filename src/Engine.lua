@@ -165,7 +165,7 @@ function Engine:CreateRigidBody(frame: GuiObject, collidable: boolean, anchored:
 	throwTypeError("anchored", anchored, 3, "boolean")
 
 	local newBody = RigidBody.new(frame, Globals.universalMass, collidable, anchored, self)
-	self.bodies[#self.bodies + 1] = newBody
+	table.insert(self.bodies, newBody)
 	
 	return newBody
 end
@@ -188,7 +188,7 @@ function Engine:CreatePoint(position: Vector2, visible: boolean)
 		render = visible,
 		keepInCanvas = true
 	})
-	self.points[#self.points + 1] = newPoint
+	table.insert(self.points, newPoint)
 	
 	return newPoint
 end
@@ -214,7 +214,7 @@ function Engine:CreateConstraint(point1, point2, visible: boolean, thickness: nu
 		support = true
 	}, self)
 	
-	self.constraints[#self.constraints + 1] = newConstraint
+	table.insert(self.constraints, newConstraint)
 	
 	return newConstraint
 end
@@ -363,6 +363,18 @@ function Engine:GetConstraintById(id: string)
 	end
 
 	return;
+end
+
+--[[
+	Returns current canvas the engine adheres to.
+	
+	[METHOD]: Engine:GetCurrentCanvas()
+	[PARAMETERS]: none
+	[RETURNS]: { frame: Frame, topLeft: Vector2, size: Vector2 }
+]]--
+
+function Engine:GetCurrentCanvas()
+	return self.canvas
 end
 
 return Engine
