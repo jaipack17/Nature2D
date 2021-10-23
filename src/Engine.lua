@@ -60,8 +60,10 @@ end
 ]]--
 
 function Engine.init(screengui: ScreenGui)
-	if not typeof(screengui) == "ScreenGui" then error("Invalid Argument #1. 'screengui' must be a ScreenGui.", 2) end
-	
+	if not typeof(screengui) == "Instance" or not screengui:IsA("Instance") then 
+		error("Invalid Argument #1. 'screengui' must be a ScreenGui.", 2) 
+	end
+
 	local self = setmetatable({
 		bodies = {},
 		constraints = {},
@@ -156,7 +158,9 @@ end
 ]]--
 
 function Engine:CreateRigidBody(frame: GuiObject, collidable: boolean, anchored: boolean)
-	if not typeof(frame) == "GuiObject" then error("Invalid Argument #1. 'frame' must be a GuiObject", 2) end
+	if not typeof(frame) == "Instance" or not frame:IsA("GuiObject") then 
+		error("Invalid Argument #1. 'frame' must be a GuiObject", 2)
+	end
 	throwTypeError("collidable", collidable, 2, "boolean")
 	throwTypeError("anchored", anchored, 3, "boolean")
 
