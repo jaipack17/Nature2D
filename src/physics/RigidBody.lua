@@ -5,6 +5,7 @@
 local Point = require(script.Parent.Point)
 local Constraint = require(script.Parent.Constraint)
 local Globals = require(script.Parent.Parent.constants.Globals)
+local Signal = require(script.Parent.Parent.utils.Signal)
 local throwTypeError = require(script.Parent.Parent.debug.TypeErrors)
 
 local HttpService = game:GetService("HttpService")
@@ -183,16 +184,8 @@ function RigidBody.new(frame: GuiObject, m: number, collidable: boolean, anchore
 		self.center += Globals.offset
 	end
 	
-	local touched = Instance.new("BindableEvent")
-	touched.Name = "Touched"
-	touched.Parent = self.frame
-	
-	local canvasEdgeTouched = Instance.new("BindableEvent")
-	canvasEdgeTouched.Name = "CanvasEdgeTouched"
-	canvasEdgeTouched.Parent = self.frame
-	
-	self.Touched = touched
-	self.CanvasEdgeTouched = canvasEdgeTouched
+	self.Touched = Signal.new()
+	self.CanvasEdgeTouched = Signal.new()
 	
 	for _, edge in ipairs(edges) do
 		edge.point1.Parent = edge
