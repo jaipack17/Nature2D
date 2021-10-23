@@ -110,35 +110,40 @@ end
 function Point:KeepInCanvas()
 	local vx = self.pos.x - self.oldPos.x;
 	local vy = self.pos.y - self.oldPos.y;
-	
+
 	local width = self.canvas.size.x	
 	local height = self.canvas.size.y 
-	
+
 	local collision = false
+	local edge;
 	
 	if self.pos.y > height then
 		self.pos = Vector2.new(self.pos.x, height) 
 		self.oldPos = Vector2.new(self.oldPos.x, self.pos.y + vy * self.bounce)
 		collision = true
+		edge = "Bottom"
 	elseif self.pos.y < self.canvas.topLeft.y then
 		self.pos = Vector2.new(self.pos.x, self.canvas.topLeft.y) 
 		self.oldPos = Vector2.new(self.oldPos.x, self.pos.y - vy * self.bounce)
 		collision = true
+		edge = "Top"
 	end
-	
+
 	if self.pos.x < self.canvas.topLeft.x then
 		self.pos = Vector2.new(self.canvas.topLeft.x, self.pos.y) 
 		self.oldPos = Vector2.new(self.pos.x + vx * self.bounce, self.oldPos.y)
 		collision = true
+		edge = "Left"
 	elseif self.pos.x > width then
 		self.pos = Vector2.new(width, self.pos.y) 
 		self.oldPos = Vector2.new(self.pos.x - vx * self.bounce, self.oldPos.y)
 		collision = true
+		edge = "Right"
 	end
-	
+
 	if collision then 
 		if self.Parent and self.Parent.Parent then 
-			self.Parent.Parent.CanvasEdgeTouched:Fire()
+			self.Parent.Parent.CanvasEdgeTouched:Fire(edge)
 		end
 	end
 end
