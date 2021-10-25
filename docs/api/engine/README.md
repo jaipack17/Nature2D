@@ -122,3 +122,11 @@ Returns current canvas the engine adheres to.
 
 * parameters - `none`
 * returns - `{ frame: Frame, topLeft: Vector2, size: Vector2 }`
+
+## `Engine.Started`
+
+This event is fired when the engine starts the simulation.
+
+## `Engine.Stopped`
+
+This event is fired when the engine stops the simulation.
