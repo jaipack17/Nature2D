@@ -1,5 +1,24 @@
 # Releases
 
+## v0.1.0 - Additions to Constraints, Engine and RigidBodies.
+
+* Added new methods to Constraints
+  * `Constraint:SetLength()` - [Documentation](https://github.com/jaipack17/Nature2D/tree/master/docs/api/constraint#constraintsetlength)
+* Added new methods to RigidBodies
+  * `RigidBody:IsInBounds()` - [Documentation](https://github.com/jaipack17/Nature2D/tree/master/docs/api/rigidbody#rigidbodyisinbounds)
+* Added new events to Engine
+  * `Engine.Started`
+  * `Engine.Stopped`
+```lua
+engine.Started:Connect(function()
+    -- fires when the engine starts
+end)
+
+engine.Stopped:Connect(function()
+    -- fires when the engine stops
+end)
+```
+
 ## v0.0.5 - Fixes and New Stuff!
 
 * The library now utilizes sleitnick's Signal class instead of bindable events.

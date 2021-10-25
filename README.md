@@ -1,6 +1,6 @@
 <div align="center">
     <img src="https://github.com/jaipack17/Nature2D/blob/master/Nature2D_LOGO.png?raw=true" /><br/>
-    <a href="https://devforum.roblox.com/t/physics-library-nature2d-bring-ui-elements-to-life/1510935/14"><img alt="version" src="https://img.shields.io/badge/v0.0.5--beta-version-green"></img></a>
+    <a href="https://devforum.roblox.com/t/physics-library-nature2d-bring-ui-elements-to-life/1510935/14"><img alt="version" src="https://img.shields.io/badge/v0.1.0--beta-version-green"></img></a>
 </div>
 
 # About
