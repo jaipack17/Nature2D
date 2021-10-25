@@ -7,6 +7,7 @@ local RigidBody = require(script.Parent.physics.RigidBody)
 local Point = require(script.Parent.physics.Point)
 local Constraint = require(script.Parent.physics.Constraint)
 local Globals = require(script.Parent.constants.Globals)
+local Signal = require(script.Parent.utils.Signal)
 local throwException = require(script.Parent.debug.Exceptions)
 local throwTypeError = require(script.Parent.debug.TypeErrors)
 
@@ -23,9 +24,9 @@ Engine.__index = Engine
 
 local function CollisionResponse(body, other, isColliding, Collision, dt)
 	if not isColliding then return end
-	
+
 	body.Touched:Fire(other.id)
-	
+
 	local penetration = Collision.axis * Collision.depth
 	local p1 = Collision.edge.point1
 	local p2 = Collision.edge.point2
@@ -38,12 +39,12 @@ local function CollisionResponse(body, other, isColliding, Collision, dt)
 	end
 
 	local factor = 1/(t^2 + (1 - t)^2)
-	
+
 	if not Collision.edge.Parent.anchored then 
 		p1.pos -= penetration * ((1 - t) * factor/2) * dt * 60
 		p2.pos -= penetration * (t * factor/2)
 	end	
-	
+
 	if not Collision.vertex.Parent.Parent.anchored then 	
 		Collision.vertex.pos += penetration/2
 	end	
@@ -63,7 +64,7 @@ function Engine.init(screengui: ScreenGui)
 	if not typeof(screengui) == "Instance" or not screengui:IsA("Instance") then 
 		error("Invalid Argument #1. 'screengui' must be a ScreenGui.", 2) 
 	end
-
+	
 	local self = setmetatable({
 		bodies = {},
 		constraints = {},
@@ -79,9 +80,11 @@ function Engine.init(screengui: ScreenGui)
 			frame = nil,
 			topLeft = Globals.engineInit.canvas.topLeft,
 			size = Globals.engineInit.canvas.size
-		}
+		},
+		Started = Signal.new(),
+		Stopped = Signal.new()
 	}, Engine)
-	
+
 	return self
 end
 
@@ -92,11 +95,13 @@ end
 	[PARAMETERS]: none 
 	[RETURNS]: nil
 ]]--
- 
+
 function Engine:Start()
 	if not self.canvas then throwException("error", "NO_CANVAS_FOUND") end
 	if #self.bodies == 0 then throwException("warn", "NO_RIGIDBODIES_FOUND") end
 	
+	self.Started:Fire()
+
 	local connection;
 	connection = RunService.RenderStepped:Connect(function(dt)
 		for _, body in ipairs(self.bodies) do 
@@ -106,7 +111,7 @@ function Engine:Start()
 					local result = body:DetectCollision(other)
 					local isColliding = result[1]
 					local Collision = result[2]
-					
+
 					CollisionResponse(body, other, isColliding, Collision, dt)
 				end
 			end
@@ -115,14 +120,14 @@ function Engine:Start()
 			end
 			body:Render()
 		end
-		
+
 		if #self.constraints > 0 then 
 			for _, constraint in ipairs(self.constraints) do 
 				constraint:Constrain()
 				constraint:Render()
 			end			
 		end
-		
+
 		if #self.points > 0 then 
 			for _, point in ipairs(self.points) do 
 				point:Update(dt)
@@ -130,7 +135,7 @@ function Engine:Start()
 			end
 		end
 	end)
-	
+
 	self.connection = connection
 end
 
@@ -144,6 +149,7 @@ end
 
 function Engine:Stop()
 	if self.connection then 
+		self.Stopped:Fire()
 		self.connection:Disconnect()
 		self.connection = nil
 	end
@@ -161,12 +167,13 @@ function Engine:CreateRigidBody(frame: GuiObject, collidable: boolean, anchored:
 	if not typeof(frame) == "Instance" or not frame:IsA("GuiObject") then 
 		error("Invalid Argument #1. 'frame' must be a GuiObject", 2)
 	end
+	
 	throwTypeError("collidable", collidable, 2, "boolean")
 	throwTypeError("anchored", anchored, 3, "boolean")
 
 	local newBody = RigidBody.new(frame, Globals.universalMass, collidable, anchored, self)
 	table.insert(self.bodies, newBody)
-	
+
 	return newBody
 end
 
@@ -181,7 +188,7 @@ end
 function Engine:CreatePoint(position: Vector2, visible: boolean)
 	throwTypeError("position", position, 1, "Vector2")
 	throwTypeError("visible", visible, 2, "boolean")
-	
+
 	local newPoint = Point.new(position, self.canvas, self, {
 		snap = false, 
 		selectable = false, 
@@ -189,7 +196,7 @@ function Engine:CreatePoint(position: Vector2, visible: boolean)
 		keepInCanvas = true
 	})
 	table.insert(self.points, newPoint)
-	
+
 	return newPoint
 end
 
@@ -204,16 +211,16 @@ end
 function Engine:CreateConstraint(point1, point2, visible: boolean, thickness: number)
 	throwTypeError("visible", visible, 3, "boolean")
 	throwTypeError("thickness", thickness, 4, "number")
-	
+
 	local dist = (point2.pos - point1.pos).magnitude
-	
+
 	local newConstraint = Constraint.new(point1, point2, self.canvas, {
 		restLength = dist, 
 		render = visible, 
 		thickness = thickness,
 		support = true
 	}, self)
-	
+
 	table.insert(self.constraints, newConstraint)
 	
 	return newConstraint
@@ -267,10 +274,10 @@ end
 function Engine:CreateCanvas(topLeft: Vector2, size: Vector2, frame: Frame)
 	throwTypeError("topLeft", topLeft, 1, "Vector2")
 	throwTypeError("size", size, 2, "Vector2")
-	
+
 	self.canvas.absolute = topLeft
 	self.canvas.size = size
-	
+
 	if frame and frame:IsA("Frame") then 
 		self.canvas.frame = frame
 	end
@@ -299,9 +306,9 @@ end
 
 function Engine:SetPhysicalProperty(property: string, value)
 	throwTypeError("property", property, 1, "string")
-	
+
 	local properties = Globals.properties
-	
+
 	if table.find(properties, string.lower(property)) then 
 		for _, b in ipairs(self.bodies) do 
 			for _, v in ipairs(b:GetVertices()) do 
@@ -335,13 +342,13 @@ end
 
 function Engine:GetBodyById(id: string)
 	throwTypeError("id", id, 1, "string")
-	
+
 	for _, b in ipairs(self.bodies) do 
 		if b.id == id then 
 			return b
 		end
 	end
-	
+
 	return;
 end
 
@@ -355,7 +362,7 @@ end
 
 function Engine:GetConstraintById(id: string)
 	throwTypeError("id", id, 1, "string")
-	
+
 	for _, c in ipairs(self.constraints) do 
 		if c.id == id then 
 			return c
