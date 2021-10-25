@@ -592,4 +592,27 @@ function RigidBody:SetGravity(force: Vector2)
 	end
 end
 
+--[[
+	Returns true if the RigidBody lies within the boundaries of the canvas, else false.
+
+	[METHOD]: RigidBody:IsInBounds()
+	[PARAMETERS]: none
+	[RETURNS]: isInBounds: boolean
+]]--
+
+function RigidBody:IsInBounds()
+	local canvas = self.engine.canvas
+	if not canvas then return false end
+	
+	for _, v in ipairs(self.vertices) do 
+		local pos = v.pos 
+		
+		if not ((pos.X >= canvas.topLeft.X and pos.X <= canvas.topLeft.X + canvas.size.X) and (pos.Y >= canvas.topLeft.Y and pos.Y <= canvas.topLeft.Y + canvas.size.Y)) then 
+			return false
+		end
+	end
+	
+	return true
+end
+
 return RigidBody
