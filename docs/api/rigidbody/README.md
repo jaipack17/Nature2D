@@ -158,6 +158,13 @@ This method sets a custom gravitational force just for the RigidBody. The RigidB
 * parameters - `gravity: Vector2`
 * returns - `nil`
 
+## `RigidBody:IsInBounds()`
+
+Returns true if the RigidBody lies within the boundaries of the canvas, else false.
+
+* parameters - `none`
+* returns - `isInBounds: boolean`
+
 ## `RigidBody.Touched`
 
 This event is fired when the RigidBody collides with another RigidBody. This event returns the unique ID of the other RigidBody.
