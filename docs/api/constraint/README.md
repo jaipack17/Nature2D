@@ -40,6 +40,13 @@ This method is used to update the position and appearance of the constraint on s
 * parameters - `none`
 * returns - `nil`
 
+## `Constraint:SetLength()`
+
+Used to set the minimum constrained distance between two points. By default, the initial distance between the two points.
+
+* parameters - `newLength: number`
+* returns - `nil`
+
 ## `Constraint:GetLength()`
 
 This method returns the current distance between the two points of a constraint.
