@@ -104,6 +104,19 @@ function Constraint:Render()
 end
 
 --[[
+	Used to set the minimum constrained distance between two points. By default, the initial distance between the two points.
+	
+	[METHOD]: Constraint:SetLength()
+	[PARAMETERS]: newLength: number,
+	[RETURNS]: nil
+]]--
+
+function Constraint:SetLength(newLength: number)
+	throwTypeError("length", newLength, 1, "number")
+	self.restLength = newLength
+end
+
+--[[
 	This method returns the current distance between the two points of a constraint.
 
 	[METHOD]: Constraint:GetLength()
