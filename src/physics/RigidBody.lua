@@ -48,7 +48,7 @@ end
 ]]--
 
 local function CalculatePenetration(minA, maxA, minB, maxB)
-	if (minA < minB) then 
+	if minA < minB then 
 		return minB - maxA 
 	else 
 		return minA - maxB 
