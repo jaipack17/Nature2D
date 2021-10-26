@@ -165,6 +165,13 @@ Returns true if the RigidBody lies within the boundaries of the canvas, else fal
 * parameters - `none`
 * returns - `isInBounds: boolean`
 
+## `RigidBody:AverageVelocity()`
+
+Returns the average of all the velocities of the RigidBody's points.
+
+* parameters - `none`
+* returns - `velocity: Vector2`
+
 ## `RigidBody.Touched`
 
 This event is fired when the RigidBody collides with another RigidBody. This event returns the unique ID of the other RigidBody.

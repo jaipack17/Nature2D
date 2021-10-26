@@ -615,4 +615,22 @@ function RigidBody:IsInBounds()
 	return true
 end
 
+--[[
+	Returns the average of all the velocities of the RigidBody's points.
+
+	[METHOD]: RigidBody:AverageVelocity()
+	[PARAMETERS]: none
+	[RETURNS]: velocity: Vector2
+]]--
+
+function RigidBody:AverageVelocity()
+	local sum = Vector2.new(0, 0)
+	
+	for _, v in ipairs(self.vertices) do
+		sum += v:Velocity()
+	end
+	
+	return sum/#self.vertices
+end
+
 return RigidBody
