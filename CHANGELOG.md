@@ -1,5 +1,21 @@
 # Releases
 
+## v0.1.2 - Quadtrees in the works!
+
+* Collision Detection is now being re-written, with the addition of quadtrees! 
+* Fixed `RigidBody:Destroy()` Connections are now destroyed when `RigidBody:Destroy()` is called.
+* Added new methods to Points
+  * `Point:Velocity()`
+* Added new methods to RigidBodies
+  * `RigidBody:AverageVelocity()`
+* Added new methods to Constraints
+  * `Constraint:GetPoints()`
+  * `Constraint:GetFrame()`
+* Fixed `Constraint:Destroy()`. Does not spam errors if connected to a RigidBody now.
+
+<img src="https://user-images.githubusercontent.com/74130881/138874154-ea20396e-9a19-4d41-9925-3c3a008f4911.gif" alt="gif" width="500px" />
+  
+
 ## v0.1.0 - Additions to Constraints, Engine and RigidBodies.
 
 * Added new methods to Constraints
