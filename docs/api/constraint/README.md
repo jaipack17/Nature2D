@@ -74,3 +74,10 @@ Returns the constraints points.
 
 * parameters - `none`
 * returns - `point1: Point, point2: Point`
+
+## `Constraint:GetFrame()`
+
+Returns the UI element for the constrained IF rendered.
+
+* parameters - `none`
+* returns - `frame: Frame`

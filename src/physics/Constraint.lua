@@ -175,4 +175,16 @@ function Constraint:GetPoints()
 	return self.point1, self.point2
 end
 
+--[[
+	Returns the UI element for the constrained IF rendered.
+	
+	[METHOD]: Constraint:GetFrame()
+	[PARAMETERS]: none,
+	[RETURNS]: frame: Frame
+]]--
+
+function Constraint:GetFrame()
+	return self.frame
+end
+
 return Constraint
