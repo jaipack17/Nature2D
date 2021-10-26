@@ -163,4 +163,16 @@ function Constraint:Destroy()
 	end
 end
 
+--[[
+	Returns the constraints points.
+	
+	[METHOD]: Constraint:GetPoints()
+	[PARAMETERS]: none,
+	[RETURNS]: point1: Point, point2: Point
+]]--
+
+function Constraint:GetPoints()
+	return self.point1, self.point2
+end
+
 return Constraint

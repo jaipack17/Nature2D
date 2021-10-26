@@ -67,3 +67,10 @@ This method destroys the constraint. Its UI element is no longer rendered on scr
 
 * parameters - `none`
 * returns - `nil`
+
+## `Constraint:GetPoints()`
+
+Returns the constraints points.
+
+* parameters - `none`
+* returns - `point1: Point, point2: Point`
