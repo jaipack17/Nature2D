@@ -81,3 +81,10 @@ This method determines if the point remains anchored. If set to false, the point
 
 * parameters - `snap: boolean`
 * returns `nil`
+
+## `Point:Velocity()`
+
+Returns the velocity of the Point.
+
+* parameters - `none`
+* returns `velocity: Vector2`
