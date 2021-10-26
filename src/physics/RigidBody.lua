@@ -363,6 +363,10 @@ end
 function RigidBody:Destroy()
 	for i, body in ipairs(self.engine.bodies) do
 		if self.id == body.id then 
+			self.Touched:Destroy()
+			self.CanvasEdgeTouched:Destroy()
+			self.Touched = nil 
+			self.CanvasEdgeTouched = nil
 			self.frame:Destroy()
 			table.remove(self.engine.bodies, i)
 		end
