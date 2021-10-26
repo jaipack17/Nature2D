@@ -222,4 +222,16 @@ function Point:Snap(snap: boolean)
 	self.snap = snap
 end
 
+--[[
+	Returns the velocity of the Point.
+	
+	[METHOD]: Point:Velocity()
+	[PARAMETERS]: none
+	[RETURNS]: velocity: Vector2
+]]--
+
+function Point:Velocity()
+	return self.pos - self.oldPos
+end
+
 return Point
