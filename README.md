@@ -1,6 +1,6 @@
 <div align="center">
     <img src="https://github.com/jaipack17/Nature2D/blob/master/Nature2D_LOGO.png?raw=true" /><br/>
-    <a href="https://devforum.roblox.com/t/physics-library-nature2d-bring-ui-elements-to-life/1510935/14"><img alt="version" src="https://img.shields.io/badge/v0.1.0--beta-version-green"></img></a>
+    <a href="https://devforum.roblox.com/t/physics-library-nature2d-bring-ui-elements-to-life/1510935/14"><img alt="version" src="https://img.shields.io/badge/v0.1.1--beta-version-green"></img></a>
 </div>
 
 # About
@@ -26,7 +26,7 @@ https://www.roblox.com/library/7625799164/Nature2D
 * **Using wally** - Use [wally](https://github.com/UpliftGames/wally), a package manager for roblox to install Nature2D in your external code editor! This requires wally to be installed on your device. Then, add Nature2D to the dependencies listed in your `wally.toml` file!<br/>
 ```toml
 [dependencies]
-Nature2D = "jaipack17/nature2d@0.1.0"
+Nature2D = "jaipack17/nature2d@0.1.1"
 ```
 After that, Run `wally install` in the CLI! Nature2D should be installed in your root directory. If you encounter any errors or problems installing Nature2D using wally, [open an issue!](https://github.com/jaipack17/Nature2D/issues)
 
