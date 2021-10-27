@@ -1,6 +1,12 @@
 <div align="center">
     <img src="https://github.com/jaipack17/Nature2D/blob/master/Nature2D_LOGO.png?raw=true" /><br/>
-    <a href="https://devforum.roblox.com/t/physics-library-nature2d-bring-ui-elements-to-life/1510935/14"><img alt="version" src="https://img.shields.io/badge/v0.1.2--beta-version-green"></img></a>
+    <a href="https://devforum.roblox.com/t/physics-library-nature2d-bring-ui-elements-to-life/1510935/26"><img alt="version" src="https://img.shields.io/badge/v0.1.2--beta-version-green"></img></a>
+    <br/>
+    <a href="https://devforum.roblox.com/t/physics-library-nature2d-bring-ui-elements-to-life/1510935/"><img alt="devforum" src="https://img.shields.io/badge/post-devforum-blue"></img></a>
+    <a href="https://www.roblox.com/library/7625799164/Nature2D"><img alt="model" src="https://img.shields.io/badge/asset-roblox-%23FF0000"></img></a>
+    <a href="https://github.com/jaipack17/Nature2D/tree/master/docs/"><img alt="documentation" src="https://img.shields.io/badge/getting--started-docs-orange"></img></a>
+    <a href="https://github.com/jaipack17/Nature2D/tree/master/docs/api"><img alt="api" src="https://img.shields.io/badge/api-docs-orange"></img></a>
+    <a href="https://github.com/jaipack17/Nature2D/tree/master/docs/examples"><img alt="api" src="https://img.shields.io/badge/examples-docs-orange"></img></a>
 </div>
 
 # About
