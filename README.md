@@ -42,16 +42,23 @@ local engine = Nature2D.init(screenGuiInstance)
    Code here, check out the API and examples under docs/api and docs/examples!
 ]]--
 ```
-
-# Documentation 
-
 To get familiar with the library, you can go through the documentation.
 
-[docs](https://github.com/jaipack17/Nature2D/tree/master/docs)<br/>
-  * [getting started](https://github.com/jaipack17/Nature2D/blob/master/docs/README.md)<br/>
-  * [api](https://github.com/jaipack17/Nature2D/tree/master/docs/api)<br/>
-  * [examples](https://github.com/jaipack17/Nature2D/tree/master/docs/examples)<br/>
-  * [placefiles](https://github.com/jaipack17/Nature2D/tree/master/docs/placefiles)<br/>
+[Documentation](https://github.com/jaipack17/Nature2D/tree/master/docs)<br/>
+[Getting Started](https://github.com/jaipack17/Nature2D/blob/master/docs/README.md)<br/>
+[API Reference](https://github.com/jaipack17/Nature2D/tree/master/docs/api)<br/>
+[Examples & Tutorials](https://github.com/jaipack17/Nature2D/tree/master/docs/examples)<br/>
+[Example Placefiles](https://github.com/jaipack17/Nature2D/tree/master/docs/placefiles)<br/>
+
+# Showcase
+
+### Rotating RigidBodies
+
+<img src="https://user-images.githubusercontent.com/74130881/139100574-b3ae4080-6305-4863-8fa0-a6f15ba2c18e.gif" alt="rotating" width="700px" />
+
+### Smooth Collisions
+
+<img src="https://user-images.githubusercontent.com/74130881/139101339-c73b3698-3a2d-4736-ba86-aaf403729c63.gif" alt="collisions" width="700px" />
 
 # Performance
 
