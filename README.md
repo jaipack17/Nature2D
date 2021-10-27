@@ -54,11 +54,27 @@ To get familiar with the library, you can go through the documentation.
 
 ### Rotating RigidBodies
 
-<img src="https://user-images.githubusercontent.com/74130881/139100574-b3ae4080-6305-4863-8fa0-a6f15ba2c18e.gif" alt="rotating" width="700px" />
+https://user-images.githubusercontent.com/74130881/139102128-2293b268-d4d9-440a-b961-cb377b050c3f.mp4
 
 ### Smooth Collisions
 
-<img src="https://user-images.githubusercontent.com/74130881/139101339-c73b3698-3a2d-4736-ba86-aaf403729c63.gif" alt="collisions" width="700px" />
+https://user-images.githubusercontent.com/74130881/139102559-132aef05-fb09-4e30-8844-226758839ad3.mp4
+
+### Destructible Structures
+
+https://user-images.githubusercontent.com/74130881/139103050-d6774bfb-789c-4f64-a4dd-e3d3d73bfda7.mp4
+
+### Inclined Plane
+
+https://user-images.githubusercontent.com/74130881/139103207-e6e13e5e-8e4c-4da1-9cce-432f91554433.mp4
+
+### Ragdolls
+
+https://user-images.githubusercontent.com/74130881/139103375-3580265a-06e7-49e8-9947-c9a666ca7d8b.mp4
+
+### Constraints
+
+https://user-images.githubusercontent.com/74130881/139103515-588a0211-c7d7-44d2-9667-4467e5aad245.mp4
 
 # Performance
 
