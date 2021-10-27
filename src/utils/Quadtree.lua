@@ -18,13 +18,13 @@ local function RangeOverlapsNode(node, range)
 	local ap2 = node.position
 	local as2 = node.size
 	local sum2 = ap2 + as2
-	
+
 	return (ap1.x < sum2.x and sum.x > ap2.x) and (ap1.y < sum2.y and sum.y > ap2.y)
 end
 
 local function RangeHasPoint(range, obj)
 	local p = obj.center 
-	
+
 	return (
 		(p.X > range.position.X) and (p.X < (range.position.X + range.size.X)) and 
 		(p.Y > range.position.Y) and (p.Y < (range.position.Y + range.size.Y))
@@ -32,10 +32,12 @@ local function RangeHasPoint(range, obj)
 end
 
 local function merge(array1, array2)
-	for _, v in ipairs(array2) do
-		table.insert(array1, v)
+	if #array2 > 0 then 
+		for _, v in ipairs(array2) do
+			table.insert(array1, v)
+		end		
 	end
-	
+
 	return array1
 end
 
@@ -51,7 +53,7 @@ end
 
 function Quadtree:Insert(body)
 	if not self:HasObject(body.center) then return end
-
+		
 	if #self.objects < self.capacity then 
 		self.objects[#self.objects + 1] = body
 	else
@@ -77,16 +79,14 @@ end
 function Quadtree:SubDivide()
 	local divisions = GetDivisions(self.position, self.size)
 
-	self.topLeft = Quadtree.new(divisions[1], self.size/2, self.depth)
-	self.topRight = Quadtree.new(divisions[2], self.size/2, self.depth)
-	self.bottomLeft = Quadtree.new(divisions[3], self.size/2, self.depth)
-	self.bottomRight = Quadtree.new(divisions[4], self.size/2, self.depth)
+	self.topLeft = Quadtree.new(divisions[1], self.size/2, self.capacity)
+	self.topRight = Quadtree.new(divisions[2], self.size/2, self.capacity)
+	self.bottomLeft = Quadtree.new(divisions[3], self.size/2, self.capacity)
+	self.bottomRight = Quadtree.new(divisions[4], self.size/2, self.capacity)
 end
 
-function Quadtree:Search(range: { position: Vector2, size: Vector2 }, closestObjects)
-	local objects
-	
-	if not closestObjects then 
+function Quadtree:Search(range: { position: Vector2, size: Vector2 }, objects)
+	if not objects then 
 		objects = {}
 	end
 
@@ -101,10 +101,10 @@ function Quadtree:Search(range: { position: Vector2, size: Vector2 }, closestObj
 	end
 
 	if self.divided then
-		objects = merge(objects, self.topLeft:Search(range, objects))
-		objects = merge(objects, self.topRight:Search(range, objects))
-		objects = merge(objects, self.bottomLeft:Search(range, objects))
-		objects = merge(objects, self.bottomRight:Search(range, objects))
+		self.topLeft:Search(range, objects)
+		self.topRight:Search(range, objects)
+		self.bottomLeft:Search(range, objects)
+		self.bottomRight:Search(range, objects)
 	end
 
 	return objects
