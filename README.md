@@ -53,6 +53,18 @@ To get familiar with the library, you can go through the documentation.
   * [examples](https://github.com/jaipack17/Nature2D/tree/master/docs/examples)<br/>
   * [placefiles](https://github.com/jaipack17/Nature2D/tree/master/docs/placefiles)<br/>
 
+# Performance
+
+Regarding performance, Nature2D does just fine for almost any game. Every RenderStepped event, actions take place, as described above. Performance varies according to the amount of RigidBodies and constraints being simulated. It also depends upon how many collisions take place in between 'n' number of RigidBodies. 
+
+It runs at 60fps with an average of 100 collisions every frame. Frames may drop, if RigidBodies are used as particle emitters or large scale simulations. Its advisable to use custom 2D Particle Emitters instead of RigidBodies due to frame drops.
+
+# Accuracy 
+
+In terms of physical accuracy, Nature2D does well. It's not and isn't meant to be completely physically accurate since that's near to impossible but I do plan on improving a lot of things that make it resemble the real world much better. Few things that I would improve is the friction. Friction currently is just a damping value, I do plan on refactoring it.
+
+Collisions are not necessarily physically accurate. They are meant to have a game-like vibe. I do plan on refactoring it as well.
+
 # Contributions
 
 If you encounter bugs or would like to support this project by improving the code, adding new features or fixing bugs - Feel free to open issues and pull requests!
