@@ -33,7 +33,7 @@ end
 
 local function merge(array1, array2)
 	for _, v in ipairs(array2) do
-		table.insert(array1, array2)
+		table.insert(array1, v)
 	end
 	
 	return array1
