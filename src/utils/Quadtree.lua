@@ -11,12 +11,12 @@ local function GetDivisions(position: Vector2, size: Vector2)
 end
 
 local function RangeOverlapsNode(node, range)
-	local ap1 = node.position
-	local as1 = node.size
+	local ap1 = range.position
+	local as1 = range.size
 	local sum = ap1 + as1
 
-	local ap2 = range.position
-	local as2 = range.size
+	local ap2 = node.position
+	local as2 = node.size
 	local sum2 = ap2 + as2
 	
 	return (ap1.x < sum2.x and sum.x > ap2.x) and (ap1.y < sum2.y and sum.y > ap2.y)
