@@ -26,7 +26,7 @@ https://www.roblox.com/library/7625799164/Nature2D
 * **Using wally** - Use [wally](https://github.com/UpliftGames/wally), a package manager for roblox to install Nature2D in your external code editor! This requires wally to be installed on your device. Then, add Nature2D to the dependencies listed in your `wally.toml` file!<br/>
 ```toml
 [dependencies]
-Nature2D = "jaipack17/nature2d@0.1.1"
+Nature2D = "jaipack17/nature2d@0.1.2"
 ```
 After that, Run `wally install` in the CLI! Nature2D should be installed in your root directory. If you encounter any errors or problems installing Nature2D using wally, [open an issue!](https://github.com/jaipack17/Nature2D/issues)
 
