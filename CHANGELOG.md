@@ -1,5 +1,11 @@
 # Releases
 
+## v0.2.0 - Quadtrees in Collision Detection!
+
+Quadtrees have now been implemented into the collision detection algorithm making the engine 10 times faster than before. Instead of wasting resources on wasted and unnecessary collision detection checks, RigidBodies are now distributed into different regions of a quadtree with a collision hit range. RigidBodies only in this hit range are processed with collision detection checks. This opens the gate for many new creations that required a larger amount of RigidBodies to be simulated!
+
+Since Quadtrees are still in beta, there may occur bugs and unwanted behavior. If you encounter any, be sure to open an issue at the github repository. I'll be adding configuration methods for you to switch between traditional methods of collision detection or quadtrees.
+
 ## v0.1.2 - Quadtrees in the works!
 
 * Collision Detection is now being re-written, with the addition of quadtrees! 
