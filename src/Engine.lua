@@ -8,6 +8,7 @@ local Point = require(script.Parent.physics.Point)
 local Constraint = require(script.Parent.physics.Constraint)
 local Globals = require(script.Parent.constants.Globals)
 local Signal = require(script.Parent.utils.Signal)
+local Quadtree = require(script.Parent.utils.Quadtree)
 local throwException = require(script.Parent.debug.Exceptions)
 local throwTypeError = require(script.Parent.debug.TypeErrors)
 
@@ -19,7 +20,7 @@ Engine.__index = Engine
 --[[
 	[PRIVATE]
 
-	Collision Response: This methid is responsible for separating two rigidbodies if they collide with each other.
+	Collision Response: This method is responsible for separating two rigidbodies if they collide with each other.
 ]]--
 
 local function CollisionResponse(body, other, isColliding, Collision, dt)
@@ -104,9 +105,26 @@ function Engine:Start()
 
 	local connection;
 	connection = RunService.RenderStepped:Connect(function(dt)
+		local tree = Quadtree.new(self.canvas.topLeft, self.canvas.size, 4)
+
+		for _, body in ipairs(self.bodies) do 
+			tree:Insert(body)
+		end
+		
 		for _, body in ipairs(self.bodies) do 
 			body:Update(dt)
-			for _, other in ipairs(self.bodies) do 
+
+			local abs =  body.frame.AbsoluteSize
+			local side = abs.X > abs.Y and abs.X or abs.Y
+			
+			local range = {
+				position = body.center - Vector2.new(side * 1.5, side * 1.5),
+				size = Vector2.new(side * 3, side * 3)
+			}
+			
+			local filtered = tree:Search(range, {})
+			
+			for _, other in ipairs(filtered) do 
 				if body.id ~= other.id and (body.collidable and other.collidable) then
 					local result = body:DetectCollision(other)
 					local isColliding = result[1]
@@ -115,9 +133,11 @@ function Engine:Start()
 					CollisionResponse(body, other, isColliding, Collision, dt)
 				end
 			end
+			
 			for _, vertex in ipairs(body.vertices) do
 				vertex:Render()
 			end
+			
 			body:Render()
 		end
 
