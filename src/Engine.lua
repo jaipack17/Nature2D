@@ -77,6 +77,7 @@ function Engine.init(screengui: ScreenGui)
 		timeSteps = Globals.engineInit.timeSteps,
 		path = screengui,
 		speed = Globals.speed,
+		quadtrees = false,
 		canvas = {
 			frame = nil,
 			topLeft = Globals.engineInit.canvas.topLeft,
@@ -105,24 +106,32 @@ function Engine:Start()
 
 	local connection;
 	connection = RunService.RenderStepped:Connect(function(dt)
-		local tree = Quadtree.new(self.canvas.topLeft, self.canvas.size, 4)
+		local tree;
+		
+		if self.quadtrees then 
+			tree = Quadtree.new(self.canvas.topLeft, self.canvas.size, 4)
 
-		for _, body in ipairs(self.bodies) do 
-			tree:Insert(body)
+			for _, body in ipairs(self.bodies) do 
+				tree:Insert(body)
+			end			
 		end
 		
 		for _, body in ipairs(self.bodies) do 
 			body:Update(dt)
+			
+			local filtered = self.bodies
+			
+			if self.quadtrees then 
+				local abs =  body.frame.AbsoluteSize
+				local side = abs.X > abs.Y and abs.X or abs.Y
 
-			local abs =  body.frame.AbsoluteSize
-			local side = abs.X > abs.Y and abs.X or abs.Y
-			
-			local range = {
-				position = body.center - Vector2.new(side * 1.5, side * 1.5),
-				size = Vector2.new(side * 3, side * 3)
-			}
-			
-			local filtered = tree:Search(range, {})
+				local range = {
+					position = body.center - Vector2.new(side * 1.5, side * 1.5),
+					size = Vector2.new(side * 3, side * 3)
+				}
+
+				filtered = tree:Search(range, {})				
+			end
 			
 			for _, other in ipairs(filtered) do 
 				if body.id ~= other.id and (body.collidable and other.collidable) then
@@ -402,6 +411,19 @@ end
 
 function Engine:GetCurrentCanvas()
 	return self.canvas
+end
+
+--[[
+	Determines if Quadtrees will be used in collision detection
+	
+	[METHOD]: Engine:UseQuadtrees()
+	[PARAMETERS]: use: boolean
+	[RETURNS]: nil
+]]--
+
+function Engine:UseQuadtrees(use: boolean)
+	throwTypeError("useQuadtrees", use, 1, "boolean")
+	self.quadtrees = use
 end
 
 return Engine
