@@ -1,7 +1,7 @@
 ---
 name: Report Bugs
 about: Found a bug or unwanted behavior? Share with us!
-title: ''
+title: Your bug report's title here. Be clear and concise!
 labels: 'type: bug'
 assignees: jaipack17
 
