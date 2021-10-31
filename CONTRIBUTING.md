@@ -46,7 +46,6 @@ Fixed mistakes or bugs, have an enhancement, integrated a new feature, updated t
    * Describe your PR in 30-40 words.
    * Describe the changes you proposed.
    * If possible, share videos, screenshots or examples of the changes.
-
 * **Not all PRs are Merged** - Remember, not all PRs are merged! PRs that are unclear, are conflicting with the library or introduce game breaking changes are closed! If your PR was closed, try reviewing your PR once again, propose the necessary changes and open another PR for us to review!
 * **Delete your branch after the PR has been merged** - It is advisable to delete the branch you created for the pull request after it has been merged to the main project!
 
