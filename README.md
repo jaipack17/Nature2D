@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="https://github.com/jaipack17/Nature2D/blob/master/Nature2D_LOGO.png?raw=true" /><br/>
+    <img src="https://github.com/jaipack17/Nature2D/blob/master/assets/Nature2D_LOGO.png?raw=true" /><br/>
     <a href="https://devforum.roblox.com/t/physics-library-nature2d-bring-ui-elements-to-life/1510935/27"><img alt="version" src="https://img.shields.io/badge/v0.2.0--beta-version-green"></img></a>
     <br/>
     <a href="https://devforum.roblox.com/t/physics-library-nature2d-bring-ui-elements-to-life/1510935/"><img alt="devforum" src="https://img.shields.io/badge/post-devforum-blue"></img></a>
@@ -17,7 +17,7 @@ It's user friendly and supports all UI Elements. RigidBodies and constraints can
 
 Create almost anything you can imagine. From bouncy boxes to destructible structures, even character movement in no time. Here's a wrecking ball connected to an invisible constraint knocking a few boxes off of the blue platform.
 
-<img src="https://github.com/jaipack17/Nature2D/blob/master/wrecking%20ball%20example.gif?raw=true" />
+<img src="https://github.com/jaipack17/Nature2D/blob/master/assets/wrecking%20ball%20example.gif?raw=true" />
 
 # Configuration
 
