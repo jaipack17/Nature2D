@@ -15,7 +15,7 @@ Found a bug, want to file a feature request, have a query or would like to discu
    * :x: Bad Title - "I found a bug!"
    * ✔ Good Title - "Destroying Constraints connected to RigidBodies fills the console with errors."
 * **Follow the Issue Template** - Try to follow issue templates for us to go through them faster!
-   * Describe your issue in 30 - 40 words,
+   * Describe your issue in 30-40 words.
    * If its a bug - Share when you encountered the bug.
    * If its a bug - Share reproduction steps for the bug.
    * Share examples, videos or screenshots if possible.
@@ -42,6 +42,11 @@ Fixed mistakes or bugs, have an enhancement, integrated a new feature, updated t
 * **Use Concise Titles** - Use concise titles for your PRs! It makes it easier for us review and merge them faster!
    * :x: Bad Title - "I added a new feature!"
    * ✔ Good Title - "Improved and Optimized Garbage Collection Techniques for the Engine."
+* **Follow the PR Template** - Try to follow PR templates for us to go through them faster!
+   * Describe your PR in 30-40 words.
+   * Describe the changes you proposed.
+   * If possible, share videos, screenshots or examples of the changes.
+
 * **Not all PRs are Merged** - Remember, not all PRs are merged! PRs that are unclear, are conflicting with the library or introduce game breaking changes are closed! If your PR was closed, try reviewing your PR once again, propose the necessary changes and open another PR for us to review!
 * **Delete your branch after the PR has been merged** - It is advisable to delete the branch you created for the pull request after it has been merged to the main project!
 
