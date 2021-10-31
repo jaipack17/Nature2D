@@ -92,8 +92,8 @@ function Quadtree:Search(range: { position: Vector2, size: Vector2 }, objects)
 
 	if not RangeOverlapsNode(self, range) then 
 		return objects
-	end
-
+	end   
+	
 	for _, obj in ipairs(self.objects) do
 		if RangeHasPoint(range, obj) then
 			objects[#objects + 1] = obj
