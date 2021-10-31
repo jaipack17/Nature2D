@@ -7,37 +7,23 @@ assignees: jaipack17
 
 ---
 
-**Description**
-<!--
+## Description
 Describe the bug in about 30-40 words or more! Be clear and descriptive. 
--->
 
-**Reproduction Steps**
-<!--
+## Reproduction Steps
 Steps to reproduce the bug go here! Use pointers for each step.
--->
 
-**Expected Behavior**
-<!--
+## Expected Behavior
 Describe what was expected to happen.
--->
 
-**Actual Behavior**
-<!--
+## Actual Behavior
 Describe what actually happened.
--->
 
-**Media**
-<!--
+## Media
 Examples, videos or screenshots of the bug.
--->
 
-**Encounters**
-<!--
+## Encounters
 When did you first encounter the bug, and how frequently?
--->
 
-**Lastly**
-<!--
+## Lastly
 Anything else you would like to tell us?
--->
