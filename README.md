@@ -94,6 +94,6 @@ In terms of physical accuracy, Nature2D does well. It's not and isn't meant to b
 
 Collisions are not necessarily physically accurate. They are meant to have a game-like vibe. I do plan on refactoring it as well.
 
-# Contributions
+# Contribution
 
-If you encounter bugs or would like to support this project by improving the code, adding new features or fixing bugs - Feel free to open issues and pull requests!
+If you encounter bugs or would like to support this project by improving the code, adding new features or fixing bugs - Feel free to open issues and pull requests! Also read the [contribution guide](https://github.com/jaipack17/Nature2D/blob/master/CONTRIBUTING.md)!
