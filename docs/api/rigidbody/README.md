@@ -172,6 +172,20 @@ Returns the average of all the velocities of the RigidBody's points.
 * parameters - `none`
 * returns - `velocity: Vector2`
 
+## `RigidBody:SetState()`
+
+Used to initialize or update states of a RigidBody
+
+* parameters - `state: string, value: any`
+* returns - `nil`
+
+## `RigidBody:GetState()`
+
+Used to fetch a state
+
+* parameters - `state: string`
+* returns - `value: any`
+
 ## `RigidBody.Touched`
 
 This event is fired when the RigidBody collides with another RigidBody. This event returns the unique ID of the other RigidBody.

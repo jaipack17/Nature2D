@@ -123,6 +123,13 @@ Returns current canvas the engine adheres to.
 * parameters - `none`
 * returns - `{ frame: Frame, topLeft: Vector2, size: Vector2 }`
 
+## `Engine:UseQuadtrees()`
+
+Determines if Quadtrees will be used in collision detection
+
+* parameters - `use: boolean`
+* returns - `nil`
+
 ## `Engine.Started`
 
 This event is fired when the engine starts the simulation.
