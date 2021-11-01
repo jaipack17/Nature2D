@@ -1,5 +1,28 @@
 # Releases
 
+## v0.2.3 - State Management
+
+Added state management for RigidBodies. Individual RigidBodies can have their own States/Custom Properties now!
+* `RigidBody:SetState(state: string, value: any)`
+* `RigidBody:GetState(state: string)`
+
+Example usage:
+
+```lua
+local Body = Engine:CreateRigidBody(frame, true, false)
+Body:SetState("Health", 100)
+
+local Killbrick = Engine:CreateRigidBody(frame2, true, true)
+
+Killbrick.Touched:Connect(function(bodyID)
+    if Body:GetId() == bodyID then
+        local oldHealth = Body:GetState("Health")
+        Body:SetState("Health", oldHealth - 1)
+        return
+    end
+end)
+```
+
 ## v0.2.0 - Quadtrees in Collision Detection!
 
 Quadtrees have now been implemented into the collision detection algorithm making the engine 10 times faster than before. Instead of wasting resources on wasted and unnecessary collision detection checks, RigidBodies are now distributed into different regions of a quadtree with a collision hit range. RigidBodies only in this hit range are processed with collision detection checks. This opens the gate for many new creations that required a larger amount of RigidBodies to be simulated!
