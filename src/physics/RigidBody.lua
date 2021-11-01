@@ -650,11 +650,13 @@ end
 
 function RigidBody:SetState(state: string, value: any)
 	throwTypeError("state", state, 1, "string")
+	if self.States[state] == value then return end
+	
 	self.States[state] = value
 end
 
 --[[
-	Used to initialize or update states of a RigidBody
+	Used to fetch a state
 
 	[METHOD]: RigidBody:SetState()
 	[PARAMETERS]: state: string
