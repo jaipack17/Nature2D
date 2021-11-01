@@ -96,4 +96,4 @@ Collisions are not necessarily physically accurate. They are meant to have a gam
 
 # Contribution
 
-If you encounter bugs or would like to support this project by improving the code, adding new features or fixing bugs - Feel free to open issues and pull requests! Also read the [contribution guide](https://github.com/jaipack17/Nature2D/blob/master/CONTRIBUTING.md)! Check out all the amazing people who have contributed to this project [here](https://github.com/jaipack17/Nature2D/blob/master/CONTRIBUTORS)! 
+If you encounter bugs or would like to support this project by improving the code, adding new features or fixing bugs - Feel free to open issues and pull requests! Also read the [contribution guide](https://github.com/jaipack17/Nature2D/blob/master/CONTRIBUTING.md)!

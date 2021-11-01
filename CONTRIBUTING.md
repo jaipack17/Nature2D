@@ -51,4 +51,4 @@ Fixed mistakes or bugs, have an enhancement, integrated a new feature, updated t
 
 <hr/>
 
-If you open an issue or a pull request, we will review and process them. Patience is key! If your pull request is merged, you will be added to the [contributors' list](https://github.com/jaipack17/Nature2D/blob/master/CONTRIBUTORS). If you aren't added to the list, open an issue!
+If you open an issue or a pull request, we will review and process them. Patience is key! 
