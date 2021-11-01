@@ -65,7 +65,7 @@ function Engine.init(screengui: ScreenGui)
 	if not typeof(screengui) == "Instance" or not screengui:IsA("Instance") then 
 		error("Invalid Argument #1. 'screengui' must be a ScreenGui.", 2) 
 	end
-	
+
 	local self = setmetatable({
 		bodies = {},
 		constraints = {},
@@ -101,13 +101,13 @@ end
 function Engine:Start()
 	if not self.canvas then throwException("error", "NO_CANVAS_FOUND") end
 	if #self.bodies == 0 then throwException("warn", "NO_RIGIDBODIES_FOUND") end
-	
+
 	self.Started:Fire()
 
 	local connection;
 	connection = RunService.RenderStepped:Connect(function(dt)
 		local tree;
-		
+
 		if self.quadtrees then 
 			tree = Quadtree.new(self.canvas.topLeft, self.canvas.size, 4)
 
@@ -115,12 +115,12 @@ function Engine:Start()
 				tree:Insert(body)
 			end			
 		end
-		
+
 		for _, body in ipairs(self.bodies) do 
 			body:Update(dt)
-			
+
 			local filtered = self.bodies
-			
+
 			if self.quadtrees then 
 				local abs =  body.frame.AbsoluteSize
 				local side = abs.X > abs.Y and abs.X or abs.Y
@@ -132,7 +132,7 @@ function Engine:Start()
 
 				filtered = tree:Search(range, {})				
 			end
-			
+
 			for _, other in ipairs(filtered) do 
 				if body.id ~= other.id and (body.collidable and other.collidable) then
 					local result = body:DetectCollision(other)
@@ -142,11 +142,11 @@ function Engine:Start()
 					CollisionResponse(body, other, isColliding, Collision, dt)
 				end
 			end
-			
+
 			for _, vertex in ipairs(body.vertices) do
 				vertex:Render()
 			end
-			
+
 			body:Render()
 		end
 
@@ -196,7 +196,7 @@ function Engine:CreateRigidBody(frame: GuiObject, collidable: boolean, anchored:
 	if not typeof(frame) == "Instance" or not frame:IsA("GuiObject") then 
 		error("Invalid Argument #1. 'frame' must be a GuiObject", 2)
 	end
-	
+
 	throwTypeError("collidable", collidable, 2, "boolean")
 	throwTypeError("anchored", anchored, 3, "boolean")
 
@@ -251,7 +251,7 @@ function Engine:CreateConstraint(point1, point2, visible: boolean, thickness: nu
 	}, self)
 
 	table.insert(self.constraints, newConstraint)
-	
+
 	return newConstraint
 end
 
