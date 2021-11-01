@@ -28,9 +28,9 @@ local function GetCorners(frame, engine)
 	local rotation = math.rad(frame.Rotation)
 	local center = pos + size/2
 	local temp = math.sqrt((size.X/2)^2+(size.Y/2)^2)
-	
+
 	local offset = (engine.path and engine.path.IgnoreGuiInset) and Globals.offset or Vector2.new(0, 0)
-	
+
 	return {
 		center - temp*Vector2.new(math.cos(rotation + math.atan2(size.Y, size.X)), math.sin(rotation + math.atan2(size.Y, size.X))) + offset, -- topleft
 		center + temp*Vector2.new(math.cos(rotation - math.atan2(size.Y, size.X)), math.sin(rotation - math.atan2(size.Y, size.X))) + offset, -- topright
@@ -48,7 +48,7 @@ end
 ]]--
 
 local function CalculatePenetration(minA, maxA, minB, maxB)
-	if minA < minB then 
+	if (minA < minB) then 
 		return minB - maxA 
 	else 
 		return minA - maxB 
@@ -80,7 +80,7 @@ local function CalculateCenter(vertices)
 	end
 
 	center /= #vertices;
-	
+
 	return center
 end
 
@@ -113,7 +113,7 @@ end
 function RigidBody.new(frame: GuiObject, m: number, collidable: boolean, anchored: boolean, engine) 	
 	local vertices = {}
 	local edges = {}
-	
+
 	--[[
 		Type Definitions
 	]]--
@@ -124,43 +124,43 @@ function RigidBody.new(frame: GuiObject, m: number, collidable: boolean, anchore
 		render = false,
 		keepInCanvas = true
 	}
-	
+
 	local constraintConfig = {
 		restLength = nil, 
 		render = false, 
 		thickness = 4,
 		support = false
 	}
-	
+
 	local function addPoint(pos)
 		local newPoint = Point.new(pos, engine.canvas, engine, pointConfig)
 		vertices[#vertices + 1] = newPoint
-		
+
 		return newPoint
 	end
-	
+
 	local function addConstraint(p1, p2, support)
 		constraintConfig.support = support
-		
+
 		local newConstraint = Constraint.new(p1, p2, engine.canvas, constraintConfig)
 		edges[#edges + 1] = newConstraint
-		
+
 		return newConstraint
 	end
-	
+
 	local corners = GetCorners(frame, engine)
 	local topleft = addPoint(corners[1])
 	local topright = addPoint(corners[2])
 	local bottomleft = addPoint(corners[3])
 	local bottomright = addPoint(corners[4])
-	
+
 	addConstraint(topleft, topright, false)
 	addConstraint(topleft, bottomleft, false)
 	addConstraint(topright, bottomright, false)
 	addConstraint(bottomleft, bottomright, false)
 	addConstraint(topleft, bottomright, true)
 	addConstraint(topright, bottomleft, true)               
-	
+
 	local self = setmetatable({
 		id = HttpService:GenerateGUID(false),
 		vertices = vertices,
@@ -176,23 +176,24 @@ function RigidBody.new(frame: GuiObject, m: number, collidable: boolean, anchore
 		anchorRotation = anchored and frame.Rotation or nil,
 		anchorPos = anchored and frame.AbsolutePosition or nil,
 		Touched = nil,
-		CanvasEdgeTouched = nil	
+		CanvasEdgeTouched = nil,
+		States = {}
 	}, RigidBody)
-	
+
 	if engine.path and engine.path.IgnoreGuiInset then 
 		self.anchorPos = self.anchorPos and self.anchorPos + Globals.offset or nil
 		self.center += Globals.offset
 	end
-	
+
 	self.Touched = Signal.new()
 	self.CanvasEdgeTouched = Signal.new()
-	
+
 	for _, edge in ipairs(edges) do
 		edge.point1.Parent = edge
 		edge.point2.Parent = edge
 		edge.Parent = self
 	end
-	
+
 	return self
 end
 
@@ -288,7 +289,7 @@ function RigidBody:DetectCollision(other)
 
 		return { true, collision }; 	
 	end
-	
+
 	return { false, {} }
 end
 
@@ -302,7 +303,7 @@ end
 
 function RigidBody:ApplyForce(force: Vector2)
 	throwTypeError("force", force, 1, "Vector2")
-	
+
 	for _, v in ipairs(self.vertices) do 
 		v:ApplyForce(force)
 	end
@@ -318,10 +319,10 @@ end
 
 function RigidBody:Update(dt: number)
 	self.center = CalculateCenter(self.vertices)
-	
+
 	for i = 1, #self.vertices + #self.edges do 
 		local edge = i > #self.vertices
-		
+
 		if edge then 
 			self.edges[(#self.vertices + #self.edges) + 1 - i]:Constrain()
 		else 
@@ -342,7 +343,7 @@ function RigidBody:Render()
 	if self.lifeSpan and os.time() - self.spawnedAt >= self.lifeSpan then 
 		self:Destroy()
 	end
-	
+
 	if self.anchored then 
 		self:SetPosition(self.anchorPos)
 		self:Rotate(self.anchorRotation)
@@ -362,7 +363,7 @@ end
 
 function RigidBody:Destroy()
 	for i, body in ipairs(self.engine.bodies) do
-		if self.id == body.id then 
+		if self.id == body.id then
 			self.Touched:Destroy()
 			self.CanvasEdgeTouched:Destroy()
 			self.Touched = nil 
@@ -387,12 +388,12 @@ function RigidBody:Rotate(newRotation: number)
 	if self.anchored and self.anchorRotation then 
 		self.anchorRotation = newRotation
 	end
-	
+
 	local oldRotation = self.frame.Rotation
 	self.frame.Position = self.anchored and UDim2.new(0, self.anchorPos.x, 0, self.anchorPos.y) or UDim2.new(0, self.center.x, 0, self.center.y)
 	self.frame.Rotation = newRotation
 	UpdateVertices(self.frame, self.vertices, self.engine)
-	
+
 	return oldRotation, newRotation
 end
 
@@ -410,11 +411,11 @@ function RigidBody:SetPosition(newPosition: Vector2)
 	if self.anchored and self.anchorPos then 
 		self.anchorPos = newPosition
 	end
-	
+
 	local oldPosition = self.frame.Position
 	self.frame.Position = UDim2.new(0, newPosition.X, 0, newPosition.Y)
 	UpdateVertices(self.frame, self.vertices, self.engine)
-	
+
 	return oldPosition, UDim2.new(0, newPosition.X, 0, newPosition.Y)
 end
 
@@ -428,7 +429,7 @@ end
 
 function RigidBody:SetSize(newSize: Vector2)
 	throwTypeError("newSize", newSize, 1, "Vector2")
-	
+
 	local oldSize = self.frame.Size
 	self.frame.Size = UDim2.new(0, newSize.X, 0, newSize.Y)
 	UpdateVertices(self.frame, self.vertices, self.engine)
@@ -448,7 +449,7 @@ function RigidBody:Anchor()
 	self.anchored = true
 	self.anchorRotation = self.frame.Rotation
 	self.anchorPos = self.center
-	
+
 	for _, vertex in ipairs(self.vertices) do
 		if not vertex.selectable then vertex.snap = self.anchored end
 	end
@@ -466,7 +467,7 @@ function RigidBody:Unanchor()
 	self.anchored = false
 	self.anchorRotation = nil
 	self.anchorPos = nil
-	
+
 	for _, vertex in ipairs(self.vertices) do
 		if not vertex.selectable then vertex.snap = self.anchored end
 	end
@@ -558,7 +559,7 @@ end
 
 function RigidBody:KeepInCanvas(keepInCanvas: boolean)
 	throwTypeError("keepInCanvas", keepInCanvas, 1, "boolean")
-	
+
 	for _, p in ipairs(self.vertices) do 
 		p.keepInCanvas = keepInCanvas
 	end
@@ -574,7 +575,7 @@ end
 
 function RigidBody:SetFriction(friction: number)
 	throwTypeError("friction", friction, 1, "number")
-	
+
 	for _, p in ipairs(self.vertices) do
 		p.friction = friction
 	end
@@ -620,7 +621,7 @@ function RigidBody:IsInBounds()
 end
 
 --[[
-	Returns the average of all the velocities of the RigidBody's points.
+	Returns the average of all the velocities of the RigidBody's points
 
 	[METHOD]: RigidBody:AverageVelocity()
 	[PARAMETERS]: none
@@ -635,6 +636,34 @@ function RigidBody:AverageVelocity()
 	end
 	
 	return sum/#self.vertices
+end
+
+-- STATE MANAGEMENT
+
+--[[
+	Used to initialize or update states of a RigidBody
+
+	[METHOD]: RigidBody:SetState()
+	[PARAMETERS]: state: string, value: any
+	[RETURNS]: nil
+]]--
+
+function RigidBody:SetState(state: string, value: any)
+	throwTypeError("state", state, 1, "string")
+	self.States[state] = value
+end
+
+--[[
+	Used to initialize or update states of a RigidBody
+
+	[METHOD]: RigidBody:SetState()
+	[PARAMETERS]: state: string
+	[RETURNS]: value: any
+]]--
+
+function RigidBody:GetState(state: string)
+	throwTypeError("state", state, 1, "string")
+	return self.States[state]
 end
 
 return RigidBody
