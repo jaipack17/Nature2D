@@ -9,6 +9,7 @@ local Constraint = require(script.Parent.physics.Constraint)
 local Globals = require(script.Parent.constants.Globals)
 local Signal = require(script.Parent.utils.Signal)
 local Quadtree = require(script.Parent.utils.Quadtree)
+local Types = require(script.Parent.Types)
 local throwException = require(script.Parent.debug.Exceptions)
 local throwTypeError = require(script.Parent.debug.TypeErrors)
 
@@ -23,28 +24,28 @@ Engine.__index = Engine
 	Collision Response: This method is responsible for separating two rigidbodies if they collide with each other.
 ]]--
 
-local function CollisionResponse(body, other, isColliding, Collision, dt)
+local function CollisionResponse(body: Types.RigidBody, other: Types.RigidBody, isColliding: boolean, Collision: Types.Collision, dt: number)
 	if not isColliding then return end
 
 	body.Touched:Fire(other.id)
 
-	local penetration = Collision.axis * Collision.depth
-	local p1 = Collision.edge.point1
-	local p2 = Collision.edge.point2
+	local penetration: Vector2 = Collision.axis * Collision.depth
+	local p1: Types.Point = Collision.edge.point1
+	local p2: Types.Point = Collision.edge.point2
 
 	local t
-	if math.abs(p1.pos.x - p2.pos.x) > math.abs(p1.pos.y - p2.pos.y) then
-		t = (Collision.vertex.pos.x - penetration.x - p1.pos.x)/(p2.pos.x - p1.pos.x);
+	if math.abs(p1.pos.X - p2.pos.X) > math.abs(p1.pos.Y - p2.pos.Y) then
+		t = (Collision.vertex.pos.X - penetration.X - p1.pos.X)/(p2.pos.X - p1.pos.X)
 	else 
-		t = (Collision.vertex.pos.y - penetration.y - p1.pos.y)/(p2.pos.y - p1.pos.y);
+		t = (Collision.vertex.pos.Y - penetration.Y - p1.pos.Y)/(p2.pos.Y - p1.pos.Y)
 	end
 
-	local factor = 1/(t^2 + (1 - t)^2)
-
+	local factor: number = 1/(t^2 + (1 - t)^2)
+	
 	if not Collision.edge.Parent.anchored then 
 		p1.pos -= penetration * ((1 - t) * factor/2) * dt * 60
 		p2.pos -= penetration * (t * factor/2)
-	end	
+	end
 
 	if not Collision.vertex.Parent.Parent.anchored then 	
 		Collision.vertex.pos += penetration/2
@@ -61,7 +62,7 @@ end
 	[RETURNS]: Engine
 ]]--
 
-function Engine.init(screengui: ScreenGui)
+function Engine.init(screengui: Instance)
 	if not typeof(screengui) == "Instance" or not screengui:IsA("Instance") then 
 		error("Invalid Argument #1. 'screengui' must be a ScreenGui.", 2) 
 	end
@@ -237,11 +238,11 @@ end
 	[RETURNS]: Constraint
 ]]--
 
-function Engine:CreateConstraint(point1, point2, visible: boolean, thickness: number)
+function Engine:CreateConstraint(point1: Types.Point, point2: Types.Point, visible: boolean, thickness: number)
 	throwTypeError("visible", visible, 3, "boolean")
 	throwTypeError("thickness", thickness, 4, "number")
 
-	local dist = (point2.pos - point1.pos).magnitude
+	local dist = (point2.pos - point1.pos).Magnitude
 
 	local newConstraint = Constraint.new(point1, point2, self.canvas, {
 		restLength = dist, 
@@ -333,7 +334,7 @@ end
 	[RETURNS]: nil
 ]]--
 
-function Engine:SetPhysicalProperty(property: string, value)
+function Engine:SetPhysicalProperty(property: string, value: Vector2 | number)
 	throwTypeError("property", property, 1, "string")
 
 	local properties = Globals.properties
@@ -378,7 +379,7 @@ function Engine:GetBodyById(id: string)
 		end
 	end
 
-	return;
+	return
 end
 
 --[[
@@ -398,7 +399,7 @@ function Engine:GetConstraintById(id: string)
 		end
 	end
 
-	return;
+	return 
 end
 
 --[[
@@ -409,7 +410,7 @@ end
 	[RETURNS]: { frame: Frame, topLeft: Vector2, size: Vector2 }
 ]]--
 
-function Engine:GetCurrentCanvas()
+function Engine:GetCurrentCanvas() : Types.Canvas
 	return self.canvas
 end
 

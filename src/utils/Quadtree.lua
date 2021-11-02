@@ -1,3 +1,5 @@
+local Types = require(script.Parent.Parent.Types)
+
 local Quadtree = {}
 Quadtree.__index = Quadtree
 
@@ -10,7 +12,7 @@ local function GetDivisions(position: Vector2, size: Vector2)
 	}
 end
 
-local function RangeOverlapsNode(node, range)
+local function RangeOverlapsNode(node: Types.Quadtree<Types.RigidBody>, range: Types.Range) : boolean
 	local ap1 = range.position
 	local as1 = range.size
 	local sum = ap1 + as1
@@ -22,7 +24,7 @@ local function RangeOverlapsNode(node, range)
 	return (ap1.x < sum2.x and sum.x > ap2.x) and (ap1.y < sum2.y and sum.y > ap2.y)
 end
 
-local function RangeHasPoint(range, obj)
+local function RangeHasPoint(range: Types.Range, obj: Types.RigidBody) : boolean
 	local p = obj.center 
 
 	return (
@@ -31,7 +33,7 @@ local function RangeHasPoint(range, obj)
 	)
 end
 
-local function merge(array1, array2)
+local function merge<T>(array1: {T}, array2: {T}) : {T}
 	if #array2 > 0 then 
 		for _, v in ipairs(array2) do
 			table.insert(array1, v)
@@ -51,7 +53,7 @@ function Quadtree.new(_position: Vector2, _size: Vector2, _capacity: number)
 	}, Quadtree)
 end
 
-function Quadtree:Insert(body)
+function Quadtree:Insert(body: Types.RigidBody)
 	if not self:HasObject(body.center) then return end
 		
 	if #self.objects < self.capacity then 
@@ -69,7 +71,7 @@ function Quadtree:Insert(body)
 	end
 end
 
-function Quadtree:HasObject(p: Vector2)
+function Quadtree:HasObject(p: Vector2) : boolean
 	return (
 		(p.X > self.position.X) and (p.X < (self.position.X + self.size.X)) and 
 		(p.Y > self.position.Y) and (p.Y < (self.position.Y + self.size.Y))
@@ -85,15 +87,15 @@ function Quadtree:SubDivide()
 	self.bottomRight = Quadtree.new(divisions[4], self.size/2, self.capacity)
 end
 
-function Quadtree:Search(range: { position: Vector2, size: Vector2 }, objects)
+function Quadtree:Search(range: Types.Range, objects: { Types.RigidBody })
 	if not objects then 
 		objects = {}
 	end
 
 	if not RangeOverlapsNode(self, range) then 
 		return objects
-	end   
-	
+	end
+
 	for _, obj in ipairs(self.objects) do
 		if RangeHasPoint(range, obj) then
 			objects[#objects + 1] = obj

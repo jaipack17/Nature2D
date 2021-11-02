@@ -4,34 +4,11 @@
 ]]--
 
 local Globals = require(script.Parent.Parent.constants.Globals)
+local Types = require(script.Parent.Parent.Types)
 local throwTypeError = require(script.Parent.Parent.debug.TypeErrors)
 
 local Point = {}
 Point.__index = Point
-
---[[
-	Type Definitions
-]]--
-
-type engineConfig = {
-	gravity: Vector2,
-	friction: number,
-	bounce: number,
-	speed: number,
-}
-
-type canvas = {
-	topLeft: Vector2,
-	size: Vector2,
-	frame: Frame
-}
-
-type pointConfig = {
-	snap: boolean, 
-	selectable: boolean, 
-	render: boolean,
-	keepInCanvas: boolean
-}
 
 --[[
 	This method is used to initialize a new Point.
@@ -41,7 +18,7 @@ type pointConfig = {
 	[RETURNS]: Point
 ]]--
 
-function Point.new(pos: Vector2, canvas, engine: engineConfig, config: pointConfig)
+function Point.new(pos: Vector2, canvas: Types.Canvas, engine: Types.EngineConfig, config: Types.PointConfig)
 	local self = setmetatable({
 		Parent = nil,
 		frame = nil,
@@ -60,7 +37,7 @@ function Point.new(pos: Vector2, canvas, engine: engineConfig, config: pointConf
 		color = nil,
 		radius = Globals.point.radius
 	}, Point)
-	
+
 	return self 
 end
 
@@ -72,7 +49,7 @@ end
 	[RETURNS]: nil
 ]]--
 
-function Point:ApplyForce(force)
+function Point:ApplyForce(force: Vector2)
 	self.forces += force
 end
 
@@ -87,12 +64,12 @@ end
 function Point:Update(dt: number)
 	if not self.snap then
 		self:ApplyForce(self.gravity)
-		
+
 		local velocity = self.pos 
 		velocity -= self.oldPos
 		velocity += self.forces * dt * self.engine.speed
 		velocity *= self.friction 
-		
+
 		self.oldPos = self.pos
 		self.pos += velocity
 		self.forces *= 0
@@ -162,20 +139,20 @@ function Point:Render()
 			local p = Instance.new("Frame")
 			local border = Instance.new("UICorner")
 			local r = self.radius or Globals.point.radius
-			
+
 			p.BackgroundColor3 = self.color or Globals.point.color
 			p.Size = UDim2.new(0, r * 2, 0, r * 2)
 			p.Parent = self.canvas.frame
-			
+
 			border.CornerRadius = Globals.point.uicRadius
 			border.Parent = p
-			
+
 			self.frame = p
 		end
-		
+
 		self.frame.Position = UDim2.new(0, self.pos.x, 0, self.pos.y)
 	end
-	
+
 	if self.keepInCanvas then 
 		self:KeepInCanvas()
 	end
@@ -223,14 +200,14 @@ function Point:Snap(snap: boolean)
 end
 
 --[[
-	Returns the velocity of the Point.
+	Returns the velocity of the Point
 	
 	[METHOD]: Point:Velocity()
 	[PARAMETERS]: none
 	[RETURNS]: velocity: Vector2
 ]]--
 
-function Point:Velocity()
+function Point:Velocity() : Vector2
 	return self.pos - self.oldPos
 end
 

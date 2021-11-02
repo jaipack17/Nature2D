@@ -8,27 +8,11 @@
 local line = require(script.Parent.Parent.utils.Line)
 local Globals = require(script.Parent.Parent.constants.Globals)
 local throwTypeError = require(script.Parent.Parent.debug.TypeErrors)
+local Types = require(script.Parent.Parent.Types)
 local https = game:GetService("HttpService")
 
 local Constraint = {}
 Constraint.__index = Constraint
-
---[[
-	Type Definitions
-]]--
-
-type canvas = {
-	topLeft: Vector2,
-	size: Vector2,
-	frame: Frame
-}
-
-type segmentConfig = {	
-	restLength: number?, 
-	render: boolean, 
-	thickness: number,
-	support: boolean
-}
 
 --[[
 	This method is used to initialize a constraint.
@@ -38,7 +22,7 @@ type segmentConfig = {
 	[RETURNS]: Constraint
 ]]--
 
-function Constraint.new(p1, p2, canvas, config: segmentConfig, engine)
+function Constraint.new(p1: Types.Point, p2: Types.Point, canvas: Types.Canvas, config: Types.SegmentConfig, engine)
 	local self = setmetatable({
 		id = https:GenerateGUID(false),
 		engine = engine,
@@ -47,13 +31,13 @@ function Constraint.new(p1, p2, canvas, config: segmentConfig, engine)
 		canvas = canvas,
 		point1 = p1,
 		point2 = p2,
-		restLength = config.restLength or (p2.pos - p1.pos).magnitude,
+		restLength = config.restLength or (p2.pos - p1.pos).Magnitude,
 		render = config.render,
 		thickness = config.thickness,
 		support = config.support,
 		color = nil,
 	}, Constraint)
-	
+
 	return self	
 end
 
@@ -66,7 +50,7 @@ end
 ]]--
 
 function Constraint:Constrain()
-	local cur = (self.point2.pos - self.point1.pos).magnitude
+	local cur = (self.point2.pos - self.point1.pos).Magnitude
 	local offset = ((self.restLength - cur) / cur)/2
 
 	local dir = self.point2.pos 
@@ -94,11 +78,11 @@ function Constraint:Render()
 	if self.render and self.canvas.frame then
 		local thickness = self.thickness or Globals.constraint.thickness
 		local color = self.color or Globals.constraint.color
-		
+
 		if not self.frame then 
 			self.frame = line(self.point1.pos, self.point2.pos, self.canvas.frame, thickness, color)
 		end
-		
+
 		line(self.point1.pos, self.point2.pos, self.canvas.frame, thickness, color, self.frame)
 	end
 end
@@ -124,8 +108,8 @@ end
 	[RETURNS]: distance: number
 ]]--
 
-function Constraint:GetLength()
-	return (self.point2.pos - self.point1.pos).magnitude
+function Constraint:GetLength() : number
+	return (self.point2.pos - self.point1.pos).Magnitude
 end
 
 --[[
@@ -154,7 +138,7 @@ function Constraint:Destroy()
 		if self.frame then 
 			self.frame:Destroy()
 		end
-		
+
 		for i, c in ipairs(self.engine.constraints) do 
 			if c.id == self.id then 
 				table.remove(self.engine.constraints, i)
@@ -183,7 +167,7 @@ end
 	[RETURNS]: frame: Frame
 ]]--
 
-function Constraint:GetFrame()
+function Constraint:GetFrame() : Frame?
 	return self.frame
 end
 

@@ -5,7 +5,7 @@
 
 local Globals = require(script.Parent.Parent.constants.Globals)
 
-local function draw(hyp: number, origin: Vector2, thickness: number, parent, color: Color3, l) 
+local function draw(hyp: number, origin: Vector2, thickness: number, parent: Instance, color: Color3, l: Frame?) : Frame
 	local line = l or Instance.new("Frame")
 	line.Name = "Constraint"
 	line.AnchorPoint = Vector2.new(.5, .5)
@@ -19,7 +19,7 @@ local function draw(hyp: number, origin: Vector2, thickness: number, parent, col
 	return line
 end
 
-return function (origin: Vector2, endpoint: Vector2, parent, thickness: number, color: Color3, l)
+return function (origin: Vector2, endpoint: Vector2, parent: Instance, thickness: number, color: Color3, l: Frame?) : Frame
 	local hyp = (endpoint - origin).Magnitude
 
 	local line = draw(hyp, origin, thickness, parent, color, l)

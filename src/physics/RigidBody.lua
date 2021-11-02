@@ -6,6 +6,7 @@ local Point = require(script.Parent.Point)
 local Constraint = require(script.Parent.Constraint)
 local Globals = require(script.Parent.Parent.constants.Globals)
 local Signal = require(script.Parent.Parent.utils.Signal)
+local Types = require(script.Parent.Parent.Types)
 local throwTypeError = require(script.Parent.Parent.debug.TypeErrors)
 
 local HttpService = game:GetService("HttpService")
@@ -23,7 +24,7 @@ RigidBody.__index = RigidBody
 	[RETURNS]: corners: table
 ]]--
 
-local function GetCorners(frame, engine)
+local function GetCorners(frame: GuiObject, engine)
 	local pos, size = frame.AbsolutePosition, frame.AbsoluteSize
 	local rotation = math.rad(frame.Rotation)
 	local center = pos + size/2
@@ -47,7 +48,7 @@ end
 	[RETURNS]: depth: number
 ]]--
 
-local function CalculatePenetration(minA, maxA, minB, maxB)
+local function CalculatePenetration(minA: number, maxA: number, minB: number, maxB: number) : number
 	if (minA < minB) then 
 		return minB - maxA 
 	else 
@@ -63,7 +64,7 @@ end
 	[RETURNS]: center: Vector2
 ]]--
 
-local function CalculateCenter(vertices)
+local function CalculateCenter(vertices) : Vector2
 	local center = Vector2.new(0, 0)
 
 	local minX = math.huge
@@ -92,7 +93,7 @@ end
 	[RETURNS]: nil
 ]]--
 
-local function UpdateVertices(frame, vertices, engine)
+local function UpdateVertices(frame: GuiObject, vertices, engine)
 	local corners = GetCorners(frame, engine)
 	for i, vertex in ipairs(vertices) do 
 		vertex.oldPos = corners[i]
@@ -113,11 +114,7 @@ end
 function RigidBody.new(frame: GuiObject, m: number, collidable: boolean, anchored: boolean, engine) 	
 	local vertices = {}
 	local edges = {}
-
-	--[[
-		Type Definitions
-	]]--
-
+	
 	local pointConfig = {
 		snap = anchored, 
 		selectable = false, 
@@ -205,12 +202,12 @@ end
 	[RETURNS]: Min: number, Max: number
 ]]--
 
-function RigidBody:CreateProjection(Axis, Min, Max) 
-	local DotP = Axis.x * self.vertices[1].pos.x + Axis.y * self.vertices[1].pos.y;
+function RigidBody:CreateProjection(Axis: Vector2, Min: number, Max: number) : (number, number)
+	local DotP = Axis.X * self.vertices[1].pos.x + Axis.Y * self.vertices[1].pos.y;
 	Min, Max = DotP, DotP;
 
 	for I = 2, #self.vertices, 1 do
-		DotP = Axis.x * self.vertices[I].pos.x + Axis.y * self.vertices[I].pos.y;
+		DotP = Axis.X * self.vertices[I].pos.x + Axis.Y * self.vertices[I].pos.y;
 		Min = math.min(DotP, Min)
 		Max = math.max(DotP, Max)
 	end
@@ -231,7 +228,7 @@ function RigidBody:DetectCollision(other)
 		self.center = CalculateCenter(self.vertices)
 
 		local minDist = math.huge
-		local collision = {
+		local collision: Types.Collision = {
 			axis = nil,
 			depth = nil,
 			edge = nil,
@@ -256,7 +253,7 @@ function RigidBody:DetectCollision(other)
 					minDist = math.abs(dist) 
 					collision.axis = axis
 					collision.edge = edge
-				end		
+				end	
 			end
 		end
 
@@ -269,7 +266,7 @@ function RigidBody:DetectCollision(other)
 		end
 
 		local centerDif = self.center - other.center
-		local dot = collision.axis.x * centerDif.x + collision.axis.y * centerDif.y
+		local dot = collision.axis.X * centerDif.x + collision.axis.Y * centerDif.Y
 
 		if dot < 0 then 
 			collision.axis *= -1
@@ -279,7 +276,7 @@ function RigidBody:DetectCollision(other)
 
 		for i = 1, #self.vertices, 1 do
 			local dif =  self.vertices[i].pos - other.center
-			local dist = collision.axis.x * dif.x + collision.axis.y * dif.y
+			local dist = collision.axis.X * dif.X + collision.axis.Y * dif.Y
 
 			if dist < minMag then
 				minMag = dist
@@ -494,7 +491,7 @@ end
 	[RETURNS]: GuiObject
 ]]--
 
-function RigidBody:GetFrame()
+function RigidBody:GetFrame() : GuiObject
 	return self.frame
 end
 
@@ -506,7 +503,7 @@ end
 	[RETURNS]: id: string
 ]]--
 
-function RigidBody:GetId()
+function RigidBody:GetId() : string
 	return self.id
 end
 
@@ -605,7 +602,7 @@ end
 	[RETURNS]: isInBounds: boolean
 ]]--
 
-function RigidBody:IsInBounds()
+function RigidBody:IsInBounds() : boolean
 	local canvas = self.engine.canvas
 	if not canvas then return false end
 	
@@ -628,7 +625,7 @@ end
 	[RETURNS]: velocity: Vector2
 ]]--
 
-function RigidBody:AverageVelocity()
+function RigidBody:AverageVelocity() : Vector2
 	local sum = Vector2.new(0, 0)
 	
 	for _, v in ipairs(self.vertices) do
@@ -651,7 +648,7 @@ end
 function RigidBody:SetState(state: string, value: any)
 	throwTypeError("state", state, 1, "string")
 	if self.States[state] == value then return end
-	
+
 	self.States[state] = value
 end
 
@@ -663,7 +660,7 @@ end
 	[RETURNS]: value: any
 ]]--
 
-function RigidBody:GetState(state: string)
+function RigidBody:GetState(state: string) : any
 	throwTypeError("state", state, 1, "string")
 	return self.States[state]
 end
