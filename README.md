@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="https://doy2mn9upadnk.cloudfront.net/uploads/default/original/4X/e/7/0/e709b34f89add2336a7d74faee3b2a839a9391b0.png" width="480" /><br/>
+    <img src="https://doy2mn9upadnk.cloudfront.net/uploads/default/original/4X/e/7/0/e709b34f89add2336a7d74faee3b2a839a9391b0.png" width="480" /><br/><br/>
     <a href="https://devforum.roblox.com/t/physics-library-nature2d-bring-ui-elements-to-life/1510935/35"><img alt="version" src="https://img.shields.io/badge/v0.2.4--beta-version-green"></img></a>
     <br/>
     <a href="https://devforum.roblox.com/t/physics-library-nature2d-bring-ui-elements-to-life/1510935/"><img alt="devforum" src="https://img.shields.io/badge/post-devforum-blue"></img></a>
