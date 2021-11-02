@@ -4,9 +4,7 @@
     <br/>
     <a href="https://devforum.roblox.com/t/physics-library-nature2d-bring-ui-elements-to-life/1510935/"><img alt="devforum" src="https://img.shields.io/badge/post-devforum-blue"></img></a>
     <a href="https://www.roblox.com/library/7625799164/Nature2D"><img alt="model" src="https://img.shields.io/badge/asset-roblox-%23FF0000"></img></a>
-    <a href="https://github.com/jaipack17/Nature2D/tree/master/docs/"><img alt="documentation" src="https://img.shields.io/badge/getting--started-docs-orange"></img></a>
-    <a href="https://github.com/jaipack17/Nature2D/tree/master/docs/api"><img alt="api" src="https://img.shields.io/badge/api-docs-orange"></img></a>
-    <a href="https://github.com/jaipack17/Nature2D/tree/master/docs/examples"><img alt="api" src="https://img.shields.io/badge/examples-docs-orange"></img></a>
+    <a href="https://jaipack17.github.io/Nature2D/"><img alt="documentation" src="https://img.shields.io/badge/docs-website-orange"></img></a>
 </div>
 
 # About
@@ -48,13 +46,7 @@ local engine = Nature2D.init(screenGuiInstance)
    Code here, check out the API and examples under docs/api and docs/examples!
 ]]--
 ```
-To get familiar with the library, you can go through the documentation.
-
-[Documentation](https://github.com/jaipack17/Nature2D/tree/master/docs)<br/>
-[Getting Started](https://github.com/jaipack17/Nature2D/blob/master/docs/README.md)<br/>
-[API Reference](https://github.com/jaipack17/Nature2D/tree/master/docs/api)<br/>
-[Examples & Tutorials](https://github.com/jaipack17/Nature2D/tree/master/docs/examples)<br/>
-[Example Placefiles](https://github.com/jaipack17/Nature2D/tree/master/docs/placefiles)<br/>
+To get familiar with the library, you can go through the documentation. Documentation is available at https://jaipack17.github.io/Nature2D/!
 
 # Showcase
 
