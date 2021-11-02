@@ -1,5 +1,17 @@
 # Releases
 
+## v0.2.4 - Improvements to Code
+
+* Add type definitions & annotations 
+* Type check everything (almost)
+* Remove code redundancies 
+* Replace deprecations
+   * `Vector2.x` -> `Vector2.X`
+   * `Vector2.y` -> `Vector2.Y`
+   * `Vector2.magnitude` -> `Vector2.Magnitude`
+   * `Vector2.unit` -> `Vector2.Unit`
+   * ... etc
+
 ## v0.2.3 - State Management
 
 Added state management for RigidBodies. Individual RigidBodies can have their own States/Custom Properties now!
