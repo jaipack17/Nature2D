@@ -51,22 +51,23 @@ end
 ]]--
 
 function Constraint:Constrain()
+	local cur = (self.point2.pos - self.point1.pos).Magnitude
+	local offset
+	
 	if self._TYPE == "ROPE" then 
-		local cur = (self.point2.pos - self.point1.pos).Magnitude
-		local offset = ((self.restLength - cur) / cur)/2
-		
-		local dir = self.point2.pos 
-		dir -= self.point1.pos 
-		dir *= offset
-		
-		if not self.point1.snap then
-			self.point1.pos -= dir
-		end
-
-		if not self.point2.snap then
-			self.point2.pos += dir
-		end		
+		offset = ((self.restLength - cur)/cur)/5
+	elseif self._TYPE == "ROD" then 
+		offset = ((self.restLength - cur)/self.restLength)/2		
+	else 
+		return
 	end
+	
+	local dir = self.point2.pos 
+	dir -= self.point1.pos 
+	dir *= offset
+
+	if not self.point1.snap then self.point1.pos -= dir end
+	if not self.point2.snap then self.point2.pos += dir end		
 end
 
 --[[
