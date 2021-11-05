@@ -238,17 +238,23 @@ end
 	[RETURNS]: Constraint
 ]]--
 
-function Engine:CreateConstraint(point1: Types.Point, point2: Types.Point, visible: boolean, thickness: number)
+function Engine:CreateConstraint(Type: string, point1: Types.Point, point2: Types.Point, visible: boolean, thickness: number)
+	throwTypeError("type", Type, 1, "string")
 	throwTypeError("visible", visible, 3, "boolean")
 	throwTypeError("thickness", thickness, 4, "number")
+	
+	if not table.find(Globals.constraint.types, string.lower(Type)) then 
+		throwException("error", "INVALID_CONSTRAINT_TYPE")
+	end
 
 	local dist = (point2.pos - point1.pos).Magnitude
-
+		
 	local newConstraint = Constraint.new(point1, point2, self.canvas, {
 		restLength = dist, 
 		render = visible, 
 		thickness = thickness,
-		support = true
+		support = true,
+		TYPE = string.upper(Type)
 	}, self)
 
 	table.insert(self.constraints, newConstraint)
