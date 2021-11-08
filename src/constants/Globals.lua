@@ -26,7 +26,6 @@ return {
 		types = {
 			"rope",
 			"spring",
-			"weld",
 			"rod"
 		}
 	},
