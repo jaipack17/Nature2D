@@ -195,4 +195,13 @@ function Constraint:GetFrame() : Frame?
 	return self.frame
 end
 
+function Constraint:SetSpringConstant(k: number)
+	throwTypeError("springConstant", k, 1, "number")
+	self.k = k
+end
+
+function Constraint:GetId()
+	return self.id
+end
+
 return Constraint
