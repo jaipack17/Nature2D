@@ -68,7 +68,9 @@ function Point:Update(dt: number)
 		local velocity = self.pos 
 		velocity -= self.oldPos
 		velocity += self.forces * dt * self.engine.speed
-		velocity *= self.friction 
+		velocity *= self.friction
+
+                -- fix friction
 
 		self.oldPos = self.pos
 		self.pos += velocity
