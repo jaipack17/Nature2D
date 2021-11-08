@@ -8,6 +8,7 @@
 local line = require(script.Parent.Parent.utils.Line)
 local Globals = require(script.Parent.Parent.constants.Globals)
 local throwTypeError = require(script.Parent.Parent.debug.TypeErrors)
+local throwException = require(script.Parent.Parent.debug.Exceptions)
 local Types = require(script.Parent.Parent.Types)
 local https = game:GetService("HttpService")
 
@@ -36,6 +37,7 @@ function Constraint.new(p1: Types.Point, p2: Types.Point, canvas: Types.Canvas, 
 		thickness = config.thickness,
 		support = config.support,
 		_TYPE = config.TYPE,
+		k = 0.1,
 		color = nil,
 	}, Constraint)
 
@@ -52,22 +54,36 @@ end
 
 function Constraint:Constrain()
 	local cur = (self.point2.pos - self.point1.pos).Magnitude
-	local offset
+	local force
 	
 	if self._TYPE == "ROPE" then 
-		offset = ((self.restLength - cur)/cur)/5
+		local restLength
+		if cur > self.restLength then 
+			restLength = self.restLength
+		elseif cur < self.thickness then 
+			restLength = self.thickness
+		end
+		
+		local offset = ((restLength - cur)/restLength)/2
+		force = self.point2.pos - self.point1.pos 
+		force *= offset
 	elseif self._TYPE == "ROD" then 
-		offset = ((self.restLength - cur)/self.restLength)/2		
-	else 
+		local offset = ((self.restLength - cur)/self.restLength)/2	
+		force = self.point2.pos - self.point1.pos
+		force *= offset
+	elseif self._TYPE == "SPRING" then
+		force = self.point2.pos - self.point1.pos 
+		local mag = force.Magnitude - self.restLength
+		force = force.Unit
+		force *= -1 * self.k * mag
+	else
 		return
 	end
 	
-	local dir = self.point2.pos 
-	dir -= self.point1.pos 
-	dir *= offset
-
-	if not self.point1.snap then self.point1.pos -= dir end
-	if not self.point2.snap then self.point2.pos += dir end		
+	if force then 
+		if not self.point1.snap then self.point1.pos -= force end
+		if not self.point2.snap then self.point2.pos += force end		
+	end
 end
 
 --[[
@@ -101,6 +117,10 @@ end
 
 function Constraint:SetLength(newLength: number)
 	throwTypeError("length", newLength, 1, "number")
+	if newLength <= 0 then 
+		throwException("error", "INVALID_CONSTRAINT_LENGTH")
+	end
+	
 	self.restLength = newLength
 end
 
