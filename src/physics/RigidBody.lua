@@ -126,7 +126,8 @@ function RigidBody.new(frame: GuiObject, m: number, collidable: boolean, anchore
 		restLength = nil, 
 		render = false, 
 		thickness = 4,
-		support = false
+		support = false,
+		TYPE = "ROD"
 	}
 
 	local function addPoint(pos)
