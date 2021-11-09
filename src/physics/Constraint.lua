@@ -195,12 +195,28 @@ function Constraint:GetFrame() : Frame?
 	return self.frame
 end
 
+--[[
+	This method is used to update the Spring constant (by default 0.1) used for spring constraint calculations.
+
+	[METHOD]: Constraint:SetSpringConstant()
+	[PARAMETERS]: k: number 
+	[RETURNS]: nil
+]]--
+
 function Constraint:SetSpringConstant(k: number)
 	throwTypeError("springConstant", k, 1, "number")
 	self.k = k
 end
 
-function Constraint:GetId()
+--[[
+	The constraints's unique ID can be fetched using this method.
+
+	[METHOD]: Constraint:GetId()
+	[PARAMETERS]: none 
+	[RETURNS]: id: string
+]]--
+
+function Constraint:GetId() : string
 	return self.id
 end
 
