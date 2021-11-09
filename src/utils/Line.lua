@@ -4,6 +4,7 @@
 
 
 local Globals = require(script.Parent.Parent.constants.Globals)
+local Math = require(script.Parent.Parent.Math)
 
 local function draw(hyp: number, origin: Vector2, thickness: number, parent: Instance, color: Color3, l: Frame?) : Frame
 	local line = l or Instance.new("Frame")
@@ -24,9 +25,9 @@ return function (origin: Vector2, endpoint: Vector2, parent: Instance, thickness
 
 	local line = draw(hyp, origin, thickness, parent, color, l)
 	local mid = (origin + endpoint)/2
-	local theta = math.atan2((origin - endpoint).Y, (origin - endpoint).X)	
+	local theta = Math.Vector.angle(endpoint, origin)	
 
-	line.Position = UDim2.fromOffset(mid.x, mid.y)
+	line.Position = UDim2.fromOffset(mid.X, mid.Y)
 	line.Rotation = math.deg(theta)
 
 	return line

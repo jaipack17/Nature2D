@@ -10,6 +10,7 @@ local Globals = require(script.Parent.Parent.constants.Globals)
 local throwTypeError = require(script.Parent.Parent.debug.TypeErrors)
 local throwException = require(script.Parent.Parent.debug.Exceptions)
 local Types = require(script.Parent.Parent.Types)
+local Math = require(script.Parent.Parent.Math)
 local https = game:GetService("HttpService")
 
 local Constraint = {}
@@ -57,25 +58,11 @@ function Constraint:Constrain()
 	local force
 	
 	if self._TYPE == "ROPE" then 
-		local restLength
-		if cur > self.restLength then 
-			restLength = self.restLength
-		elseif cur < self.thickness then 
-			restLength = self.thickness
-		end
-		
-		local offset = ((restLength - cur)/restLength)/2
-		force = self.point2.pos - self.point1.pos 
-		force *= offset
+		force = Math.Physics.calculate_rope(self.point1, self.point2, cur, self.restLength, self.thickness)
 	elseif self._TYPE == "ROD" then 
-		local offset = ((self.restLength - cur)/self.restLength)/2	
-		force = self.point2.pos - self.point1.pos
-		force *= offset
+		force = Math.Physics.calculate_rod(self.point1, self.point2, cur, self.restLength)
 	elseif self._TYPE == "SPRING" then
-		force = self.point2.pos - self.point1.pos 
-		local mag = force.Magnitude - self.restLength
-		force = force.Unit
-		force *= -1 * self.k * mag
+		force = Math.Physics.calculate_spring(self.point1, self.point2, self.restLength, self.k)
 	else
 		return
 	end
