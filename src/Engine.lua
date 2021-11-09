@@ -247,6 +247,9 @@ function Engine:CreateConstraint(Type: string, point1: Types.Point, point2: Type
 	if not table.find(Globals.constraint.types, string.lower(Type)) then 
 		throwException("error", "INVALID_CONSTRAINT_TYPE")
 	end
+	
+	if restLength and restLength <= 0 then throwException("error", "INVALID_CONSTRAINT_LENGTH") end
+	if thickness and thickness <= 0 then throwException("error", "INVALID_CONSTRAINT_THICKNESS") end
 
 	local dist = (point2.pos - point1.pos).Magnitude
 		
