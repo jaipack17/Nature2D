@@ -23,6 +23,11 @@ return {
 	constraint = {
 		color = Color3.new(1, 1, 1),
 		thickness = 4,
+		types = {
+			"rope",
+			"spring",
+			"rod"
+		}
 	},
 	point = {
 		radius = 2.5,
