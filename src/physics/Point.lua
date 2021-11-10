@@ -214,4 +214,16 @@ function Point:Velocity() : Vector2
 	return self.pos - self.oldPos
 end
 
+--[[
+	Returns the Parent (Constraint) of the Point if any.
+	
+	[METHOD]: Point:GetParent()
+	[PARAMETERS]: none
+	[RETURNS]: parent: Constraint | nil
+]]--
+
+function Point:GetParent()
+	return self.Parent
+end
+
 return Point

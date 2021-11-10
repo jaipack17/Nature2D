@@ -220,4 +220,16 @@ function Constraint:GetId() : string
 	return self.id
 end
 
+--[[
+	Returns the Parent (RigidBody) of the Constraint if any.
+	
+	[METHOD]: Constraint:GetParent()
+	[PARAMETERS]: none
+	[RETURNS]: parent: RigidBody | nil
+]]--
+
+function Constraint:GetParent()
+	return self.Parent
+end
+
 return Constraint
