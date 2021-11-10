@@ -238,17 +238,21 @@ end
 	[RETURNS]: Constraint
 ]]--
 
-function Engine:CreateConstraint(Type: string, point1: Types.Point, point2: Types.Point, visible: boolean, thickness: number, restLength: number)
+function Engine:CreateConstraint(Type: string, point1: Types.Point, point2: Types.Point, visible: boolean, thickness: number, restLength: number?)
 	throwTypeError("type", Type, 1, "string")
 	throwTypeError("visible", visible, 3, "boolean")
 	throwTypeError("thickness", thickness, 4, "number")
-	throwTypeError("restLength", restLength, 5, "number")
 
 	if not table.find(Globals.constraint.types, string.lower(Type)) then 
 		throwException("error", "INVALID_CONSTRAINT_TYPE")
 	end
 	
-	if restLength and restLength <= 0 then throwException("error", "INVALID_CONSTRAINT_LENGTH") end
+	if restLength then 
+		throwTypeError("restLength", restLength, 5, "number")
+		if restLength <= 0 then 
+			throwException("error", "INVALID_CONSTRAINT_LENGTH") 
+		end
+	end
 	if thickness and thickness <= 0 then throwException("error", "INVALID_CONSTRAINT_THICKNESS") end
 
 	local dist = (point2.pos - point1.pos).Magnitude
