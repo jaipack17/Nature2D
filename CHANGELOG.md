@@ -1,5 +1,17 @@
 # Releases
 
+## v0.3.1 - Fixes to Collision Detection & New Methods
+
+* Made `restLength: number?` an optional parameter for `Engine:CreateConstraint()`.
+* Fixes to Collision Detection - Collision detection is no longer skipped at low frame rates.
+* Fixed how forces are applied to Points when the engine is framerate independent.
+* Added new methods to Engine
+   * `Engine:FrameRateIndependent(independent: boolean)` - Determines if Frame rate does not affect the simulation speed. By default set to true.
+* Added new methods to Constraint
+   * `Constraint:GetParent()`
+* Added new methods to Point 
+   * `Point:GetParent()`
+
 ## v0.3 - New Constraints: Ropes, Rods & Springs!
 
 Major Release. 
