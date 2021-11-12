@@ -23,5 +23,6 @@ jobs:
           WALLY_AU: ${{ secrets.WALLY_AU }}
           run: |
             mkdir -p ~/.wally
-            printf "[tokens]\n\"https://api.wally.run/\" = \"%s\"" "$WALLY_AU" >> ~/.wally/auth.toml
+            mkdir -p ~/.wally
+            echo "$WALLY_AUTH" > ~/.wally/auth.toml
             wally publish
