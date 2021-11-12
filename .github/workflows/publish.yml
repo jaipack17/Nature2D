@@ -1,0 +1,27 @@
+name: publish
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  wally:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Initialize Foreman
+        uses: rojo-rbx/setup-foreman@v1.0.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Publish Nature2D to Wally
+        shell: bash
+        env:
+          WALLY_AU: ${{ secrets.WALLY_AU }}
+          run: |
+            mkdir -p ~/.wally
+            printf "[tokens]\n\"https://api.wally.run/\" = \"%s\"" "$WALLY_AU" >> ~/.wally/auth.toml
+            wally publish
