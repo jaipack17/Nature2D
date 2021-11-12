@@ -18,6 +18,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Publish Nature2D to Wally
+        shell: bash
         env:
           WALLY_AU: ${{ secrets.WALLY_AU }}
         run: |
