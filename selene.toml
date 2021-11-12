@@ -1,3 +1,5 @@
 [rules]
+undefined_variable = "allow"
+empty_if = "allow"
 incorrect_standard_library_use = "warn"
 one_line_if = "allow"
