@@ -175,6 +175,10 @@ function RigidBody.new(frame: GuiObject, m: number, collidable: boolean, anchore
 		anchorPos = anchored and frame.AbsolutePosition or nil,
 		Touched = nil,
 		CanvasEdgeTouched = nil,
+		Collisions = {			
+			Body = false,
+			CanvasEdge = false,
+		},
 		States = {}
 	}, RigidBody)
 
@@ -575,7 +579,23 @@ function RigidBody:SetFriction(friction: number)
 	throwTypeError("friction", friction, 1, "number")
 
 	for _, p in ipairs(self.vertices) do
-		p.friction = friction
+		p.friction =  math.clamp(1 - friction, 0, 1)
+	end
+end
+
+--[[
+	This method sets a custom air frictional damp value just for the RigidBody.
+
+	[METHOD]: RigidBody:SetAirFriction()
+	[PARAMETERS]: friction: number
+	[RETURNS]: nil
+]]--
+
+function RigidBody:SetAirFriction(friction: number)
+	throwTypeError("friction", friction, 1, "number")
+
+	for _, p in ipairs(self.vertices) do
+		p.airfriction =  math.clamp(1 - friction, 0, 1)
 	end
 end
 

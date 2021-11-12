@@ -1,5 +1,16 @@
 # Releases
 
+## v0.3.2 - Major Improvements to Frictional Forces
+
+* Fixed a bug where changes to physical properties before creating any RigidBodies, Constraints or Points won't affect/apply to newly created objects.
+* Friction only applies if RigidBodies collide with each other or the edges of the canvas. If none of those conditions are true, AirFriction is applied.
+* Added AirFriction physical property to Engine, Points and RigidBodies. Frictional force applied when a RigidBody neither touches another body nor the edges of canvas.
+   * `Engine:SetPhysicalProperty("AirFriction", 0.1)`
+* Friction and AirFriction are set to 0.01 by default. (0.99 damping value).
+* Changed how we pass parameters when initializing or updating friction of the engine or rigidbodies. The closer the friction to 1, the higher it is. The closer the friction to 0, the lower it is. Same applies for AirFriction. Values not in the range of 0-1 are automatically clamped down.
+* Added new Methods to RigidBodies
+  * `RigidBody:SetAirFriction(airfriction: number)`
+
 ## v0.3.1 - Fixes to Collision Detection & New Methods
 
 * Made `restLength: number?` an optional parameter for `Engine:CreateConstraint()`.

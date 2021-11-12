@@ -26,6 +26,7 @@ export type Point = {
 	forces: Vector2,
 	gravity: Vector2,
 	friction: number,
+	airfriction: number,
 	bounce: number,
 	snap: boolean,
 	selectable: boolean,
@@ -71,6 +72,7 @@ export type EngineConfig = {
 	friction: number,
 	bounce: number,
 	speed: number,
+	airfriction: number,
 }
 
 export type PointConfig = {
