@@ -1,3 +1,4 @@
 [tools]
 rojo = { source = "rojo-rbx/rojo", version = "6.2.0" }
+selene = { source = "Kampfkarren/selene", version = "x" }
 wally = { source = "UpliftGames/wally", version = "0.3.0" }
