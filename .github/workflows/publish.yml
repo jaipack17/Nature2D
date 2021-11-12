@@ -20,7 +20,7 @@ jobs:
       - name: Publish Nature2D to Wally
         env:
           WALLY_AU: ${{ secrets.WALLY_AU }}
-          run: |
-            mkdir -p ~/.wally
-            echo "$WALLY_AUTH" > ~/.wally/auth.toml
-            wally publish
+      - run: |
+          mkdir -p ~/.wally
+          echo "$WALLY_AUTH" > ~/.wally/auth.toml
+          wally publish
