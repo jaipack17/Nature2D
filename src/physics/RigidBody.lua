@@ -49,7 +49,7 @@ end
 ]]--
 
 local function CalculatePenetration(minA: number, maxA: number, minB: number, maxB: number) : number
-	if (minA < minB) then 
+	if minA < minB then 
 		return minB - maxA 
 	else 
 		return minA - maxB 
@@ -74,10 +74,10 @@ local function CalculateCenter(vertices) : Vector2
 
 	for _, v in ipairs(vertices) do 
 		center += v.pos
-		minX = math.min(minX, v.pos.x);
-		minY = math.min(minY, v.pos.y);
-		maxX = math.max(maxX, v.pos.x);
-		maxY = math.max(maxY, v.pos.y);
+		minX = math.min(minX, v.pos.x)
+		minY = math.min(minY, v.pos.y)
+		maxX = math.max(maxX, v.pos.x)
+		maxY = math.max(maxY, v.pos.y)
 	end
 
 	center /= #vertices;
