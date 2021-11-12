@@ -29,6 +29,7 @@ function Point.new(pos: Vector2, canvas: Types.Canvas, engine: Types.EngineConfi
 		forces = Vector2.new(0, 0),
 		gravity = engine.gravity,
 		friction = engine.friction,
+		airfriction = engine.airfriction,
 		bounce = engine.bounce,
 		snap = config.snap,
 		selectable = config.selectable,
@@ -67,12 +68,22 @@ function Point:Update(dt: number)
 
 		local velocity = self.pos 
 		velocity -= self.oldPos
-
 		if self.engine.independent then 
 			self.forces *= dt * self.engine.speed
 		end
 		velocity += self.forces 
-		velocity *= self.friction 
+		
+		local body = self.Parent.Parent
+		
+		if body then 
+			if body.Collisions.CanvasEdge or body.Collisions.Body then 
+				velocity *= self.friction 
+			else 
+				velocity *= self.airfriction
+			end			
+		else 
+			velocity *= self.friction
+		end
 
 		self.oldPos = self.pos
 		self.pos += velocity
@@ -121,10 +132,15 @@ function Point:KeepInCanvas()
 		collision = true
 		edge = "Right"
 	end
-
-	if collision then 
-		if self.Parent and self.Parent.Parent then 
-			self.Parent.Parent.CanvasEdgeTouched:Fire(edge)
+	
+	local body = self.Parent.Parent
+	
+	if body then 
+		if collision then 
+			body.Collisions.CanvasEdge = true
+			body.CanvasEdgeTouched:Fire(edge)
+		else
+			body.Collisions.CanvasEdge = false
 		end
 	end
 end

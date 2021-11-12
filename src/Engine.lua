@@ -74,6 +74,7 @@ function Engine.init(screengui: Instance)
 		connection = nil,
 		gravity = Globals.engineInit.gravity,
 		friction = Globals.engineInit.friction,
+		airfriction = Globals.engineInit.airfriction,
 		bounce = Globals.engineInit.bounce,
 		timeSteps = Globals.engineInit.timeSteps,
 		path = screengui,
@@ -140,6 +141,14 @@ function Engine:Start()
 					local result = body:DetectCollision(other)
 					local isColliding = result[1]
 					local Collision = result[2]
+					
+					if isColliding then 
+						body.Collisions.Body = true
+						other.Collisions.Body = true
+					else 
+						body.Collisions.Body = false
+						other.Collisions.Body = false
+					end
 
 					CollisionResponse(body, other, isColliding, Collision, dt)
 				end
@@ -345,7 +354,7 @@ end
 	This method is used to configure universal physical properties possessed by all rigid bodies and constraints. 
 	
 	[METHOD]: Engine:SetPhysicalProperty()
-	[PARAMETERS]: property: string, value
+	[PARAMETERS]: property: string, value: Vector2 | number
 	[RETURNS]: nil
 ]]--
 
@@ -353,22 +362,31 @@ function Engine:SetPhysicalProperty(property: string, value: Vector2 | number)
 	throwTypeError("property", property, 1, "string")
 
 	local properties = Globals.properties
+	
+	local function Update(object)
+		if string.lower(property) == "collisionmultiplier" then 
+			throwTypeError("value", value, 2, "number")
+			object.bounce = value
+		elseif string.lower(property) == "gravity" then 
+			throwTypeError("value", value, 2, "Vector2")
+			object.gravity = value
+		elseif string.lower(property) == "friction" then 					
+			throwTypeError("value", value, 2, "number")
+			object.friction = math.clamp(1 - value, 0, 1)
+		elseif string.lower(property) == "airfriction" then 
+			throwTypeError("value", value, 2, "number")
+			object.airfriction = math.clamp(1 - value, 0, 1)
+		end
+	end
 
 	if table.find(properties, string.lower(property)) then 
-		for _, b in ipairs(self.bodies) do 
-			for _, v in ipairs(b:GetVertices()) do 
-				if string.lower(property) == "collisionmultiplier" then 
-					throwTypeError("value", value, 2, "number")
-					self.bounce = value
-					v.bounce = value
-				elseif string.lower(property) == "gravity" then 
-					throwTypeError("value", value, 2, "Vector2")
-					self.gravity = value
-					v.gravity = value
-				elseif string.lower(property) == "friction" then 					
-					throwTypeError("value", value, 2, "number")
-					self.friction = value
-					v.friction = value
+		if #self.bodies < 1 then 
+			Update(self)
+		else 
+			Update(self)
+			for _, b in ipairs(self.bodies) do 
+				for _, v in ipairs(b:GetVertices()) do 
+					Update(v)
 				end
 			end
 		end
