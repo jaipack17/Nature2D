@@ -43,7 +43,7 @@ local function CollisionResponse(body: Types.RigidBody, other: Types.RigidBody, 
 	local factor: number = 1/(t^2 + (1 - t)^2)
 	
 	if not Collision.edge.Parent.anchored then 
-		p1.pos -= penetration * ((1 - t) * factor/2) * dt * 60
+		p1.pos -= penetration * ((1 - t) * factor/2)
 		p2.pos -= penetration * (t * factor/2)
 	end
 
@@ -79,6 +79,7 @@ function Engine.init(screengui: Instance)
 		path = screengui,
 		speed = Globals.speed,
 		quadtrees = false,
+		independent = true,
 		canvas = {
 			frame = nil,
 			topLeft = Globals.engineInit.canvas.topLeft,
@@ -238,17 +239,31 @@ end
 	[RETURNS]: Constraint
 ]]--
 
-function Engine:CreateConstraint(point1: Types.Point, point2: Types.Point, visible: boolean, thickness: number)
+function Engine:CreateConstraint(Type: string, point1: Types.Point, point2: Types.Point, visible: boolean, thickness: number, restLength: number?)
+	throwTypeError("type", Type, 1, "string")
 	throwTypeError("visible", visible, 3, "boolean")
 	throwTypeError("thickness", thickness, 4, "number")
 
-	local dist = (point2.pos - point1.pos).Magnitude
+	if not table.find(Globals.constraint.types, string.lower(Type)) then 
+		throwException("error", "INVALID_CONSTRAINT_TYPE")
+	end
+	
+	if restLength then 
+		throwTypeError("restLength", restLength, 5, "number")
+		if restLength <= 0 then 
+			throwException("error", "INVALID_CONSTRAINT_LENGTH") 
+		end
+	end
+	if thickness and thickness <= 0 then throwException("error", "INVALID_CONSTRAINT_THICKNESS") end
 
+	local dist = (point2.pos - point1.pos).Magnitude
+		
 	local newConstraint = Constraint.new(point1, point2, self.canvas, {
-		restLength = dist, 
+		restLength = restLength or dist, 
 		render = visible, 
 		thickness = thickness,
-		support = true
+		support = true,
+		TYPE = string.upper(Type)
 	}, self)
 
 	table.insert(self.constraints, newConstraint)
@@ -425,6 +440,19 @@ end
 function Engine:UseQuadtrees(use: boolean)
 	throwTypeError("useQuadtrees", use, 1, "boolean")
 	self.quadtrees = use
+end
+
+--[[
+	Determines if Frame rate does not affect the simulation speed. By default set to true.
+	
+	[METHOD]: Engine:FrameRateIndependent()
+	[PARAMETERS]: independent: boolean
+	[RETURNS]: nil
+]]--
+
+function Engine:FrameRateIndependent(independent: boolean)
+	throwTypeError("independent", independent, 1, "boolean")
+	self.independent = independent
 end
 
 return Engine

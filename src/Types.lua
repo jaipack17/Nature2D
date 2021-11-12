@@ -58,17 +58,12 @@ export type RigidBody = {
 	States: { any }
 }
 
-export type Exceptions = {
-	NO_CANVAS_FOUND: string,
-	NO_RIGIDBODIES_FOUND: string,
-	PROPERTY_NOT_FOUND: string,
-}
-
 export type SegmentConfig = {
 	restLength: number?, 
 	render: boolean, 
 	thickness: number,
-	support: boolean
+	support: boolean,
+	TYPE: string,
 }
 
 export type EngineConfig = {

@@ -8,6 +8,7 @@
 local line = require(script.Parent.Parent.utils.Line)
 local Globals = require(script.Parent.Parent.constants.Globals)
 local throwTypeError = require(script.Parent.Parent.debug.TypeErrors)
+local throwException = require(script.Parent.Parent.debug.Exceptions)
 local Types = require(script.Parent.Parent.Types)
 local https = game:GetService("HttpService")
 
@@ -35,6 +36,8 @@ function Constraint.new(p1: Types.Point, p2: Types.Point, canvas: Types.Canvas, 
 		render = config.render,
 		thickness = config.thickness,
 		support = config.support,
+		_TYPE = config.TYPE,
+		k = 0.1,
 		color = nil,
 	}, Constraint)
 
@@ -51,18 +54,35 @@ end
 
 function Constraint:Constrain()
 	local cur = (self.point2.pos - self.point1.pos).Magnitude
-	local offset = ((self.restLength - cur) / cur)/2
-
-	local dir = self.point2.pos 
-	dir -= self.point1.pos 
-	dir *= offset
-
-	if not self.point1.snap then
-		self.point1.pos -= dir
+	local force
+	
+	if self._TYPE == "ROPE" then 
+		local restLength
+		if cur > self.restLength then 
+			restLength = self.restLength
+		elseif cur < self.thickness then 
+			restLength = self.thickness
+		end
+		
+		local offset = ((restLength - cur)/restLength)/2
+		force = self.point2.pos - self.point1.pos 
+		force *= offset
+	elseif self._TYPE == "ROD" then 
+		local offset = ((self.restLength - cur)/self.restLength)/2	
+		force = self.point2.pos - self.point1.pos
+		force *= offset
+	elseif self._TYPE == "SPRING" then
+		force = self.point2.pos - self.point1.pos 
+		local mag = force.Magnitude - self.restLength
+		force = force.Unit
+		force *= -1 * self.k * mag
+	else
+		return
 	end
-
-	if not self.point2.snap then
-		self.point2.pos += dir
+	
+	if force then 
+		if not self.point1.snap then self.point1.pos -= force end
+		if not self.point2.snap then self.point2.pos += force end		
 	end
 end
 
@@ -97,6 +117,10 @@ end
 
 function Constraint:SetLength(newLength: number)
 	throwTypeError("length", newLength, 1, "number")
+	if newLength <= 0 then 
+		throwException("error", "INVALID_CONSTRAINT_LENGTH")
+	end
+	
 	self.restLength = newLength
 end
 
@@ -169,6 +193,43 @@ end
 
 function Constraint:GetFrame() : Frame?
 	return self.frame
+end
+
+--[[
+	This method is used to update the Spring constant (by default 0.1) used for spring constraint calculations.
+
+	[METHOD]: Constraint:SetSpringConstant()
+	[PARAMETERS]: k: number 
+	[RETURNS]: nil
+]]--
+
+function Constraint:SetSpringConstant(k: number)
+	throwTypeError("springConstant", k, 1, "number")
+	self.k = k
+end
+
+--[[
+	The constraints's unique ID can be fetched using this method.
+
+	[METHOD]: Constraint:GetId()
+	[PARAMETERS]: none 
+	[RETURNS]: id: string
+]]--
+
+function Constraint:GetId() : string
+	return self.id
+end
+
+--[[
+	Returns the Parent (RigidBody) of the Constraint if any.
+	
+	[METHOD]: Constraint:GetParent()
+	[PARAMETERS]: none
+	[RETURNS]: parent: RigidBody | nil
+]]--
+
+function Constraint:GetParent()
+	return self.Parent
 end
 
 return Constraint

@@ -67,10 +67,12 @@ function Point:Update(dt: number)
 
 		local velocity = self.pos 
 		velocity -= self.oldPos
-		velocity += self.forces * dt * self.engine.speed
-		velocity *= self.friction
 
-                -- fix friction
+		if self.engine.independent then 
+			self.forces *= dt * self.engine.speed
+		end
+		velocity += self.forces 
+		velocity *= self.friction 
 
 		self.oldPos = self.pos
 		self.pos += velocity
@@ -211,6 +213,18 @@ end
 
 function Point:Velocity() : Vector2
 	return self.pos - self.oldPos
+end
+
+--[[
+	Returns the Parent (Constraint) of the Point if any.
+	
+	[METHOD]: Point:GetParent()
+	[PARAMETERS]: none
+	[RETURNS]: parent: Constraint | nil
+]]--
+
+function Point:GetParent()
+	return self.Parent
 end
 
 return Point

@@ -1,5 +1,38 @@
 # Releases
 
+## v0.3.1 - Fixes to Collision Detection & New Methods
+
+* Made `restLength: number?` an optional parameter for `Engine:CreateConstraint()`.
+* Fixes to Collision Detection - Collision detection is no longer skipped at low frame rates.
+* Fixed how forces are applied to Points when the engine is framerate independent.
+* Added new methods to Engine
+   * `Engine:FrameRateIndependent(independent: boolean)` - Determines if Frame rate does not affect the simulation speed. By default set to true.
+* Added new methods to Constraint
+   * `Constraint:GetParent()`
+* Added new methods to Point 
+   * `Point:GetParent()`
+
+## v0.3 - New Constraints: Ropes, Rods & Springs!
+
+Major Release. 
+
+* Checks to prevent division by 0. 
+* Fix `Constraint:SetLength()`. Disregard invalid lengths. (length <= 0)
+* Fix `Engine:CreateConstraint()`. Disregard invalid thickness and lengths. (length & thickness <= 0)
+* Added new methods to `Constraint`
+   * `Constraint:SetSpringConstant(k: number)`
+   * `Constraint:GetId()`
+* New "type" paramater to `Engine:CreateConstraint()`
+* New "restLength" parameter to `Engine:CreateConstraint()`
+   * `Engine:CreateConstraint(Type: string, point1: Point, point2: Point, visible: boolean, thickness: number, restLength: number)`
+* Added rope constraint type
+   * Constraints that have an upper constrain limit and exclusive of a lower limit. Similar to Roblox's 3D Rope Constraints.
+* Added rod constraint type
+   * These constraints are similar to how Rope constraints function. But unlike rope constraints, these constraints have a fixed amount of space between its points and aren't flexible. These constraints can move in all directions just how rope constraints can, but the space between them remains constant.
+* Added spring constraint type
+   * Spring constraints are elastic, wonky and flexible. Perfect for various simulations that require springs. Achieved using Hooke's Law.
+* Type parameter in Engine:CreateConstraint() must be "SPRING", "ROD" or "ROPE" (text case does not matter).
+
 ## v0.2.4 - Improvements to Code
 
 * Add type definitions & annotations 
