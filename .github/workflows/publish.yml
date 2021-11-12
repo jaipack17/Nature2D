@@ -23,6 +23,5 @@ jobs:
           WALLY_AU: ${{ secrets.WALLY_AU }}
           run: |
             mkdir -p ~/.wally
-            mkdir -p ~/.wally
             echo "$WALLY_AUTH" > ~/.wally/auth.toml
             wally publish
