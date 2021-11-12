@@ -6,6 +6,7 @@ return {
 	engineInit = {
 		gravity = Vector2.new(0, .3),
 		friction = 0.99,
+		airfriction = 0.99,
 		bounce = 0.8,
 		timeSteps = 1,
 		canvas = {
@@ -19,6 +20,7 @@ return {
 		"gravity",
 		"friction",
 		"collisionmultiplier",
+		"airfriction",
 	},
 	constraint = {
 		color = Color3.new(1, 1, 1),
