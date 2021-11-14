@@ -1,5 +1,18 @@
 # Releases
 
+## v0.3.4 - Anchor Point Support
+
+* Added Anchor point support
+* Added new methods to RigidBodies
+   * `RigidBody:GetCenter()`
+* Added new methods to Points
+   * `Point:SetPosition(newPosition: Vector2)`
+* Bug fixes
+   * Fixed Parent hierarchy errors in Points. 
+   * Fixed `Point:Update()` "Cannot read property 'Parent' of nil" errors.
+   * Fixed `Point:KeepInCanvas()` "Cannot read property 'Parent' of nil" errors.
+
+
 ## v0.3.2 - Major Improvements to Frictional Forces
 
 * Fixed a bug where changes to physical properties before creating any RigidBodies, Constraints or Points won't affect/apply to newly created objects.
