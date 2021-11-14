@@ -49,7 +49,7 @@ end
 ]]--
 
 local function CalculatePenetration(minA: number, maxA: number, minB: number, maxB: number) : number
-	if (minA < minB) then 
+	if minA < minB then 
 		return minB - maxA 
 	else 
 		return minA - maxB 
@@ -74,13 +74,13 @@ local function CalculateCenter(vertices) : Vector2
 
 	for _, v in ipairs(vertices) do 
 		center += v.pos
-		minX = math.min(minX, v.pos.x);
-		minY = math.min(minY, v.pos.y);
-		maxX = math.max(maxX, v.pos.x);
-		maxY = math.max(maxY, v.pos.y);
+		minX = math.min(minX, v.pos.x)
+		minY = math.min(minY, v.pos.y)
+		maxX = math.max(maxX, v.pos.x)
+		maxY = math.max(maxY, v.pos.y)
 	end
 
-	center /= #vertices;
+	center /= #vertices
 
 	return center
 end
@@ -208,11 +208,11 @@ end
 ]]--
 
 function RigidBody:CreateProjection(Axis: Vector2, Min: number, Max: number) : (number, number)
-	local DotP = Axis.X * self.vertices[1].pos.x + Axis.Y * self.vertices[1].pos.y;
-	Min, Max = DotP, DotP;
+	local DotP = Axis.X * self.vertices[1].pos.x + Axis.Y * self.vertices[1].pos.y
+	Min, Max = DotP, DotP
 
 	for I = 2, #self.vertices, 1 do
-		DotP = Axis.X * self.vertices[I].pos.x + Axis.Y * self.vertices[I].pos.y;
+		DotP = Axis.X * self.vertices[I].pos.x + Axis.Y * self.vertices[I].pos.y
 		Min = math.min(DotP, Min)
 		Max = math.max(DotP, Max)
 	end
@@ -289,7 +289,7 @@ function RigidBody:DetectCollision(other)
 			end
 		end
 
-		return { true, collision }; 	
+		return { true, collision }
 	end
 
 	return { false, {} }
