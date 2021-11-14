@@ -49,7 +49,7 @@ end
 ]]--
 
 local function CalculatePenetration(minA: number, maxA: number, minB: number, maxB: number) : number
-	if minA < minB then 
+	if (minA < minB) then 
 		return minB - maxA 
 	else 
 		return minA - maxB 
@@ -74,10 +74,10 @@ local function CalculateCenter(vertices) : Vector2
 
 	for _, v in ipairs(vertices) do 
 		center += v.pos
-		minX = math.min(minX, v.pos.x)
-		minY = math.min(minY, v.pos.y)
-		maxX = math.max(maxX, v.pos.x)
-		maxY = math.max(maxY, v.pos.y)
+		minX = math.min(minX, v.pos.x);
+		minY = math.min(minY, v.pos.y);
+		maxX = math.max(maxX, v.pos.x);
+		maxY = math.max(maxY, v.pos.y);
 	end
 
 	center /= #vertices;
@@ -350,8 +350,13 @@ function RigidBody:Render()
 		self:SetPosition(self.anchorPos)
 		self:Rotate(self.anchorRotation)
 	else 
+		local center = self.center
+		local offset = Vector2.new(.5, .5) - self.frame.AnchorPoint
+		offset *= self.frame.AbsoluteSize
+		center -= offset
+		
 		self.frame.Rotation = math.deg(math.atan2((self.vertices[2].pos - self.vertices[1].pos).y, (self.vertices[2].pos - self.vertices[1].pos).x))
-		self.frame.Position = UDim2.new(0, self.center.x - self.frame.AbsoluteSize.x/2, 0, self.center.y - self.frame.AbsoluteSize.y/2)		
+		self.frame.Position = UDim2.new(0, center.x, 0, center.y)		
 	end
 end
 
@@ -676,7 +681,7 @@ end
 --[[
 	Used to fetch a state
 
-	[METHOD]: RigidBody:SetState()
+	[METHOD]: RigidBody:GetState()
 	[PARAMETERS]: state: string
 	[RETURNS]: value: any
 ]]--
@@ -684,6 +689,18 @@ end
 function RigidBody:GetState(state: string) : any
 	throwTypeError("state", state, 1, "string")
 	return self.States[state]
+end
+
+--[[
+	Used to fetch the center position of the RigidBody
+
+	[METHOD]: RigidBody:SetState()
+	[PARAMETERS]: none
+	[RETURNS]: center: Vector2
+]]--
+
+function RigidBody:GetCenter()
+	return self.center
 end
 
 return RigidBody
