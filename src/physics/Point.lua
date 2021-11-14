@@ -73,10 +73,10 @@ function Point:Update(dt: number)
 		end
 		velocity += self.forces 
 		
-		local body = self.Parent.Parent
+		local body = self.Parent
 		
-		if body then 
-			if body.Collisions.CanvasEdge or body.Collisions.Body then 
+		if body and body.Parent then 
+			if body.Parent.Collisions.CanvasEdge or body.Parent.Collisions.Body then 
 				velocity *= self.friction 
 			else 
 				velocity *= self.airfriction
@@ -100,14 +100,14 @@ end
 ]]--
 
 function Point:KeepInCanvas()
-	local vx = self.pos.x - self.oldPos.x;
-	local vy = self.pos.y - self.oldPos.y;
+	local vx = self.pos.x - self.oldPos.x
+	local vy = self.pos.y - self.oldPos.y
 
 	local width = self.canvas.size.x	
 	local height = self.canvas.size.y 
 
 	local collision = false
-	local edge;
+	local edge
 	
 	if self.pos.y > height then
 		self.pos = Vector2.new(self.pos.x, height) 
@@ -133,14 +133,14 @@ function Point:KeepInCanvas()
 		edge = "Right"
 	end
 	
-	local body = self.Parent.Parent
+	local body = self.Parent
 	
-	if body then 
+	if body and body.Parent then 
 		if collision then 
-			body.Collisions.CanvasEdge = true
-			body.CanvasEdgeTouched:Fire(edge)
+			body.Parent.Collisions.CanvasEdge = true
+			body.Parent.CanvasEdgeTouched:Fire(edge)
 		else
-			body.Collisions.CanvasEdge = false
+			body.Parent.Collisions.CanvasEdge = false
 		end
 	end
 end
@@ -241,6 +241,20 @@ end
 
 function Point:GetParent()
 	return self.Parent
+end
+
+--[[
+	Used to set a new position for the point
+	
+	[METHOD]: Point:SetPosition()
+	[PARAMETERS]: newPosition: Vectir2
+	[RETURNS]: nil
+]]--
+
+function Point:SetPosition(newPosition: Vector2)
+	throwTypeError("newPosition", newPosition, 1, "Vector2")
+	self.oldPos = newPosition
+	self.pos = newPosition
 end
 
 return Point
