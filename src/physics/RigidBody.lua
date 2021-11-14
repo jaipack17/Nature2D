@@ -80,7 +80,7 @@ local function CalculateCenter(vertices) : Vector2
 		maxY = math.max(maxY, v.pos.y)
 	end
 
-	center /= #vertices;
+	center /= #vertices
 
 	return center
 end
@@ -208,11 +208,11 @@ end
 ]]--
 
 function RigidBody:CreateProjection(Axis: Vector2, Min: number, Max: number) : (number, number)
-	local DotP = Axis.X * self.vertices[1].pos.x + Axis.Y * self.vertices[1].pos.y;
-	Min, Max = DotP, DotP;
+	local DotP = Axis.X * self.vertices[1].pos.x + Axis.Y * self.vertices[1].pos.y
+	Min, Max = DotP, DotP
 
 	for I = 2, #self.vertices, 1 do
-		DotP = Axis.X * self.vertices[I].pos.x + Axis.Y * self.vertices[I].pos.y;
+		DotP = Axis.X * self.vertices[I].pos.x + Axis.Y * self.vertices[I].pos.y
 		Min = math.min(DotP, Min)
 		Max = math.max(DotP, Max)
 	end
@@ -289,7 +289,7 @@ function RigidBody:DetectCollision(other)
 			end
 		end
 
-		return { true, collision }; 	
+		return { true, collision }
 	end
 
 	return { false, {} }
@@ -350,8 +350,13 @@ function RigidBody:Render()
 		self:SetPosition(self.anchorPos)
 		self:Rotate(self.anchorRotation)
 	else 
+		local center = self.center
+		local offset = Vector2.new(.5, .5) - self.frame.AnchorPoint
+		offset *= self.frame.AbsoluteSize
+		center -= offset
+		
 		self.frame.Rotation = math.deg(math.atan2((self.vertices[2].pos - self.vertices[1].pos).y, (self.vertices[2].pos - self.vertices[1].pos).x))
-		self.frame.Position = UDim2.new(0, self.center.x - self.frame.AbsoluteSize.x/2, 0, self.center.y - self.frame.AbsoluteSize.y/2)		
+		self.frame.Position = UDim2.new(0, center.x, 0, center.y)		
 	end
 end
 
@@ -676,7 +681,7 @@ end
 --[[
 	Used to fetch a state
 
-	[METHOD]: RigidBody:SetState()
+	[METHOD]: RigidBody:GetState()
 	[PARAMETERS]: state: string
 	[RETURNS]: value: any
 ]]--
@@ -684,6 +689,18 @@ end
 function RigidBody:GetState(state: string) : any
 	throwTypeError("state", state, 1, "string")
 	return self.States[state]
+end
+
+--[[
+	Used to fetch the center position of the RigidBody
+
+	[METHOD]: RigidBody:SetState()
+	[PARAMETERS]: none
+	[RETURNS]: center: Vector2
+]]--
+
+function RigidBody:GetCenter()
+	return self.center
 end
 
 return RigidBody
