@@ -137,7 +137,7 @@ function Engine:Start()
 			end
 
 			for _, other in ipairs(filtered) do 
-				if body.id ~= other.id and (body.collidable and other.collidable) then
+				if body.id ~= other.id and (body.collidable and other.collidable) and not table.find(body.filtered, other.id) then
 					local result = body:DetectCollision(other)
 					local isColliding = result[1]
 					local Collision = result[2]

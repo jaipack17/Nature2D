@@ -703,4 +703,65 @@ function RigidBody:GetCenter()
 	return self.center
 end
 
+--[[
+	Used to ignore/filter any collisions with the other RigidBody.
+
+	[METHOD]: RigidBody:FilterCollisionsWith()
+	[PARAMETERS]: otherBody: RigidBody
+	[RETURNS]: nil
+]]--
+
+function RigidBody:FilterCollisionsWith(otherBody)	
+	if not otherBody.id or not typeof(otherBody.id) == "string" or not otherBody.filtered then 
+		throwException("error", "INVALID_RIGIDBODY")
+	end
+	
+	if otherBody.id == self.id then 
+		throwException("error", "SAME_ID") 
+	end
+	
+	if not table.find(self.filtered, otherBody.id) then 
+		table.insert(self.filtered, otherBody.id)
+		table.insert(otherBody.filtered, self.id)
+	end
+end
+
+--[[
+	Used to unfilter collisions with the other RigidBody. The two bodies will now collide with each other.
+
+	[METHOD]: RigidBody:UnfilterCollisionsWith()
+	[PARAMETERS]: otherBody: RigidBody
+	[RETURNS]: nil
+]]--
+
+function RigidBody:UnfilterCollisionsWith(otherBody)
+	if not otherBody.id or not typeof(otherBody.id) == "string" or not otherBody.filtered then 
+		throwException("error", "INVALID_RIGIDBODY")
+	end
+
+	if otherBody.id == self.id then 
+		throwException("error", "SAME_ID") 
+	end
+	
+	local i1 = table.find(self.filtered, otherBody.id)
+	local i2 = table.find(otherBody.filtered, self.id)
+	
+	if i1 and i2 then 
+		table.remove(self.filtered, i1)
+		table.remove(otherBody.filtered, i2)
+	end
+end
+
+--[[
+	Returns all filtered RigidBodies.
+
+	[METHOD]: RigidBody:GetFilteredRigidBodies()
+	[PARAMETERS]: none
+	[RETURNS]: filtered: table
+]]--
+
+function RigidBody:GetFilteredRigidBodies()
+	return self.filtered
+end
+
 return RigidBody

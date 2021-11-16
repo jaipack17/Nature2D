@@ -8,7 +8,9 @@ local TYPES = {
 	PROPERTY_NOT_FOUND = "[Nature2D]: Invalid Argument #1. Property not found.",
 	INVALID_CONSTRAINT_TYPE = "[Nature2D]: Received Invalid Constraint Type.",
 	INVALID_CONSTRAINT_LENGTH = "[Nature2D]: Received Invalid Constraint Length.",
-	INVALID_CONSTRAINT_THICKNESS = "[Nature2D]: Received Invalid Constraint Thickness."
+	INVALID_CONSTRAINT_THICKNESS = "[Nature2D]: Received Invalid Constraint Thickness.",
+	SAME_ID = "[Nature2D]: Cannot ignore collisions for the same RigidBodies.",
+	INVALID_RIGIDBODY = "[Nature2D]: Received Invalid RigidBody."
 }
 
 return function (TASK: string, TYPE: string)
