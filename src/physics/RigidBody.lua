@@ -8,6 +8,7 @@ local Globals = require(script.Parent.Parent.constants.Globals)
 local Signal = require(script.Parent.Parent.utils.Signal)
 local Types = require(script.Parent.Parent.Types)
 local throwTypeError = require(script.Parent.Parent.debug.TypeErrors)
+local throwException = require(script.Parent.Parent.debug.Exceptions)
 
 local HttpService = game:GetService("HttpService")
 

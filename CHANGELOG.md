@@ -1,6 +1,6 @@
 # Releases
 
-## v0.3.5 - Basic Collision Filtering
+## v0.3.6 - Basic Collision Filtering
 
 Implemented basic collision filtering API for RigidBodies! You can now ignore collisions for 2 rigid bodies while still being able to let them collide with other rigid bodies!
 
