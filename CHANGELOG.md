@@ -10,8 +10,6 @@ Implemented basic collision filtering API for RigidBodies! You can now ignore co
   * `Engine:UnfilterCollisionsWith(otherRigidBody: RigidBody)`
   * `Engine:GetFilteredRigidBodies()`
 
-New documentation example for collision filtering will be updated on the site shortly.
-
 ## v0.3.4 - Anchor Point Support
 
 * Added Anchor point support
