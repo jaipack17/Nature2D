@@ -1,5 +1,17 @@
 # Releases
 
+## v0.3.5 - Basic Collision Filtering
+
+Implemented basic collision filtering API for RigidBodies! You can now ignore collisions for 2 rigid bodies while still being able to let them collide with other rigid bodies!
+
+* Added Collision Filtering to Engine
+* Added new Methods to RigidBodies
+  * `Engine:FilterCollisionsWith(otherRigidBody: RigidBody)`
+  * `Engine:UnfilterCollisionsWith(otherRigidBody: RigidBody)`
+  * `Engine:GetFilteredRigidBodies()`
+
+New documentation example for collision filtering will be updated on the site shortly.
+
 ## v0.3.4 - Anchor Point Support
 
 * Added Anchor point support
