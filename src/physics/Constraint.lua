@@ -68,9 +68,10 @@ function Constraint:Constrain()
 		force = self.point2.pos - self.point1.pos 
 		force *= offset
 	elseif self._TYPE == "ROD" then 
-		local offset = ((self.restLength - cur)/self.restLength)/2	
-		force = self.point2.pos - self.point1.pos
-		force *= offset
+		local offset = self.restLength - cur
+		local dif = self.point2.pos - self.point1.pos
+		dif = dif.Unit
+		force = (dif * offset)/2
 	elseif self._TYPE == "SPRING" then
 		force = self.point2.pos - self.point1.pos 
 		local mag = force.Magnitude - self.restLength
