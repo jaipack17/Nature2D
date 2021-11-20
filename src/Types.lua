@@ -92,20 +92,14 @@ export type Range = {
 }
 
 export type Properties = {
-	-- Point
 	Position: Vector2?,
 	Visible: boolean?,
 	Snap: boolean?,
-
-	-- Constraint
 	Type: string?,
 	Point1: Point?,
 	Point2: Point?,
-	--Visible: Vector2,
 	Thickness: number?, 
 	RestLength: number?,
-	
-	-- RigidBody
 	Object: GuiObject?, 
 	Collidable: boolean?, 
 	Anchored: boolean?
