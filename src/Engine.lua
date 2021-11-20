@@ -23,7 +23,7 @@ local function CollisionResponse(body: Types.RigidBody, other: Types.RigidBody, 
 	
 	-- Fire the touched event
 	body.Touched:Fire(other.id)
-	
+
 	-- Calculate penetration in 2 dimensions
 	local penetration: Vector2 = Collision.axis * Collision.depth
 	local p1: Types.Point = Collision.edge.point1
