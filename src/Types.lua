@@ -1,6 +1,4 @@
---[[
-	Type Definitions
-]]--
+-- Type Definitions
 
 export type Quadtree<T> = {
 	position: Vector2,
@@ -33,14 +31,13 @@ export type Point = {
 	render: boolean,
 	keepInCanvas: boolean,
 	color: Color3?,
-	radius: number,
+	radius: number
 }
 
 export type RigidBody = {
 	CreateProjection: (Axis: Vector2, Min: number, Max: number) -> (number, number),
 	SetState: (state: string, value: any) -> (),
 	GetState: (state: string) -> any,
-	
 	id: string,
 	vertices: { Point },
 	edges: { any },
@@ -62,7 +59,7 @@ export type RigidBody = {
 export type SegmentConfig = {
 	restLength: number?, 
 	render: boolean, 
-	thickness: number,
+	thickness: number?,
 	support: boolean,
 	TYPE: string,
 }
@@ -92,6 +89,26 @@ export type Collision = {
 export type Range = {
 	position: Vector2,
 	size: Vector2
+}
+
+export type Properties = {
+	-- Point
+	Position: Vector2?,
+	Visible: boolean?,
+	Snap: boolean?,
+
+	-- Constraint
+	Type: string?,
+	Point1: Point?,
+	Point2: Point?,
+	--Visible: Vector2,
+	Thickness: number?, 
+	RestLength: number?,
+	
+	-- RigidBody
+	Object: GuiObject?, 
+	Collidable: boolean?, 
+	Anchored: boolean?
 }
 
 return nil
