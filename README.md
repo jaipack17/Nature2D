@@ -39,7 +39,7 @@ After that, Run `wally install` in the CLI! Nature2D should be installed in your
 **To get started:**
 ```lua
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Nature2D = require(ReplicatedStorage.Nature2D.Engine)
+local Nature2D = require(ReplicatedStorage.Nature2D)
 
 local engine = Nature2D.init(screenGuiInstance)
 --[[
