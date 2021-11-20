@@ -1,30 +1,20 @@
---[[
-	RigidBodies are formed by Constraints, Points and UI Elements.
-]]--
+-- RigidBodies are formed by Constraints, Points and UI Elements.
 
+-- Services and utilities
 local Point = require(script.Parent.Point)
 local Constraint = require(script.Parent.Constraint)
-local Globals = require(script.Parent.Parent.constants.Globals)
-local Signal = require(script.Parent.Parent.utils.Signal)
+local Globals = require(script.Parent.Parent.Constants.Globals)
+local Signal = require(script.Parent.Parent.Utilities.Signal)
 local Types = require(script.Parent.Parent.Types)
-local throwTypeError = require(script.Parent.Parent.debug.TypeErrors)
-local throwException = require(script.Parent.Parent.debug.Exceptions)
-
+local throwTypeError = require(script.Parent.Parent.Debugging.TypeErrors)
+local throwException = require(script.Parent.Parent.Debugging.Exceptions)
 local HttpService = game:GetService("HttpService")
 
 local RigidBody = {}
 RigidBody.__index = RigidBody
 
---[[
-	[PRIVATE]
-
-	This method is used to fetch the positions of the 4 corners of  UI element.
-
-	[METHOD]: GetCorners()
-	[PARAMETERS]: frame: GuiObject, engine: Engine 
-	[RETURNS]: corners: table
-]]--
-
+-- [PRIVATE]
+-- This method is used to fetch the positions of the 4 corners of  UI element.
 local function GetCorners(frame: GuiObject, engine)
 	local pos, size = frame.AbsolutePosition, frame.AbsoluteSize
 	local rotation = math.rad(frame.Rotation)
@@ -32,7 +22,9 @@ local function GetCorners(frame: GuiObject, engine)
 	local temp = math.sqrt((size.X/2)^2+(size.Y/2)^2)
 
 	local offset = (engine.path and engine.path.IgnoreGuiInset) and Globals.offset or Vector2.new(0, 0)
-
+	
+	-- Calculate and return all 4 corners of the GuiObject
+	-- Also adheres to the Rotation of the GuiObject
 	return {
 		center - temp*Vector2.new(math.cos(rotation + math.atan2(size.Y, size.X)), math.sin(rotation + math.atan2(size.Y, size.X))) + offset, -- topleft
 		center + temp*Vector2.new(math.cos(rotation - math.atan2(size.Y, size.X)), math.sin(rotation - math.atan2(size.Y, size.X))) + offset, -- topright
@@ -41,14 +33,7 @@ local function GetCorners(frame: GuiObject, engine)
 	}
 end
 
---[[
-	This method is used to calculate the depth/penetration of a collision
-
-	[METHOD]: CalculatePenetration()
-	[PARAMETERS]: minA: number, maxA: number, minB: number, maxB: number
-	[RETURNS]: depth: number
-]]--
-
+-- This method is used to calculate the depth/penetration of a collision
 local function CalculatePenetration(minA: number, maxA: number, minB: number, maxB: number) : number
 	if minA < minB then 
 		return minB - maxA 
@@ -57,14 +42,7 @@ local function CalculatePenetration(minA: number, maxA: number, minB: number, ma
 	end
 end
 
---[[
-	This method is used to calculate the center position of a UI element
-
-	[METHOD]: CalculateCenter()
-	[PARAMETERS]: vertices: table
-	[RETURNS]: center: Vector2
-]]--
-
+-- This method is used to calculate the center position of a UI element
 local function CalculateCenter(vertices) : Vector2
 	local center = Vector2.new(0, 0)
 
@@ -86,14 +64,7 @@ local function CalculateCenter(vertices) : Vector2
 	return center
 end
 
---[[
-	This method is used to update the positions of each point of a rigidbody to the corners of a UI element.
-
-	[METHOD]: UpdateVertices()
-	[PARAMETERS]: frame: GuiObject, vertices: table, engine: Engine
-	[RETURNS]: nil
-]]--
-
+-- This method is used to update the positions of each point of a rigidbody to the corners of a UI element.
 local function UpdateVertices(frame: GuiObject, vertices, engine)
 	local corners = GetCorners(frame, engine)
 	for i, vertex in ipairs(vertices) do 
@@ -102,20 +73,13 @@ local function UpdateVertices(frame: GuiObject, vertices, engine)
 	end
 end
 
---[[
-	[PUBLIC]
-
-	This method is used to initialize a new RigidBody.
-
-	[METHOD]: RigidBody.new()
-	[PARAMETERS]: frame: GuiObject, m: number, collidable: boolean, anchored: boolean, engine: Engine
-	[RETURNS]: RigidBody
-]]--
-
-function RigidBody.new(frame: GuiObject, m: number, collidable: boolean, anchored: boolean, engine) 	
+-- [PUBLIC]
+-- This method is used to initialize a new RigidBody.
+function RigidBody.new(frame: GuiObject, m: number, collidable: boolean?, anchored: boolean?, engine) 	
 	local vertices = {}
 	local edges = {}
 	
+	-- Configurations
 	local pointConfig = {
 		snap = anchored, 
 		selectable = false, 
@@ -130,14 +94,16 @@ function RigidBody.new(frame: GuiObject, m: number, collidable: boolean, anchore
 		support = false,
 		TYPE = "ROD"
 	}
-
+	
+	-- Point creation method
 	local function addPoint(pos)
 		local newPoint = Point.new(pos, engine.canvas, engine, pointConfig)
 		vertices[#vertices + 1] = newPoint
 
 		return newPoint
 	end
-
+	
+	-- Constraint creation method
 	local function addConstraint(p1, p2, support)
 		constraintConfig.support = support
 
@@ -146,13 +112,15 @@ function RigidBody.new(frame: GuiObject, m: number, collidable: boolean, anchore
 
 		return newConstraint
 	end
-
+	
+	-- Create Points
 	local corners = GetCorners(frame, engine)
 	local topleft = addPoint(corners[1])
 	local topright = addPoint(corners[2])
 	local bottomleft = addPoint(corners[3])
 	local bottomright = addPoint(corners[4])
-
+	
+	-- Connect points with constraints
 	addConstraint(topleft, topright, false)
 	addConstraint(topleft, bottomleft, false)
 	addConstraint(topright, bottomright, false)
@@ -180,17 +148,22 @@ function RigidBody.new(frame: GuiObject, m: number, collidable: boolean, anchore
 			Body = false,
 			CanvasEdge = false,
 		},
-		States = {}
+		States = {},
+		filtered = {},
 	}, RigidBody)
-
+	
+	-- Apply offsets if ScreenGui's IgnoreGuiInset property is set to true
+	-- Offset = Vector2.new(0, 36)
 	if engine.path and engine.path.IgnoreGuiInset then 
 		self.anchorPos = self.anchorPos and self.anchorPos + Globals.offset or nil
 		self.center += Globals.offset
 	end
-
+	
+	-- Create events
 	self.Touched = Signal.new()
 	self.CanvasEdgeTouched = Signal.new()
-
+	
+	-- Set parents of points and constraints
 	for _, edge in ipairs(edges) do
 		edge.point1.Parent = edge
 		edge.point2.Parent = edge
@@ -200,14 +173,7 @@ function RigidBody.new(frame: GuiObject, m: number, collidable: boolean, anchore
 	return self
 end
 
---[[
-	This method projects the RigidBody on an axis. Used for collision detection.
-
-	[METHOD]: RigidBody:CreateProjection()
-	[PARAMETERS]: Axis: Vector2, Min: number, Max: number
-	[RETURNS]: Min: number, Max: number
-]]--
-
+-- This method projects the RigidBody on an axis. Used for collision detection.
 function RigidBody:CreateProjection(Axis: Vector2, Min: number, Max: number) : (number, number)
 	local DotP = Axis.X * self.vertices[1].pos.x + Axis.Y * self.vertices[1].pos.y
 	Min, Max = DotP, DotP
@@ -221,18 +187,13 @@ function RigidBody:CreateProjection(Axis: Vector2, Min: number, Max: number) : (
 	return Min, Max
 end
 
---[[
-	This method detects collision between two RigidBodies.
-
-	[METHOD]: RigidBody:DetectCollision()
-	[PARAMETERS]: other: RigidBody
-	[RETURNS]: { colliding: table, info: table }
-]]--
-
+-- This method detects collision between two RigidBodies.
 function RigidBody:DetectCollision(other)
 	if self.frame and other.frame then 
+		-- Calculate center of the Body
 		self.center = CalculateCenter(self.vertices)
-
+		
+		-- Initialize collision information
 		local minDist = math.huge
 		local collision: Types.Collision = {
 			axis = nil,
@@ -240,7 +201,13 @@ function RigidBody:DetectCollision(other)
 			edge = nil,
 			vertex = nil
 		}
-
+		
+		-- Loop throught both bodies' edges (excluding support edges)
+		-- Calculate an axis and then project both bodies to the axis
+		-- Assign axis and edge of collision to the collision information dictionary
+		-- Calculate the penetration/depth of the collision
+		-- Find the vertex that collided with the edge
+		-- If a collision took place, return the collision information
 		for i = 1, #self.edges + #other.edges, 1 do
 			local edge = i <= #self.edges and self.edges[i] or other.edges[i - #self.edges]
 
@@ -296,14 +263,7 @@ function RigidBody:DetectCollision(other)
 	return { false, {} }
 end
 
---[[
-	This method is used to apply an external force on the rigid body.
-
-	[METHOD]: RigidBody:ApplyForce()
-	[PARAMETERS]: force: Vector2
-	[RETURNS]: nil
-]]--
-
+-- This method is used to apply an external force on the rigid body.
 function RigidBody:ApplyForce(force: Vector2)
 	throwTypeError("force", force, 1, "Vector2")
 
@@ -312,17 +272,11 @@ function RigidBody:ApplyForce(force: Vector2)
 	end
 end
 
---[[
-	This method updates the positions of the RigidBody's points and constraints.
-
-	[METHOD]: RigidBody:Update()
-	[PARAMETERS]: dt: number
-	[RETURNS]: nil
-]]--
-
+-- This method updates the positions of the RigidBody's points and constraints.
 function RigidBody:Update(dt: number)
 	self.center = CalculateCenter(self.vertices)
-
+	
+	-- Update vertices and edges together
 	for i = 1, #self.vertices + #self.edges do 
 		local edge = i > #self.vertices
 
@@ -334,19 +288,15 @@ function RigidBody:Update(dt: number)
 	end
 end
 
---[[
-	This method updates the positions and appearance of the RigidBody on screen.
-
-	[METHOD]: RigidBody:Render()
-	[PARAMETERS]: none
-	[RETURNS]: nil
-]]--
-
+-- This method updates the positions and appearance of the RigidBody on screen.
 function RigidBody:Render()
+	-- If the RigidBody exceeds its life span, it is destroyed.
 	if self.lifeSpan and os.time() - self.spawnedAt >= self.lifeSpan then 
 		self:Destroy()
 	end
-
+	
+	-- Apply rotations and update positions
+	-- Respects the anchor point of the GuiObject
 	if self.anchored then 
 		self:SetPosition(self.anchorPos)
 		self:Rotate(self.anchorRotation)
@@ -361,42 +311,35 @@ function RigidBody:Render()
 	end
 end
 
---[[
-	This method is used to destroy the RigidBody. The body's UI element is destroyed, its connections are disconnected and the body is removed from the engine.
-
-	[METHOD]: RigidBody:Destroy()
-	[PARAMETERS]: none
-	[RETURNS]: nil
-]]--
-
+-- This method is used to destroy the RigidBody. 
+-- The body's UI element is destroyed, its connections are disconnected and the body is removed from the engine.
 function RigidBody:Destroy()
 	for i, body in ipairs(self.engine.bodies) do
 		if self.id == body.id then
+			-- Destroy events
 			self.Touched:Destroy()
 			self.CanvasEdgeTouched:Destroy()
 			self.Touched = nil 
 			self.CanvasEdgeTouched = nil
+			-- Destroy the frame and remove the RigidBody from the Engine.
 			self.frame:Destroy()
 			table.remove(self.engine.bodies, i)
 		end
 	end
 end
 
---[[
-	This method is used to rotate the RigidBody's UI element. After rotation the positions of its points and constraints are automatically updated.
-
-	[METHOD]: RigidBody:Rotate()
-	[PARAMETERS]: newRotation: number
-	[RETURNS]: oldRotation: number, newRotation: number
-]]--
-
+-- This method is used to rotate the RigidBody's UI element. 
+-- After rotation the positions of its points and constraints are automatically updated.
 function RigidBody:Rotate(newRotation: number)
 	throwTypeError("newRotation", newRotation, 1, "number")
-
+	
+	-- Update anchorRotation if the body is anchored
 	if self.anchored and self.anchorRotation then 
 		self.anchorRotation = newRotation
 	end
-
+	
+	-- Apply rotation and update positions
+	-- Update the RigidBody's points
 	local oldRotation = self.frame.Rotation
 	self.frame.Position = self.anchored and UDim2.new(0, self.anchorPos.x, 0, self.anchorPos.y) or UDim2.new(0, self.center.x, 0, self.center.y)
 	self.frame.Rotation = newRotation
@@ -405,21 +348,17 @@ function RigidBody:Rotate(newRotation: number)
 	return oldRotation, newRotation
 end
 
---[[
-	This method is used to set a new position of the RigidBody's UI element.
-	
-	[METHOD]: RigidBody:SetPosition()
-	[PARAMETERS]: newPosition: Vector2
-	[RETURNS]: oldPosition: UDim2, newPosition: UDim2
-]]--
-
+-- This method is used to set a new position of the RigidBody's UI element.
 function RigidBody:SetPosition(newPosition: Vector2)
 	throwTypeError("newPosition", newPosition, 1, "Vector2")
-
+	
+	-- Update anchorRotation if the body is anchored
 	if self.anchored and self.anchorPos then 
 		self.anchorPos = newPosition
 	end
-
+	
+	-- Update position
+	-- Update the RigidBody's points
 	local oldPosition = self.frame.Position
 	self.frame.Position = UDim2.new(0, newPosition.X, 0, newPosition.Y)
 	UpdateVertices(self.frame, self.vertices, self.engine)
@@ -427,17 +366,12 @@ function RigidBody:SetPosition(newPosition: Vector2)
 	return oldPosition, UDim2.new(0, newPosition.X, 0, newPosition.Y)
 end
 
---[[
-	This method is used to set a new size of the RigidBody's UI element. 
-	
-	[METHOD]: RigidBody:SetSize()
-	[PARAMETERS]: newSize: Vector2
-	[RETURNS]: oldSize: UDim2, newSize: UDim2
-]]--
-
+-- This method is used to set a new size of the RigidBody's UI element. 
 function RigidBody:SetSize(newSize: Vector2)
 	throwTypeError("newSize", newSize, 1, "Vector2")
-
+	
+	-- Update size
+	-- Update the RigidBody's points
 	local oldSize = self.frame.Size
 	self.frame.Size = UDim2.new(0, newSize.X, 0, newSize.Y)
 	UpdateVertices(self.frame, self.vertices, self.engine)
@@ -445,14 +379,8 @@ function RigidBody:SetSize(newSize: Vector2)
 	return oldSize, UDim2.new(0, newSize.X, 0, newSize.Y)
 end
 
---[[
-	This method is used to anchor the RigidBody. Its position will no longer change.
-	
-	[METHOD]: RigidBody:Anchor()
-	[PARAMETERS]: none
-	[RETURNS]: nil
-]]--
-
+-- This method is used to anchor the RigidBody.
+-- Its position will no longer change.
 function RigidBody:Anchor()
 	self.anchored = true
 	self.anchorRotation = self.frame.Rotation
@@ -463,14 +391,7 @@ function RigidBody:Anchor()
 	end
 end
 
---[[
-	This method is used to unachor and anchored RigidBody.
-	
-	[METHOD]: RigidBody:Unanchor()
-	[PARAMETERS]: none
-	[RETURNS]: nil
-]]--
-
+-- This method is used to unachor and anchored RigidBody.
 function RigidBody:Unanchor()
 	self.anchored = false
 	self.anchorRotation = nil
@@ -481,90 +402,41 @@ function RigidBody:Unanchor()
 	end
 end
 
---[[
-	This method is used to determine whether the RigidBody will collide with other RigidBodies. 
-
-	[METHOD]: RigidBody:CanCollide()
-	[PARAMETERS]: collidable: boolean
-	[RETURNS]: nil
-]]--
-
+-- This method is used to determine whether the RigidBody will collide with other RigidBodies. 
 function RigidBody:CanCollide(collidable: boolean)
 	throwTypeError("collidable", collidable, 1, "boolean")
 	self.collidable = collidable
 end
 
---[[
-	The RigidBody's UI Element can be fetched using this method.
-
-	[METHOD]: RigidBody:GetFrame()
-	[PARAMETERS]: none 
-	[RETURNS]: GuiObject
-]]--
-
+-- The RigidBody's UI Element can be fetched using this method.
 function RigidBody:GetFrame() : GuiObject
 	return self.frame
 end
 
---[[
-	The RigidBody's unique ID can be fetched using this method.
-
-	[METHOD]: RigidBody:GetId()
-	[PARAMETERS]: none 
-	[RETURNS]: id: string
-]]--
-
+-- The RigidBody's unique ID can be fetched using this method.
 function RigidBody:GetId() : string
 	return self.id
 end
 
---[[
-	The RigidBody's Points can be fetched using this method.
-
-
-	[METHOD]: RigidBody:GetVertices()
-	[PARAMETERS]: none 
-	[RETURNS]: points: table
-]]--
-
+-- The RigidBody's Points can be fetched using this method.
 function RigidBody:GetVertices()
 	return self.vertices
 end
 
---[[
-	The RigidBody's Constraints can be fetched using this method.
-
-
-	[METHOD]: RigidBody:GetConstraints()
-	[PARAMETERS]: none 
-	[RETURNS]: constraints: table
-]]--
-
+-- The RigidBody's Constraints can be fetched using this method.
 function RigidBody:GetConstraints()
 	return self.edges
 end
 
---[[
-	This method is used to set the RigidBody's life span. Life span is determined by 'seconds'. After this time in seconds has been passed after the RigidBody is created, the RigidBody is automatically destroyed and removed from the engine.
-
-	[METHOD]: RigidBody:SetLifeSpan()
-	[PARAMETERS]: seconds: number 
-	[RETURNS]: nil
-]]--
-
+--vThis method is used to set the RigidBody's life span. 
+-- Life span is determined by 'seconds'.
+-- After this time in seconds has been passed after the RigidBody is created, the RigidBody is automatically destroyed and removed from the engine.
 function RigidBody:SetLifeSpan(seconds: number)
 	throwTypeError("seconds", seconds, 1, "number")
 	self.lifeSpan = seconds
 end
 
---[[
-	This method determines if the RigidBody stays inside the engine's canvas at all times. 
-
-	[METHOD]: RigidBody:KeepInCanvas()
-	[PARAMETERS]: keepInCanvas: boolean
-	[RETURNS]: nil
-]]--
-
+-- This method determines if the RigidBody stays inside the engine's canvas at all times. 
 function RigidBody:KeepInCanvas(keepInCanvas: boolean)
 	throwTypeError("keepInCanvas", keepInCanvas, 1, "boolean")
 
@@ -573,14 +445,7 @@ function RigidBody:KeepInCanvas(keepInCanvas: boolean)
 	end
 end
 
---[[
-	This method sets a custom frictional damp value just for the RigidBody.
-
-	[METHOD]: RigidBody:SetFriction()
-	[PARAMETERS]: friction: number
-	[RETURNS]: nil
-]]--
-
+-- This method sets a custom frictional damp value just for the RigidBody.
 function RigidBody:SetFriction(friction: number)
 	throwTypeError("friction", friction, 1, "number")
 
@@ -589,14 +454,7 @@ function RigidBody:SetFriction(friction: number)
 	end
 end
 
---[[
-	This method sets a custom air frictional damp value just for the RigidBody.
-
-	[METHOD]: RigidBody:SetAirFriction()
-	[PARAMETERS]: friction: number
-	[RETURNS]: nil
-]]--
-
+-- This method sets a custom air frictional damp value just for the RigidBody.
 function RigidBody:SetAirFriction(friction: number)
 	throwTypeError("friction", friction, 1, "number")
 
@@ -605,14 +463,7 @@ function RigidBody:SetAirFriction(friction: number)
 	end
 end
 
---[[
-	This method sets a custom gravitational force just for the RigidBody.
-
-	[METHOD]: RigidBody:SetFriction()
-	[PARAMETERS]: force: Vector2
-	[RETURNS]: nil
-]]--
-
+-- This method sets a custom gravitational force just for the RigidBody.
 function RigidBody:SetGravity(force: Vector2)
 	throwTypeError("force", force, 1, "Vector2")
 
@@ -621,21 +472,15 @@ function RigidBody:SetGravity(force: Vector2)
 	end
 end
 
---[[
-	Returns true if the RigidBody lies within the boundaries of the canvas, else false.
-
-	[METHOD]: RigidBody:IsInBounds()
-	[PARAMETERS]: none
-	[RETURNS]: isInBounds: boolean
-]]--
-
+-- Returns true if the RigidBody lies within the boundaries of the canvas, else false.
 function RigidBody:IsInBounds() : boolean
 	local canvas = self.engine.canvas
 	if not canvas then return false end
 	
+	-- Check if all vertices lie within the canvas.
 	for _, v in ipairs(self.vertices) do 
 		local pos = v.pos 
-		
+	
 		if not ((pos.X >= canvas.topLeft.X and pos.X <= canvas.topLeft.X + canvas.size.X) and (pos.Y >= canvas.topLeft.Y and pos.Y <= canvas.topLeft.Y + canvas.size.Y)) then 
 			return false
 		end
@@ -644,14 +489,7 @@ function RigidBody:IsInBounds() : boolean
 	return true
 end
 
---[[
-	Returns the average of all the velocities of the RigidBody's points
-
-	[METHOD]: RigidBody:AverageVelocity()
-	[PARAMETERS]: none
-	[RETURNS]: velocity: Vector2
-]]--
-
+-- Returns the average of all the velocities of the RigidBody's points
 function RigidBody:AverageVelocity() : Vector2
 	local sum = Vector2.new(0, 0)
 	
@@ -659,19 +497,12 @@ function RigidBody:AverageVelocity() : Vector2
 		sum += v:Velocity()
 	end
 	
+	-- Return average
 	return sum/#self.vertices
 end
 
 -- STATE MANAGEMENT
-
---[[
-	Used to initialize or update states of a RigidBody
-
-	[METHOD]: RigidBody:SetState()
-	[PARAMETERS]: state: string, value: any
-	[RETURNS]: nil
-]]--
-
+-- Used to initialize or update states of a RigidBody
 function RigidBody:SetState(state: string, value: any)
 	throwTypeError("state", state, 1, "string")
 	if self.States[state] == value then return end
@@ -679,88 +510,52 @@ function RigidBody:SetState(state: string, value: any)
 	self.States[state] = value
 end
 
---[[
-	Used to fetch a state
-
-	[METHOD]: RigidBody:GetState()
-	[PARAMETERS]: state: string
-	[RETURNS]: value: any
-]]--
-
+-- Used to fetch an already existing state
 function RigidBody:GetState(state: string) : any
 	throwTypeError("state", state, 1, "string")
 	return self.States[state]
 end
 
---[[
-	Used to fetch the center position of the RigidBody
-
-	[METHOD]: RigidBody:SetState()
-	[PARAMETERS]: none
-	[RETURNS]: center: Vector2
-]]--
-
+-- Used to fetch the center position of the RigidBody
 function RigidBody:GetCenter()
 	return self.center
 end
 
---[[
-	Used to ignore/filter any collisions with the other RigidBody.
-
-	[METHOD]: RigidBody:FilterCollisionsWith()
-	[PARAMETERS]: otherBody: RigidBody
-	[RETURNS]: nil
-]]--
-
+-- Used to ignore/filter any collisions with the other RigidBody.
 function RigidBody:FilterCollisionsWith(otherBody)	
 	if not otherBody.id or not typeof(otherBody.id) == "string" or not otherBody.filtered then 
 		throwException("error", "INVALID_RIGIDBODY")
 	end
 	
-	if otherBody.id == self.id then 
-		throwException("error", "SAME_ID") 
-	end
-	
+	if otherBody.id == self.id then throwException("error", "SAME_ID") end
+
+	-- Insert the ids into their respective places
 	if not table.find(self.filtered, otherBody.id) then 
 		table.insert(self.filtered, otherBody.id)
 		table.insert(otherBody.filtered, self.id)
 	end
 end
 
---[[
-	Used to unfilter collisions with the other RigidBody. The two bodies will now collide with each other.
-
-	[METHOD]: RigidBody:UnfilterCollisionsWith()
-	[PARAMETERS]: otherBody: RigidBody
-	[RETURNS]: nil
-]]--
-
+-- Used to unfilter collisions with the other RigidBody. 
+-- The two bodies will now collide with each other.
 function RigidBody:UnfilterCollisionsWith(otherBody)
 	if not otherBody.id or not typeof(otherBody.id) == "string" or not otherBody.filtered then 
 		throwException("error", "INVALID_RIGIDBODY")
 	end
 
-	if otherBody.id == self.id then 
-		throwException("error", "SAME_ID") 
-	end
+	if otherBody.id == self.id then throwException("error", "SAME_ID") end
 	
 	local i1 = table.find(self.filtered, otherBody.id)
 	local i2 = table.find(otherBody.filtered, self.id)
 	
+	-- Remove the ids from their respective places
 	if i1 and i2 then 
 		table.remove(self.filtered, i1)
 		table.remove(otherBody.filtered, i2)
 	end
 end
 
---[[
-	Returns all filtered RigidBodies.
-
-	[METHOD]: RigidBody:GetFilteredRigidBodies()
-	[PARAMETERS]: none
-	[RETURNS]: filtered: table
-]]--
-
+--Returns all filtered RigidBodies.
 function RigidBody:GetFilteredRigidBodies()
 	return self.filtered
 end
