@@ -1,23 +1,15 @@
---[[
-	Points are what make the rigid bodies behave like real world entities. 
-	Points are responsible for the movement of the RigidBodies and Constraints.
-]]--
+-- Points are what make the rigid bodies behave like real world entities. 
+-- Points are responsible for the movement of the RigidBodies and Constraints.
 
-local Globals = require(script.Parent.Parent.constants.Globals)
+-- Services and utilities
+local Globals = require(script.Parent.Parent.Constants.Globals)
 local Types = require(script.Parent.Parent.Types)
-local throwTypeError = require(script.Parent.Parent.debug.TypeErrors)
+local throwTypeError = require(script.Parent.Parent.Debugging.TypeErrors)
 
 local Point = {}
 Point.__index = Point
 
---[[
-	This method is used to initialize a new Point.
-
-	[METHOD]: Point.new()
-	[PARAMETERS]: pos: Vector2, canvas, engine: engineConfig, config: pointConfig
-	[RETURNS]: Point
-]]--
-
+-- This method is used to initialize a new Point.
 function Point.new(pos: Vector2, canvas: Types.Canvas, engine: Types.EngineConfig, config: Types.PointConfig)
 	local self = setmetatable({
 		Parent = nil,
@@ -38,34 +30,21 @@ function Point.new(pos: Vector2, canvas: Types.Canvas, engine: Types.EngineConfi
 		color = nil,
 		radius = Globals.point.radius
 	}, Point)
-
-	return self 
+	
+	return self
 end
 
---[[
-	This method is used to apply a force to the Point. 
-	
-	[METHOD]: Point:ApplyForce()
-	[PARAMETERS]: force: Vector2
-	[RETURNS]: nil
-]]--
-
+-- This method is used to apply a force to the Point. 
 function Point:ApplyForce(force: Vector2)
 	self.forces += force
 end
 
---[[
-	This method is used to apply external forces like gravity and is responsible for moving the point.
-	
-	[METHOD]: Point:Update()
-	[PARAMETERS]: dt: number
-	[RETURNS]: nil
-]]--
-
+-- This method is used to apply external forces like gravity and is responsible for moving the point.
 function Point:Update(dt: number)
 	if not self.snap then
 		self:ApplyForce(self.gravity)
-
+		
+		-- Calculate velocity
 		local velocity = self.pos 
 		velocity -= self.oldPos
 		if self.engine.independent then 
@@ -75,6 +54,7 @@ function Point:Update(dt: number)
 		
 		local body = self.Parent
 		
+		-- Apply friction
 		if body and body.Parent then 
 			if body.Parent.Collisions.CanvasEdge or body.Parent.Collisions.Body then 
 				velocity *= self.friction 
@@ -84,22 +64,19 @@ function Point:Update(dt: number)
 		else 
 			velocity *= self.friction
 		end
-
+		
+		-- Update point positions
 		self.oldPos = self.pos
 		self.pos += velocity
 		self.forces *= 0
 	end
 end
 
---[[
-	This method is used to keep the point in the engine's canvas. Any point that goes past the canvas, is positioned correctly and the direction of its flipped is reversed accordingly. 
-	
-	[METHOD]: Point:KeepInCanvas()
-	[PARAMETERS]: none
-	[RETURNS]: nil
-]]--
-
+-- This method is used to keep the point in the engine's canvas. 
+-- Any point that goes past the canvas, is positioned correctly and the direction of its flipped is reversed accordingly. 
 function Point:KeepInCanvas()
+	-- vx = velocity.X
+	-- vy = velocity.Y
 	local vx = self.pos.x - self.oldPos.x
 	local vy = self.pos.y - self.oldPos.y
 
@@ -135,6 +112,7 @@ function Point:KeepInCanvas()
 	
 	local body = self.Parent
 	
+	-- Fire CanvasEdgeTouched event
 	if body and body.Parent then 
 		if collision then 
 			body.Parent.Collisions.CanvasEdge = true
@@ -145,21 +123,16 @@ function Point:KeepInCanvas()
 	end
 end
 
---[[
-	This method is used to update the position and appearance of the Point on screen.
-	
-	[METHOD]: Point:Render()
-	[PARAMETERS]: none
-	[RETURNS]: nil
-]]--
-
+-- This method is used to update the position and appearance of the Point on screen.
 function Point:Render()
 	if self.render then 
 		if not self.frame then 
+			-- Create new instance for the point
 			local p = Instance.new("Frame")
 			local border = Instance.new("UICorner")
 			local r = self.radius or Globals.point.radius
-
+			
+			p.AnchorPoint = Vector2.new(.5, .5)
 			p.BackgroundColor3 = self.color or Globals.point.color
 			p.Size = UDim2.new(0, r * 2, 0, r * 2)
 			p.Parent = self.canvas.frame
@@ -169,88 +142,47 @@ function Point:Render()
 
 			self.frame = p
 		end
-
+		
+		-- Update the point's instance
 		self.frame.Position = UDim2.new(0, self.pos.x, 0, self.pos.y)
 	end
-
+	
 	if self.keepInCanvas then 
 		self:KeepInCanvas()
 	end
 end
 
---[[
-	This method is used to determine the radius of the point.
-	
-	[METHOD]: Point:SetRadius()
-	[PARAMETERS]: radius: number
-	[RETURNS]: nil
-]]--
-
-
+-- This method is used to determine the radius of the point.
 function Point:SetRadius(radius: number)
 	throwTypeError("radius", radius, 1, "number")
 	self.radius = radius
 end
 
---[[
-	This method is used to determine the color of the point on screen. By default this is set to (RED) Color3.new(1, 0, 0).
-	
-	[METHOD]: Point:Stroke()
-	[PARAMETERS]: color: Color3
-	[RETURNS]: nil
-]]--
-
+-- his method is used to determine the color of the point on screen. 
+-- By default this is set to (RED) Color3.new(1, 0, 0).
 function Point:Stroke(color: Color3)
 	throwTypeError("color", color, 1, "Color3")
 	self.color = color
 end
 
---[[
-	This method determines if the point remains anchored. If set to false, the point is unanchored.
-	
-	[METHOD]: Point:Snap()
-	[PARAMETERS]: snap: boolean
-	[RETURNS]: nil
-]]--
-
-
+-- This method determines if the point remains anchored. 
+-- If set to false, the point is unanchored.
 function Point:Snap(snap: boolean)
 	throwTypeError("snap", snap, 1, "boolean")
 	self.snap = snap
 end
 
---[[
-	Returns the velocity of the Point
-	
-	[METHOD]: Point:Velocity()
-	[PARAMETERS]: none
-	[RETURNS]: velocity: Vector2
-]]--
-
+-- Returns the velocity of the Point
 function Point:Velocity() : Vector2
 	return self.pos - self.oldPos
 end
 
---[[
-	Returns the Parent (Constraint) of the Point if any.
-	
-	[METHOD]: Point:GetParent()
-	[PARAMETERS]: none
-	[RETURNS]: parent: Constraint | nil
-]]--
-
+-- Returns the Parent (Constraint) of the Point if any.
 function Point:GetParent()
 	return self.Parent
 end
 
---[[
-	Used to set a new position for the point
-	
-	[METHOD]: Point:SetPosition()
-	[PARAMETERS]: newPosition: Vectir2
-	[RETURNS]: nil
-]]--
-
+-- Used to set a new position for the point
 function Point:SetPosition(newPosition: Vector2)
 	throwTypeError("newPosition", newPosition, 1, "Vector2")
 	self.oldPos = newPosition

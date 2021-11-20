@@ -1,8 +1,13 @@
+-- This utility is used in Collision Detection
+-- Quadtree data structure
+
+-- Services and utilities
 local Types = require(script.Parent.Parent.Types)
 
 local Quadtree = {}
 Quadtree.__index = Quadtree
 
+-- Calculate sub-divisions of a node
 local function GetDivisions(position: Vector2, size: Vector2)
 	return {
 		position,
@@ -12,6 +17,7 @@ local function GetDivisions(position: Vector2, size: Vector2)
 	}
 end
 
+-- Check if a range overlaps a node of the quadtree
 local function RangeOverlapsNode(node: Types.Quadtree<Types.RigidBody>, range: Types.Range) : boolean
 	local ap1 = range.position
 	local as1 = range.size
@@ -20,10 +26,12 @@ local function RangeOverlapsNode(node: Types.Quadtree<Types.RigidBody>, range: T
 	local ap2 = node.position
 	local as2 = node.size
 	local sum2 = ap2 + as2
-
+	
+	-- Detect overlapping
 	return (ap1.x < sum2.x and sum.x > ap2.x) and (ap1.y < sum2.y and sum.y > ap2.y)
 end
 
+-- Check if a point lies within a range
 local function RangeHasPoint(range: Types.Range, obj: Types.RigidBody) : boolean
 	local p = obj.center 
 
@@ -33,6 +41,7 @@ local function RangeHasPoint(range: Types.Range, obj: Types.RigidBody) : boolean
 	)
 end
 
+-- Merge two arrays
 local function merge<T>(array1: {T}, array2: {T}) : {T}
 	if #array2 > 0 then 
 		for _, v in ipairs(array2) do
@@ -43,6 +52,7 @@ local function merge<T>(array1: {T}, array2: {T}) : {T}
 	return array1
 end
 
+-- Initialize a new quadtree
 function Quadtree.new(_position: Vector2, _size: Vector2, _capacity: number)
 	return setmetatable({
 		position = _position,
@@ -53,17 +63,20 @@ function Quadtree.new(_position: Vector2, _size: Vector2, _capacity: number)
 	}, Quadtree)
 end
 
+-- Insert a RigidBody in the quadtree
 function Quadtree:Insert(body: Types.RigidBody)
 	if not self:HasObject(body.center) then return end
 		
 	if #self.objects < self.capacity then 
 		self.objects[#self.objects + 1] = body
 	else
+		-- Subdivide if not already
 		if not self.divided then 
 			self:SubDivide()
 			self.divided = true
 		end
-
+		
+		-- Insert the RigidBody in the subdivisions if possible
 		self.topLeft:Insert(body)
 		self.topRight:Insert(body)
 		self.bottomLeft:Insert(body)
@@ -78,6 +91,7 @@ function Quadtree:HasObject(p: Vector2) : boolean
 	)
 end
 
+-- Create subdivisions of a node
 function Quadtree:SubDivide()
 	local divisions = GetDivisions(self.position, self.size)
 
@@ -87,6 +101,8 @@ function Quadtree:SubDivide()
 	self.bottomRight = Quadtree.new(divisions[4], self.size/2, self.capacity)
 end
 
+-- Search through the nodes, given a range query. 
+-- Returns any rigidbody that lies within the range.
 function Quadtree:Search(range: Types.Range, objects: { Types.RigidBody })
 	if not objects then 
 		objects = {}

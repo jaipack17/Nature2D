@@ -1,5 +1,29 @@
 # Releases
 
+## v0.4 - Refactored Object Creation Completely
+
+Major Release. 
+
+* Removed `Engine:CreatePoint()`
+* Removed `Engine:CreateConstraint()`
+* Removed `Engine:CreateRigidBody()`
+* Added `Engine:Create(objectName: string, propertyTable: table)`
+
+Creating new Constraints, Points and RigidBodies is much simpler than before! You just need to care about 1 single method - `Engine:Create()`. This method takes in 2 parameters. The first parameter being the type of instance you are creating. This is either "Point", "Constraint" or "RigidBody". The second parameter consists of the properties you wish to assign to the object. 
+
+Intellisense of VSCode and Studio's script editor will suggest these properties to you!
+
+https://user-images.githubusercontent.com/74130881/142725251-577454d1-abdd-40af-bddf-db1d4c286b2b.mp4
+
+* Changed how you require Nature2D.
+   *  Earlier: `require(ReplicatedStorage.Nature2D.Engine)`
+   * Now: `require(ReplicatedStorage.Nature2D)`
+* Added "Snap" to a valid property of `Point`
+* API cleanup
+* Rewrote commented docs in the source code.
+* Fixed `Point:Render()` - Set point's anchor point to 0.5, 0.5
+* Fixed Rod Constraints and how I solve them - See issue [#8](https://github.com/jaipack17/Nature2D/issues/8)
+
 ## v0.3.6 - Basic Collision Filtering
 
 Implemented basic collision filtering API for RigidBodies! You can now ignore collisions for 2 rigid bodies while still being able to let them collide with other rigid bodies!
@@ -21,7 +45,6 @@ Implemented basic collision filtering API for RigidBodies! You can now ignore co
    * Fixed Parent hierarchy errors in Points. 
    * Fixed `Point:Update()` "Cannot read property 'Parent' of nil" errors.
    * Fixed `Point:KeepInCanvas()` "Cannot read property 'Parent' of nil" errors.
-
 
 ## v0.3.2 - Major Improvements to Frictional Forces
 
