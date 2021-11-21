@@ -19,15 +19,15 @@ Create almost anything you can imagine. From bouncy boxes to destructible struct
 
 # Configuration
 
-* **Using the CLI** - You can clone the repository on your local device and start experimenting!
+**Using the CLI** - You can clone the repository on your local device and start experimenting!
 ```bash
 $ git clone https://github.com/jaipack17/Nature2D.git
 ```
-* **Roblox Model** - Nature2D is available on the Roblox asset store for free. You can get the model through the following link.<br/>
+**Roblox Model** - Nature2D is available on the Roblox asset store for free. You can get the model through the following link.<br/>
 
 https://www.roblox.com/library/7625799164/Nature2D
 
-* **Using wally** - Use [wally](https://github.com/UpliftGames/wally), a package manager for roblox to install Nature2D in your external code editor! This requires wally to be installed on your device. Then, add Nature2D to the dependencies listed in your `wally.toml` file!<br/>
+**Using wally** - Use [wally](https://github.com/UpliftGames/wally), a package manager for roblox to install Nature2D in your external code editor! This requires wally to be installed on your device. Then, add Nature2D to the dependencies listed in your `wally.toml` file!<br/>
 ```toml
 [dependencies]
 Nature2D = "jaipack17/nature2d@0.4.2"
@@ -48,7 +48,7 @@ local engine = Nature2D.init(screenGuiInstance)
 ```
 To get familiar with the library, you can go through the documentation. Documentation is available at https://jaipack17.github.io/Nature2D/!
 
-# Showcase
+# Examples
 
 ### Rotating RigidBodies
 
