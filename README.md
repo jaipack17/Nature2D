@@ -38,8 +38,6 @@ Nature2D = "jaipack17/nature2d@0.4.2"
 ```
 After that, Run `wally install` in the CLI! Nature2D should be installed in your root directory. If you encounter any errors or problems installing Nature2D using wally, [open an issue!](https://github.com/jaipack17/Nature2D/issues)
 
-<hr/>
-
 Require the library and start coding!
 
 ```lua
