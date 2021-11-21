@@ -6,17 +6,18 @@
     <a href="https://www.roblox.com/library/7625799164/Nature2D"><img alt="model" src="https://img.shields.io/badge/asset-roblox-white"></img></a>
     <a href="https://jaipack17.github.io/Nature2D/"><img alt="documentation" src="https://img.shields.io/badge/docs-website-white"></img></a>
 </div>
-<br/>
-
-| <p>Rotating Objects</p> <img width="250px" src="https://github.com/jaipack17/Nature2D/blob/master/assets/spin.gif?raw=true"> | <p>Wrecking Ball</p> <img width="250px" src="https://doy2mn9upadnk.cloudfront.net/uploads/default/original/4X/c/9/d/c9d0129948912361012047ff2c507e42bd032dd1.gif"> | <p>Constraints</p> <img width="250px" src="https://github.com/jaipack17/Nature2D/blob/master/assets/constraints.gif?raw=true"> | <p>Smooth Collisions</p> <img width="270px" src="https://user-images.githubusercontent.com/74130881/142762580-b0bbba61-1a03-4d40-932c-f46344b78815.gif"> |
-|-|-|-|-|
-| <p align="center"><b>Inclined Plane</b></p> <img width="250px" src="https://user-images.githubusercontent.com/74130881/142762715-f17f53ae-a2c8-4ed0-b32e-cad0b72c63b8.gif"> | <p align="center"><b>Ragdoll</b></p> <img width="250px" src="https://user-images.githubusercontent.com/74130881/142762715-f17f53ae-a2c8-4ed0-b32e-cad0b72c63b8.gif"> | | |
 
 ## About
 
 Nature2D is a 2D physics library designed for and on Roblox! Ever wanted to create 2D games but step back because Roblox doesn't have a built-in 2D physics engine? Use Nature2D to create versatile and smooth simulations and mechanics for your 2D games with minimum effort! Nature2D primarily uses methods of [Verlet Integration](https://en.wikipedia.org/wiki/Verlet_integration) and [Convex Hull collisions](https://en.wikipedia.org/wiki/Hyperplane_separation_theorem).
 
 RigidBodies and constraints can potentially be made with almost all UI elements, from Frames to TextBoxes. Create almost anything you can imagine. From bouncy boxes to destructible structures, even character movement in no time. Here's a wrecking ball connected to an invisible constraint knocking a few boxes off of the blue platform.
+
+## Showcase
+
+| <p>Rotating Objects</p> <img width="250px" src="https://github.com/jaipack17/Nature2D/blob/master/assets/spin.gif?raw=true"> | <p>Wrecking Ball</p> <img width="250px" src="https://doy2mn9upadnk.cloudfront.net/uploads/default/original/4X/c/9/d/c9d0129948912361012047ff2c507e42bd032dd1.gif"> | <p>Constraints</p> <img width="250px" src="https://github.com/jaipack17/Nature2D/blob/master/assets/constraints.gif?raw=true"> | <p>Smooth Collisions</p> <img width="270px" src="https://user-images.githubusercontent.com/74130881/142762580-b0bbba61-1a03-4d40-932c-f46344b78815.gif"> |
+|-|-|-|-|
+| <p align="center"><b>Double Pendulum</b></p> <img width="300px" src="https://user-images.githubusercontent.com/74130881/142763125-4c833456-013e-4eb4-9866-36f2eaa82db6.gif"> | <p align="center"><b>Inclined Plane</b></p> <img width="300px" src="https://user-images.githubusercontent.com/74130881/142762715-f17f53ae-a2c8-4ed0-b32e-cad0b72c63b8.gif"> | <p align="center"><b>Slingshot</b></p> <img width="300px" src="https://user-images.githubusercontent.com/74130881/142762938-699dea39-9c9f-417f-9b00-ed512ae1ccb7.gif"> | <p align="center"><b>Box Stack</b></p> <img width="300px" src="https://user-images.githubusercontent.com/74130881/142763023-1d5b6b1e-b93f-4026-806a-c9449b679b93.gif"> |
 
 ## Configuration
 
@@ -48,32 +49,6 @@ local engine = Nature2D.init(screenGuiInstance)
 ]]--
 ```
 To get familiar with the library, you can go through the documentation. Documentation is available at https://jaipack17.github.io/Nature2D/!
-
-## Examples
-
-### Rotating RigidBodies
-
-https://user-images.githubusercontent.com/74130881/139102128-2293b268-d4d9-440a-b961-cb377b050c3f.mp4
-
-### Smooth Collisions
-
-https://user-images.githubusercontent.com/74130881/139102559-132aef05-fb09-4e30-8844-226758839ad3.mp4
-
-### Destructible Structures
-
-https://user-images.githubusercontent.com/74130881/139103050-d6774bfb-789c-4f64-a4dd-e3d3d73bfda7.mp4
-
-### Inclined Plane
-
-https://user-images.githubusercontent.com/74130881/139103207-e6e13e5e-8e4c-4da1-9cce-432f91554433.mp4
-
-### Ragdolls
-
-https://user-images.githubusercontent.com/74130881/139103375-3580265a-06e7-49e8-9947-c9a666ca7d8b.mp4
-
-### Constraints
-
-https://user-images.githubusercontent.com/74130881/139103515-588a0211-c7d7-44d2-9667-4467e5aad245.mp4
 
 ## Contribution
 
