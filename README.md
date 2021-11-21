@@ -21,7 +21,7 @@ Created something cool with Nature2D? Open an [issue](https://github.com/jaipack
 |-|-|-|-|
 | <p align="center"><b>Double Pendulum</b></p> <img width="300px" src="https://user-images.githubusercontent.com/74130881/142763125-4c833456-013e-4eb4-9866-36f2eaa82db6.gif"> | <p align="center"><b>Inclined Plane</b></p> <img width="300px" src="https://user-images.githubusercontent.com/74130881/142762715-f17f53ae-a2c8-4ed0-b32e-cad0b72c63b8.gif"> | <p align="center"><b>Slingshot</b></p> <img width="300px" src="https://user-images.githubusercontent.com/74130881/142762938-699dea39-9c9f-417f-9b00-ed512ae1ccb7.gif"> | <p align="center"><b>Box Stack</b></p> <img width="300px" src="https://user-images.githubusercontent.com/74130881/142763023-1d5b6b1e-b93f-4026-806a-c9449b679b93.gif"> |
 
-## Configuration
+## Getting Started
 
 **Using the CLI** - You can clone the repository on your local device and start experimenting!
 ```bash
@@ -40,7 +40,8 @@ After that, Run `wally install` in the CLI! Nature2D should be installed in your
 
 <hr/>
 
-**To get started:**
+Require the library and start coding!
+
 ```lua
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Nature2D = require(ReplicatedStorage.Nature2D)
