@@ -24,7 +24,12 @@ return {
 		props = {
 			"Object",
 			"Collidable",
-			"Anchored"
+			"Anchored",
+			"LifeSpan",
+			"KeepInCanvas",
+			"Gravity",
+			"Friction",
+			"AirFriction"
 		},
 		must_have = {
 			"Object"
@@ -44,7 +49,9 @@ return {
 			"Point2",
 			"Visible",
 			"Thickness",
-			"RestLength"
+			"RestLength",
+			"SpringConstant",
+			"Color",
 		},
 		must_have = {
 			"Type",
@@ -59,7 +66,10 @@ return {
 		props = {
 			"Position",
 			"Visible",
-			"Snap"
+			"Snap",
+			"KeepInCanvas",
+			"Radius",
+			"Color"
 		},
 		must_have = {
 			"Position"
@@ -71,25 +81,41 @@ return {
 		"Position",
 		"Visible",
 		"Snap",
+		"KeepInCanvas",
+		"Radius",
+		"Color",
 		"Type",
 		"Point1",
 		"Point2",
 		"Thickness", 
 		"RestLength",
+		"SpringConstant",
 		"Object",
 		"Collidable",
-		"Anchored"
+		"Anchored",
+		"LifeSpan",
+		"Gravity",
+		"Friction",
+		"AirFriction"
 	},
 	
 	OBJECT_PROPS_TYPES = {
 		Position = "Vector2",
 		Visible = "boolean",
 		Snap = "boolean",
+		KeepInCanvas = "boolean",
+		Radius = "number",
+		Color = "Color3",
 		Type = "string",
 		Thickness = "number", 
 		RestLength = "number",
+		SpringConstant = "number",
 		Object = "Instance",
 		Collidable = "boolean",
-		Anchored = "boolean"
+		Anchored = "boolean",
+		LifeSpan = "number",
+		Gravity = "Vector2",
+		Friction = "number",
+		AirFriction = "number",
 	},
 }
