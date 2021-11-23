@@ -95,14 +95,22 @@ export type Properties = {
 	Position: Vector2?,
 	Visible: boolean?,
 	Snap: boolean?,
+	KeepInCanvas: boolean?,
+	Radius: number?,
+	Color: Color3?,
 	Type: string?,
 	Point1: Point?,
 	Point2: Point?,
 	Thickness: number?, 
 	RestLength: number?,
+	SpringConstant: number?,
 	Object: GuiObject?, 
 	Collidable: boolean?, 
-	Anchored: boolean?
+	Anchored: boolean?,
+	LifeSpan: number?,
+	Gravity: Vector2?,
+	Friction: number?,
+	AirFriction: number?,
 }
 
 return nil
