@@ -23,7 +23,7 @@ local function CollisionResponse(body: Types.RigidBody, other: Types.RigidBody, 
 	
 	-- Fire the touched event
 	body.Touched:Fire(other.id)
-
+	
 	-- Calculate penetration in 2 dimensions
 	local penetration: Vector2 = Collision.axis * Collision.depth
 	local p1: Types.Point = Collision.edge.point1
@@ -226,9 +226,13 @@ function Engine:Create(object: string, properties: Types.Properties)
 			snap = properties.Snap, 
 			selectable = false, 
 			render = properties.Visible,
-			keepInCanvas = true
+			keepInCanvas = properties.KeepInCanvas or true
 		})
 		
+		-- Apply properties
+		if properties.Radius then newPoint:SetRadius(properties.Radius)	end
+		if properties.Color then newPoint:Stroke(properties.Color) end
+
 		table.insert(self.points, newPoint)
 		return newPoint
 	-- Create the constraint object
@@ -252,6 +256,10 @@ function Engine:Create(object: string, properties: Types.Properties)
 				support = true,
 				TYPE = string.upper(properties.Type)
 			}, self)
+			
+			-- Apply properties
+			if properties.SpringConstant then newConstraint:SetSpringConstant(properties.SpringConstant) end
+			if properties.Color then newConstraint:Stroke(properties.Color) end
 
 			table.insert(self.constraints, newConstraint)	
 			return newConstraint
@@ -262,6 +270,14 @@ function Engine:Create(object: string, properties: Types.Properties)
 			if not properties.Object:IsA("GuiObject") then error("'Object' must be a GuiObject", 2)	end
 
 			local newBody = RigidBody.new(properties.Object, Globals.universalMass, properties.Collidable, properties.Anchored, self)
+			
+			--Apply properties
+			if properties.LifeSpan then newBody:SetLifeSpan(properties.LifeSpan) end
+			if properties.KeepInCanvas then newBody:KeepInCanvas(properties.KeepInCanvas) end
+			if properties.Gravity then newBody:SetGravity(properties.Gravity) end
+			if properties.Friction then newBody:SetFriction(properties.Friction) end
+			if properties.AirFriction then newBody:SetAirFriction(properties.AirFriction) end
+
 			table.insert(self.bodies, newBody)
 			return newBody
 		end
