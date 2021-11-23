@@ -12,6 +12,7 @@ local TYPES = {
 	INVALID_OBJECT = "Received an Invalid Object. Valid objects - RigidBody, Point and Constraint",
 	INVALID_PROPERTY = "Received an Invalid Object Property.",
 	MUST_HAVE_PROPERTY = "Missing must-have properties.",
+	CANVAS_FRAME_NOT_FOUND = "No canvas frame found, initialize the canvas's frame to render custom Points and Constraints!",
 }
 
 return function (TASK: string, TYPE: string)

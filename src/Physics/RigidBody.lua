@@ -68,8 +68,7 @@ end
 local function UpdateVertices(frame: GuiObject, vertices, engine)
 	local corners = GetCorners(frame, engine)
 	for i, vertex in ipairs(vertices) do 
-		vertex.oldPos = corners[i]
-		vertex.pos = corners[i]
+		vertex:SetPosition(corners[i].X, corners[i].Y)
 	end
 end
 
@@ -138,7 +137,7 @@ function RigidBody.new(frame: GuiObject, m: number, collidable: boolean?, anchor
 		collidable = collidable,
 		center = frame.AbsolutePosition + frame.AbsoluteSize/2,
 		engine = engine,
-		spawnedAt = os.time(),
+		spawnedAt = os.clock(),
 		lifeSpan = nil,
 		anchorRotation = anchored and frame.Rotation or nil,
 		anchorPos = anchored and frame.AbsolutePosition or nil,
@@ -285,20 +284,20 @@ function RigidBody:Update(dt: number)
 		else 
 			self.vertices[i]:Update(dt)
 		end
-	end
+	end	
 end
 
 -- This method updates the positions and appearance of the RigidBody on screen.
 function RigidBody:Render()
 	-- If the RigidBody exceeds its life span, it is destroyed.
-	if self.lifeSpan and os.time() - self.spawnedAt >= self.lifeSpan then 
+	if self.lifeSpan and os.clock() - self.spawnedAt >= self.lifeSpan then 
 		self:Destroy()
 	end
 	
 	-- Apply rotations and update positions
 	-- Respects the anchor point of the GuiObject
 	if self.anchored then 
-		self:SetPosition(self.anchorPos)
+		self:SetPosition(self.anchorPos.X, self.anchorPos.Y)
 		self:Rotate(self.anchorRotation)
 	else 
 		local center = self.center
@@ -317,11 +316,11 @@ function RigidBody:Destroy()
 	for i, body in ipairs(self.engine.bodies) do
 		if self.id == body.id then
 			-- Destroy events
+			-- Destroy the frame and remove the RigidBody from the Engine.
 			self.Touched:Destroy()
 			self.CanvasEdgeTouched:Destroy()
 			self.Touched = nil 
 			self.CanvasEdgeTouched = nil
-			-- Destroy the frame and remove the RigidBody from the Engine.
 			self.frame:Destroy()
 			table.remove(self.engine.bodies, i)
 		end
@@ -349,34 +348,36 @@ function RigidBody:Rotate(newRotation: number)
 end
 
 -- This method is used to set a new position of the RigidBody's UI element.
-function RigidBody:SetPosition(newPosition: Vector2)
-	throwTypeError("newPosition", newPosition, 1, "Vector2")
+function RigidBody:SetPosition(PositionX: number, PositionY: number)
+	throwTypeError("PositionX", PositionX, 1, "number")
+	throwTypeError("PositionY", PositionY, 2, "number")
 	
 	-- Update anchorRotation if the body is anchored
 	if self.anchored and self.anchorPos then 
-		self.anchorPos = newPosition
+		self.anchorPos = Vector2.new(PositionX, PositionY)
 	end
 	
 	-- Update position
 	-- Update the RigidBody's points
 	local oldPosition = self.frame.Position
-	self.frame.Position = UDim2.new(0, newPosition.X, 0, newPosition.Y)
+	self.frame.Position = UDim2.fromOffset(PositionX, PositionY)
 	UpdateVertices(self.frame, self.vertices, self.engine)
 
-	return oldPosition, UDim2.new(0, newPosition.X, 0, newPosition.Y)
+	return oldPosition, UDim2.fromOffset(PositionX, PositionY)
 end
 
 -- This method is used to set a new size of the RigidBody's UI element. 
-function RigidBody:SetSize(newSize: Vector2)
-	throwTypeError("newSize", newSize, 1, "Vector2")
+function RigidBody:SetSize(SizeX: number, SizeY: number)
+	throwTypeError("SizeX", SizeX, 1, "number")
+	throwTypeError("SizeY", SizeY, 2, "number")	
 	
 	-- Update size
 	-- Update the RigidBody's points
 	local oldSize = self.frame.Size
-	self.frame.Size = UDim2.new(0, newSize.X, 0, newSize.Y)
+	self.frame.Size = UDim2.fromOffset(SizeX, SizeY)
 	UpdateVertices(self.frame, self.vertices, self.engine)
 
-	return oldSize, UDim2.new(0, newSize.X, 0, newSize.Y)
+	return oldSize, UDim2.fromOffset(SizeX, SizeY)
 end
 
 -- This method is used to anchor the RigidBody.

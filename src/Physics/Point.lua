@@ -5,6 +5,7 @@
 local Globals = require(script.Parent.Parent.Constants.Globals)
 local Types = require(script.Parent.Parent.Types)
 local throwTypeError = require(script.Parent.Parent.Debugging.TypeErrors)
+local throwException = require(script.Parent.Parent.Debugging.Exceptions)
 
 local Point = {}
 Point.__index = Point
@@ -126,6 +127,10 @@ end
 -- This method is used to update the position and appearance of the Point on screen.
 function Point:Render()
 	if self.render then 
+		if not self.canvas.frame then 
+			throwException("error", "CANVAS_FRAME_NOT_FOUND")
+		end
+		
 		if not self.frame then 
 			-- Create new instance for the point
 			local p = Instance.new("Frame")
@@ -183,8 +188,10 @@ function Point:GetParent()
 end
 
 -- Used to set a new position for the point
-function Point:SetPosition(newPosition: Vector2)
-	throwTypeError("newPosition", newPosition, 1, "Vector2")
+function Point:SetPosition(x: number, y: number)
+	throwTypeError("x", x, 1, "number")
+	throwTypeError("y", y, 2, "number")
+	local newPosition = Vector2.new(x, y)
 	self.oldPos = newPosition
 	self.pos = newPosition
 end

@@ -1,5 +1,27 @@
 # Releases
 
+## v0.4.3 - New Valid Properties, API Changes and Improvements
+
+* API Changes to `RigidBody:SetPosition()`, `RigidBody:SetSize()` and `Point:SetPosition()`
+   * These methods no longer take in a Vector2 value, rather individual x and y values.
+   * Example: `RigidBody:SetPosition(100, 100)`, `RigidBody:SetSize(20, 40)` and `Point:SetPosition(500, 0)`
+* Improvement how RigidBody lifespans work. They no longer use `os.time()`. `os.clock()` is now used thus high precision values for RigidBody lifespans work too!
+* Fixed `Point:Render()` and `Constraint:Render()` - Added checks to see if Engine's canvas has a frame.
+* Added new Valid properties to `Engine:Create()`. You can now pass in this properties to `Engine:Create()`.
+* New valid properties for Points
+   * `KeepInCanvas: boolean | nil`
+   * `Color: Color3 | nil`
+   * `Radius: number | nil`
+* New valid properties for Constraints
+   * `SpringConstant: number | nil`
+   * `Color: Color3 | nil`
+* New valid properties for RigidBodies
+   * `LifeSpan: number | nil`
+   * `KeepInCanvas: boolean | nil`
+   * `Gravity: Vector2 | nil`
+   * `Friction: number | nil`
+   * `AirFriction: number | nil`
+
 ## v0.4 - Refactored Object Creation Completely
 
 Major Release. 
