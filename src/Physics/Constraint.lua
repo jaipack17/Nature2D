@@ -77,7 +77,11 @@ end
 
 -- This method is used to update the position and appearance of the constraint on screen.
 function Constraint:Render()
-	if self.render and self.canvas.frame then
+	if self.render then
+		if not self.canvas.frame then 
+			throwException("error", "CANVAS_FRAME_NOT_FOUND")
+		end
+		
 		local thickness = self.thickness or Globals.constraint.thickness
 		local color = self.color or Globals.constraint.color
 
