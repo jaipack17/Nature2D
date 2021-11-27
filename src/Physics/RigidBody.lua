@@ -310,6 +310,33 @@ function RigidBody:Render()
 	end
 end
 
+-- This method is used to clone the RigidBody while keeping the original one intact.
+function RigidBody:Clone(deepCopy: boolean)
+	if not self.frame then return end
+	
+	local frame = self.frame:Clone()
+	frame.Parent = self.frame.Parent
+	
+	local copy = RigidBody.new(frame, self.mass, self.collidable, self.anchored, self.engine)
+	
+	-- Copy lifespan, states and filtered RigidBodies
+	if deepCopy == true then 
+		copy.States = self.States
+		
+		if self.lifeSpan then 
+			copy:SetLifeSpan(self.lifeSpan)
+		end
+		
+		for _, body in ipairs(self.filtered) do
+			copy:FilterCollisionsWith(body)
+		end
+	end
+	
+	table.insert(self.engine.bodies, copy)
+	
+	return copy
+end
+
 -- This method is used to destroy the RigidBody. 
 -- The body's UI element is destroyed, its connections are disconnected and the body is removed from the engine.
 function RigidBody:Destroy()
