@@ -1,5 +1,10 @@
 # Releases
 
+## v0.4.4 - Ability to clone RigidBodies
+
+Added the ability to clone already existing RigidBodies! By default the clone won't inherit the original RigidBody's states, lifespan or filtered RigidBodies. In order to copy those too, pass in the deepCopy parameter as true!
+* Added `RigidBody:Clone(deepCopy: boolean | nil)`
+
 ## v0.4.3 - New Valid Properties, API Changes and Improvements
 
 * API Changes to `RigidBody:SetPosition()`, `RigidBody:SetSize()` and `Point:SetPosition()`
