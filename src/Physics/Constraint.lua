@@ -125,12 +125,14 @@ function Constraint:Destroy()
 		if self.frame then 
 			self.frame:Destroy()
 		end
-
+		
 		for i, c in ipairs(self.engine.constraints) do 
 			if c.id == self.id then 
 				table.remove(self.engine.constraints, i)
 			end
 		end
+		
+		self.engine.ObjectRemoved:Fire(self)
 	end
 end
 
