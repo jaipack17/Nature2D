@@ -146,6 +146,7 @@ function RigidBody.new(frame: GuiObject, m: number, collidable: boolean?, anchor
 		Collisions = {			
 			Body = false,
 			CanvasEdge = false,
+			Other = {}
 		},
 		States = {},
 		filtered = {},
@@ -263,11 +264,18 @@ function RigidBody:DetectCollision(other)
 end
 
 -- This method is used to apply an external force on the rigid body.
-function RigidBody:ApplyForce(force: Vector2)
+function RigidBody:ApplyForce(force: Vector2, t: number)
 	throwTypeError("force", force, 1, "Vector2")
-
+	
+	if t then 
+		throwTypeError("time", t, 2, "number")
+		if t <= 0 then 
+			throwException("error", "INVALID_TIME")
+		end
+	end
+	
 	for _, v in ipairs(self.vertices) do 
-		v:ApplyForce(force)
+		v:ApplyForce(force, t)
 	end
 end
 
@@ -333,6 +341,7 @@ function RigidBody:Clone(deepCopy: boolean)
 	end
 	
 	table.insert(self.engine.bodies, copy)
+	self.engine.ObjectAdded:Fire(copy)
 	
 	return copy
 end
@@ -349,7 +358,9 @@ function RigidBody:Destroy()
 			self.Touched = nil 
 			self.CanvasEdgeTouched = nil
 			self.frame:Destroy()
+			table.clear(self.Collisions.Other)
 			table.remove(self.engine.bodies, i)
+			self.engine.ObjectRemoved:Fire(self)
 		end
 	end
 end
@@ -583,9 +594,14 @@ function RigidBody:UnfilterCollisionsWith(otherBody)
 	end
 end
 
---Returns all filtered RigidBodies.
+-- Returns all filtered RigidBodies.
 function RigidBody:GetFilteredRigidBodies()
 	return self.filtered
+end
+
+-- Returns an array of all RigidBodies that are in collision with the current
+function RigidBody:GetTouchingRigidBodies()
+	return self.Collisions.Other
 end
 
 return RigidBody

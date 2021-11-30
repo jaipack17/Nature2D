@@ -19,7 +19,7 @@ function Point.new(pos: Vector2, canvas: Types.Canvas, engine: Types.EngineConfi
 		canvas = canvas,
 		oldPos = pos,
 		pos = pos,
-		forces = Vector2.new(0, 0),
+		forces = Vector2.new(),
 		gravity = engine.gravity,
 		friction = engine.friction,
 		airfriction = engine.airfriction,
@@ -29,21 +29,48 @@ function Point.new(pos: Vector2, canvas: Types.Canvas, engine: Types.EngineConfi
 		render = config.render,
 		keepInCanvas = config.keepInCanvas,
 		color = nil,
-		radius = Globals.point.radius
+		radius = Globals.point.radius,
+		timed = {
+			start = nil,
+			t = nil,
+			force = Vector2.new()
+		}
 	}, Point)
 	
 	return self
 end
 
 -- This method is used to apply a force to the Point. 
-function Point:ApplyForce(force: Vector2)
+function Point:ApplyForce(force: Vector2, t: number)
+	throwTypeError("force", force, 1, "Vector2")
 	self.forces += force
+		
+	if t then 
+		throwTypeError("time", t, 2, "number")
+		if t <= 0 then
+			throwException("error", "INVALID_TIME")
+		end
+		
+		self.timed.start = os.clock()
+		self.timed.t = t
+		self.timed.force = force 
+	end
 end
 
 -- This method is used to apply external forces like gravity and is responsible for moving the point.
 function Point:Update(dt: number)
 	if not self.snap then
 		self:ApplyForce(self.gravity)
+		
+		if self.timed.start then 
+			if os.clock() - self.timed.start < self.timed.t then 
+				self:ApplyForce(self.timed.force)
+			else
+				self.timed.start = nil
+				self.timed.t = nil
+				self.timed.force = Vector2.new()
+			end
+		end
 		
 		-- Calculate velocity
 		local velocity = self.pos 

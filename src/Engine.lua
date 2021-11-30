@@ -79,7 +79,9 @@ function Engine.init(screengui: Instance)
 			size = Globals.engineInit.canvas.size
 		},
 		Started = Signal.new(),
-		Stopped = Signal.new()
+		Stopped = Signal.new(),
+		ObjectAdded = Signal.new(),
+		ObjectRemoved = Signal.new()
 	}, Engine)
 end
 
@@ -125,6 +127,9 @@ function Engine:Start()
 				filtered = tree:Search(range, {})				
 			end
 			
+			table.clear(body.Collisions.Other)
+			local CollidingWith = {}
+			
 			-- Loop through the filtered RigidBodies
 			-- Detect collisions
 			-- Process collision response
@@ -137,6 +142,7 @@ function Engine:Start()
 					if isColliding then 
 						body.Collisions.Body = true
 						other.Collisions.Body = true
+						table.insert(CollidingWith, other)
 					else 
 						body.Collisions.Body = false
 						other.Collisions.Body = false
@@ -145,6 +151,8 @@ function Engine:Start()
 					CollisionResponse(body, other, isColliding, Collision, dt)
 				end
 			end
+			
+			body.Collisions.Other = CollidingWith
 			
 			-- Render vertices of the body
 			for _, vertex in ipairs(body.vertices) do
@@ -220,6 +228,8 @@ function Engine:Create(object: string, properties: Types.Properties)
 		if not properties[prop] then throwException("error", "MUST_HAVE_PROPERTY") end
 	end
 	
+	local newObject
+	
 	-- Create the Point object
 	if object == "Point" then 
 		local newPoint = Point.new(properties.Position or Vector2.new(), self.canvas, self, {
@@ -234,7 +244,7 @@ function Engine:Create(object: string, properties: Types.Properties)
 		if properties.Color then newPoint:Stroke(properties.Color) end
 
 		table.insert(self.points, newPoint)
-		return newPoint
+		newObject = newPoint
 	-- Create the constraint object
 	elseif object == "Constraint" then 
 		if not table.find(Globals.constraint.types, string.lower(properties.Type or "")) then 
@@ -262,7 +272,7 @@ function Engine:Create(object: string, properties: Types.Properties)
 			if properties.Color then newConstraint:Stroke(properties.Color) end
 
 			table.insert(self.constraints, newConstraint)	
-			return newConstraint
+			newObject = newConstraint
 		end
 	-- Create the RigidBody object
 	elseif object == "RigidBody" then
@@ -279,9 +289,12 @@ function Engine:Create(object: string, properties: Types.Properties)
 			if properties.AirFriction then newBody:SetAirFriction(properties.AirFriction) end
 
 			table.insert(self.bodies, newBody)
-			return newBody
+			newObject = newBody
 		end
 	end	
+	
+	self.ObjectAdded:Fire(newObject)
+	return newObject
 end
 
 -- This method is used to fetch all RigidBodies that have been created. 
