@@ -1,5 +1,17 @@
 # Releases
 
+## v0.4.5 - New Events, Methods and Improvements
+
+* Added new events to Engine
+   * `Engine.ObjectAdded` - Fires when a new Point, Constraint or RigidBody is created.
+   * `Engine.ObjectRemoved` - Fires when a new Point, Constraint or RigidBody is destroyed.
+* Added new methods to RigidBodies
+   * `RigidBody:GetTouchingRigidBodies()` - Returns all RigidBodies that are in collision with the current RigidBody. 
+* API Changes to `Point:ApplyForce()` and `RigidBody:ApplyForce()`
+   * Added a second optional parameter 'time'.
+   * The time parameter can be used to apply a force for a certain amount of time.
+   * Example: `Body:ApplyForce(Vector2.new(.4, 0), 3) -- applies the force for 3 seconds`
+
 ## v0.4.4 - Ability to clone RigidBodies
 
 Added the ability to clone already existing RigidBodies! By default the clone won't inherit the original RigidBody's states, lifespan or filtered RigidBodies. In order to copy those too, pass in the deepCopy parameter as true!
