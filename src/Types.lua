@@ -113,4 +113,9 @@ export type Properties = {
 	AirFriction: number?,
 }
 
+export type Custom = {
+	Vertices: {},
+	Edges: {}
+}
+
 return nil
