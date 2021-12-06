@@ -8,6 +8,7 @@ local Signal = require(script.Parent.Parent.Utilities.Signal)
 local Types = require(script.Parent.Parent.Types)
 local throwTypeError = require(script.Parent.Parent.Debugging.TypeErrors)
 local throwException = require(script.Parent.Parent.Debugging.Exceptions)
+local restrict = require(script.Parent.Parent.Debugging.Restrict)
 local HttpService = game:GetService("HttpService")
 
 local RigidBody = {}
@@ -74,9 +75,15 @@ end
 
 -- [PUBLIC]
 -- This method is used to initialize a new RigidBody.
-function RigidBody.new(frame: GuiObject, m: number, collidable: boolean?, anchored: boolean?, engine) 	
-	local vertices = {}
-	local edges = {}
+function RigidBody.new(frame: GuiObject, m: number, collidable: boolean?, anchored: boolean?, engine, custom: Types.Custom?)
+	local isCustom = false
+	
+	if isCustom then 
+		isCustom = true
+	end
+	
+	local vertices = isCustom and custom.Vertices or {}
+	local edges = isCustom and custom.Edges or {}
 	
 	-- Configurations
 	local pointConfig = {
@@ -112,34 +119,37 @@ function RigidBody.new(frame: GuiObject, m: number, collidable: boolean?, anchor
 		return newConstraint
 	end
 	
-	-- Create Points
-	local corners = GetCorners(frame, engine)
-	local topleft = addPoint(corners[1])
-	local topright = addPoint(corners[2])
-	local bottomleft = addPoint(corners[3])
-	local bottomright = addPoint(corners[4])
-	
-	-- Connect points with constraints
-	addConstraint(topleft, topright, false)
-	addConstraint(topleft, bottomleft, false)
-	addConstraint(topright, bottomright, false)
-	addConstraint(bottomleft, bottomright, false)
-	addConstraint(topleft, bottomright, true)
-	addConstraint(topright, bottomleft, true)               
+	if not isCustom then 
+		-- Create Points
+		local corners = GetCorners(frame, engine)
+		local topleft = addPoint(corners[1])
+		local topright = addPoint(corners[2])
+		local bottomleft = addPoint(corners[3])
+		local bottomright = addPoint(corners[4])
+
+		-- Connect points with constraints
+		addConstraint(topleft, topright, false)
+		addConstraint(topleft, bottomleft, false)
+		addConstraint(topright, bottomright, false)
+		addConstraint(bottomleft, bottomright, false)
+		addConstraint(topleft, bottomright, true)
+		addConstraint(topright, bottomleft, true)    	
+	end           
 
 	local self = setmetatable({
 		id = HttpService:GenerateGUID(false),
+		custom = isCustom,
 		vertices = vertices,
 		edges = edges,
-		frame = frame,
+		frame = isCustom and nil or frame,
 		anchored = anchored,
 		mass = m,
 		collidable = collidable,
-		center = frame.AbsolutePosition + frame.AbsoluteSize/2,
+		center = isCustom and CalculateCenter(vertices) or frame.AbsolutePosition + frame.AbsoluteSize/2,
 		engine = engine,
 		spawnedAt = os.clock(),
 		lifeSpan = nil,
-		anchorRotation = anchored and frame.Rotation or nil,
+		anchorRotation = (anchored and not isCustom) and frame.Rotation or nil,
 		anchorPos = anchored and frame.AbsolutePosition or nil,
 		Touched = nil,
 		CanvasEdgeTouched = nil,
@@ -302,9 +312,11 @@ function RigidBody:Render()
 		self:Destroy()
 	end
 	
+	if self.custom then return end
+	
 	-- Apply rotations and update positions
 	-- Respects the anchor point of the GuiObject
-	if self.anchored then 
+	if self.anchored then
 		self:SetPosition(self.anchorPos.X, self.anchorPos.Y)
 		self:Rotate(self.anchorRotation)
 	else 
@@ -320,6 +332,7 @@ end
 
 -- This method is used to clone the RigidBody while keeping the original one intact.
 function RigidBody:Clone(deepCopy: boolean)
+	restrict(self.custom)
 	if not self.frame then return end
 	
 	local frame = self.frame:Clone()
@@ -357,7 +370,9 @@ function RigidBody:Destroy()
 			self.CanvasEdgeTouched:Destroy()
 			self.Touched = nil 
 			self.CanvasEdgeTouched = nil
-			self.frame:Destroy()
+			if not self.custom then 
+				self.frame:Destroy()
+			end
 			table.clear(self.Collisions.Other)
 			table.remove(self.engine.bodies, i)
 			self.engine.ObjectRemoved:Fire(self)
@@ -368,6 +383,7 @@ end
 -- This method is used to rotate the RigidBody's UI element. 
 -- After rotation the positions of its points and constraints are automatically updated.
 function RigidBody:Rotate(newRotation: number)
+	restrict(self.custom)
 	throwTypeError("newRotation", newRotation, 1, "number")
 	
 	-- Update anchorRotation if the body is anchored
@@ -387,6 +403,7 @@ end
 
 -- This method is used to set a new position of the RigidBody's UI element.
 function RigidBody:SetPosition(PositionX: number, PositionY: number)
+	restrict(self.custom)
 	throwTypeError("PositionX", PositionX, 1, "number")
 	throwTypeError("PositionY", PositionY, 2, "number")
 	
@@ -406,6 +423,7 @@ end
 
 -- This method is used to set a new size of the RigidBody's UI element. 
 function RigidBody:SetSize(SizeX: number, SizeY: number)
+	restrict(self.custom)
 	throwTypeError("SizeX", SizeX, 1, "number")
 	throwTypeError("SizeY", SizeY, 2, "number")	
 	
@@ -422,7 +440,7 @@ end
 -- Its position will no longer change.
 function RigidBody:Anchor()
 	self.anchored = true
-	self.anchorRotation = self.frame.Rotation
+	self.anchorRotation = self.custom and nil or self.frame.Rotation
 	self.anchorPos = self.center
 
 	for _, vertex in ipairs(self.vertices) do
