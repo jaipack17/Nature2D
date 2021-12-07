@@ -52,6 +52,17 @@ local function CollisionResponse(body: Types.RigidBody, other: Types.RigidBody, 
 	end	
 end
 
+-- Search and return an element from a table using a lambda function
+local function SearchTable(t: { any }, a: any,  lambda) : any
+	for _, v in ipairs(t) do 
+		if lambda(a, v) then 
+			return v
+		end
+	end
+	
+	return nil
+end
+
 -- [PUBLIC]
 -- This method is used to initialize basic configurations of the engine and allocate memory for future tasks.
 function Engine.init(screengui: Instance)
@@ -116,7 +127,7 @@ function Engine:Start()
 			local filtered = self.bodies
 
 			if self.quadtrees then 
-				local abs =  body.frame.AbsoluteSize
+				local abs = body.custom and body.size or body.frame.AbsoluteSize
 				local side = abs.X > abs.Y and abs.X or abs.Y
 
 				local range = {
@@ -138,7 +149,7 @@ function Engine:Start()
 					local result = body:DetectCollision(other)
 					local isColliding = result[1]
 					local Collision = result[2]
-					
+										
 					if isColliding then 
 						body.Collisions.Body = true
 						other.Collisions.Body = true
@@ -157,6 +168,13 @@ function Engine:Start()
 			-- Render vertices of the body
 			for _, vertex in ipairs(body.vertices) do
 				vertex:Render()
+			end
+			
+			if body.custom then 
+				-- Render constraints of the body
+				for _, c in ipairs(body.edges) do 
+					c:Render()
+				end
 			end
 
 			body:Render()
@@ -225,7 +243,17 @@ function Engine:Create(object: string, properties: Types.Properties)
 	
 	-- Check if must-have properties exist in the property table
 	for _, prop in ipairs(Globals[string.lower(object)].must_have) do 
-		if not properties[prop] then throwException("error", "MUST_HAVE_PROPERTY") end
+		if not properties[prop] then 
+			local throw = true
+			
+			if prop == "Object" and properties.Structure then 
+				throw = false
+			end
+			
+			if throw then 
+				throwException("error", "MUST_HAVE_PROPERTY") 
+			end
+		end
 	end
 	
 	local newObject
@@ -276,21 +304,84 @@ function Engine:Create(object: string, properties: Types.Properties)
 		end
 	-- Create the RigidBody object
 	elseif object == "RigidBody" then
-		if properties.Object then 
-			if not properties.Object:IsA("GuiObject") then error("'Object' must be a GuiObject", 2)	end
+		-- Validate custom RigidBody structure
 
-			local newBody = RigidBody.new(properties.Object, Globals.universalMass, properties.Collidable, properties.Anchored, self)
-			
-			--Apply properties
-			if properties.LifeSpan then newBody:SetLifeSpan(properties.LifeSpan) end
-			if properties.KeepInCanvas then newBody:KeepInCanvas(properties.KeepInCanvas) end
-			if properties.Gravity then newBody:SetGravity(properties.Gravity) end
-			if properties.Friction then newBody:SetFriction(properties.Friction) end
-			if properties.AirFriction then newBody:SetAirFriction(properties.AirFriction) end
-
-			table.insert(self.bodies, newBody)
-			newObject = newBody
+		if properties.Object and not properties.Object:IsA("GuiObject") and not properties.Structure then 
+			error("'Object' must be a GuiObject", 2)	
 		end
+		
+		local obj = nil
+		if not properties.Structure then 
+			obj = properties.Object
+		end 
+		
+		local custom: Types.Custom = {
+			Vertices = {},
+			Edges = {}
+		}
+		
+		if properties.Structure then 
+			if not self.canvas.frame then 
+				throwException("error", "CANVAS_FRAME_NOT_FOUND")
+			end
+
+			for _, c in ipairs(properties.Structure) do 
+				local a = c[1]
+				local b = c[2]
+				local support = c[3]
+				
+				if typeof(a) ~= "Vector2" or typeof(b) ~= "Vector2" then 
+					error("[Nature2D]: Invalid point positions for custom RigidBody structure.", 2)
+				end
+				
+				if support and typeof(support) ~= "boolean" then error("[Nature2D]: 'support' must be a boolean or nil") end
+				if a == b then error("[Nature2D]: A constraint cannot have the same points.", 2) end
+				
+				local PointA = SearchTable(custom.Vertices, a, function(i, v) return i == v.pos end)
+				local PointB = SearchTable(custom.Vertices, b, function(i, v) return i == v.pos end)
+				
+				if not PointA then 
+					PointA = Point.new(a, self.canvas, self, { 
+						snap = properties.Anchored, 
+						selectable = false, 
+						render = false,
+						keepInCanvas = properties.KeepInCanvas or true 
+					})
+					table.insert(custom.Vertices, PointA)
+				end
+				
+				if not PointB then 
+					PointB = Point.new(b, self.canvas, self, { 
+						snap = properties.Anchored, 
+						selectable = false, 
+						render = false,
+						keepInCanvas = properties.KeepInCanvas or true 
+					})
+					table.insert(custom.Vertices, PointB)
+				end
+				
+				local edge = Constraint.new(PointA, PointB, self.canvas, {
+					render = support and false or true, 
+					thickness = 2,
+					support = support,
+					TYPE = "ROD"
+				}, self)
+				
+				table.insert(custom.Edges, edge)
+			end
+		end
+				
+		local newBody = RigidBody.new(obj, Globals.universalMass, properties.Collidable, properties.Anchored, self, properties.Structure and custom or nil)
+		
+		--Apply properties
+		if properties.LifeSpan then newBody:SetLifeSpan(properties.LifeSpan) end
+		if properties.KeepInCanvas then newBody:KeepInCanvas(properties.KeepInCanvas) end
+		if properties.Gravity then newBody:SetGravity(properties.Gravity) end
+		if properties.Friction then newBody:SetFriction(properties.Friction) end
+		if properties.AirFriction then newBody:SetAirFriction(properties.AirFriction) end
+
+		table.insert(self.bodies, newBody)
+		newObject = newBody
 	end	
 	
 	self.ObjectAdded:Fire(newObject)
@@ -320,7 +411,7 @@ function Engine:CreateCanvas(topLeft: Vector2, size: Vector2, frame: Frame)
 	throwTypeError("topLeft", topLeft, 1, "Vector2")
 	throwTypeError("size", size, 2, "Vector2")
 
-	self.canvas.absolute = topLeft
+	self.canvas.topLeft = topLeft
 	self.canvas.size = size
 
 	if frame and frame:IsA("Frame") then 

@@ -8,6 +8,7 @@ local Signal = require(script.Parent.Parent.Utilities.Signal)
 local Types = require(script.Parent.Parent.Types)
 local throwTypeError = require(script.Parent.Parent.Debugging.TypeErrors)
 local throwException = require(script.Parent.Parent.Debugging.Exceptions)
+local restrict = require(script.Parent.Parent.Debugging.Restrict)
 local HttpService = game:GetService("HttpService")
 
 local RigidBody = {}
@@ -64,6 +65,23 @@ local function CalculateCenter(vertices) : Vector2
 	return center
 end
 
+-- Used to calculate the AbsoluteSize for custom RigidBodies
+local function CalculateSize(vertices)
+	local minX = math.huge
+	local minY = math.huge
+	local maxX = -math.huge
+	local maxY = -math.huge
+
+	for _, v in ipairs(vertices) do 
+		minX = math.min(minX, v.pos.x)
+		minY = math.min(minY, v.pos.y)
+		maxX = math.max(maxX, v.pos.x)
+		maxY = math.max(maxY, v.pos.y)
+	end
+
+	return Vector2.new(maxX - minX, maxY - minY)
+end
+
 -- This method is used to update the positions of each point of a rigidbody to the corners of a UI element.
 local function UpdateVertices(frame: GuiObject, vertices, engine)
 	local corners = GetCorners(frame, engine)
@@ -74,9 +92,15 @@ end
 
 -- [PUBLIC]
 -- This method is used to initialize a new RigidBody.
-function RigidBody.new(frame: GuiObject, m: number, collidable: boolean?, anchored: boolean?, engine) 	
-	local vertices = {}
-	local edges = {}
+function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, anchored: boolean?, engine, custom: Types.Custom?)
+	local isCustom = false
+	
+	if custom then 
+		isCustom = true
+	end
+	
+	local vertices = isCustom and custom.Vertices or {}
+	local edges = isCustom and custom.Edges or {}
 	
 	-- Configurations
 	local pointConfig = {
@@ -112,35 +136,39 @@ function RigidBody.new(frame: GuiObject, m: number, collidable: boolean?, anchor
 		return newConstraint
 	end
 	
-	-- Create Points
-	local corners = GetCorners(frame, engine)
-	local topleft = addPoint(corners[1])
-	local topright = addPoint(corners[2])
-	local bottomleft = addPoint(corners[3])
-	local bottomright = addPoint(corners[4])
-	
-	-- Connect points with constraints
-	addConstraint(topleft, topright, false)
-	addConstraint(topleft, bottomleft, false)
-	addConstraint(topright, bottomright, false)
-	addConstraint(bottomleft, bottomright, false)
-	addConstraint(topleft, bottomright, true)
-	addConstraint(topright, bottomleft, true)               
+	if not isCustom then 
+		-- Create Points
+		local corners = GetCorners(frame, engine)
+		local topleft = addPoint(corners[1])
+		local topright = addPoint(corners[2])
+		local bottomleft = addPoint(corners[3])
+		local bottomright = addPoint(corners[4])
+
+		-- Connect points with constraints
+		addConstraint(topleft, topright, false)
+		addConstraint(topleft, bottomleft, false)
+		addConstraint(topright, bottomright, false)
+		addConstraint(bottomleft, bottomright, false)
+		addConstraint(topleft, bottomright, true)
+		addConstraint(topright, bottomleft, true)    	
+	end           
 
 	local self = setmetatable({
 		id = HttpService:GenerateGUID(false),
+		custom = isCustom,
 		vertices = vertices,
 		edges = edges,
-		frame = frame,
+		frame = isCustom and nil or frame,
+		size = isCustom and CalculateSize(vertices) or nil,
 		anchored = anchored,
 		mass = m,
 		collidable = collidable,
-		center = frame.AbsolutePosition + frame.AbsoluteSize/2,
+		center = isCustom and CalculateCenter(vertices) or frame.AbsolutePosition + frame.AbsoluteSize/2,
 		engine = engine,
 		spawnedAt = os.clock(),
 		lifeSpan = nil,
-		anchorRotation = anchored and frame.Rotation or nil,
-		anchorPos = anchored and frame.AbsolutePosition or nil,
+		anchorRotation = (anchored and not isCustom) and frame.Rotation or nil,
+		anchorPos = (anchored and not isCustom) and frame.AbsolutePosition or nil,
 		Touched = nil,
 		CanvasEdgeTouched = nil,
 		Collisions = {			
@@ -189,78 +217,78 @@ end
 
 -- This method detects collision between two RigidBodies.
 function RigidBody:DetectCollision(other)
-	if self.frame and other.frame then 
-		-- Calculate center of the Body
-		self.center = CalculateCenter(self.vertices)
-		
-		-- Initialize collision information
-		local minDist = math.huge
-		local collision: Types.Collision = {
-			axis = nil,
-			depth = nil,
-			edge = nil,
-			vertex = nil
-		}
-		
-		-- Loop throught both bodies' edges (excluding support edges)
-		-- Calculate an axis and then project both bodies to the axis
-		-- Assign axis and edge of collision to the collision information dictionary
-		-- Calculate the penetration/depth of the collision
-		-- Find the vertex that collided with the edge
-		-- If a collision took place, return the collision information
-		for i = 1, #self.edges + #other.edges, 1 do
-			local edge = i <= #self.edges and self.edges[i] or other.edges[i - #self.edges]
+	if not self.custom and (not self.frame and not other.frame) then 
+		return { false, {} }
+	end
+	
+	-- Calculate center of the Body
+	self.center = CalculateCenter(self.vertices)
+	
+	-- Initialize collision information
+	local minDist = math.huge
+	local collision: Types.Collision = {
+		axis = nil,
+		depth = nil,
+		edge = nil,
+		vertex = nil
+	}
+	
+	-- Loop throught both bodies' edges (excluding support edges)
+	-- Calculate an axis and then project both bodies to the axis
+	-- Assign axis and edge of collision to the collision information dictionary
+	-- Calculate the penetration/depth of the collision
+	-- Find the vertex that collided with the edge
+	-- If a collision took place, return the collision information
+	for i = 1, #self.edges + #other.edges, 1 do
+		local edge = i <= #self.edges and self.edges[i] or other.edges[i - #self.edges]
 
-			if not edge.support then 
-				local axis = Vector2.new(edge.point1.pos.Y - edge.point2.pos.Y, edge.point2.pos.X - edge.point1.pos.X).Unit
+		if not edge.support then 
+			local axis = Vector2.new(edge.point1.pos.Y - edge.point2.pos.Y, edge.point2.pos.X - edge.point1.pos.X).Unit
 
-				local MinA, MinB, MaxA, MaxB
-				MinA, MaxA = self:CreateProjection(axis, MinA, MaxA)
-				MinB, MaxB = other:CreateProjection(axis, MinB, MaxB)
+			local MinA, MinB, MaxA, MaxB
+			MinA, MaxA = self:CreateProjection(axis, MinA, MaxA)
+			MinB, MaxB = other:CreateProjection(axis, MinB, MaxB)
 
-				local dist = CalculatePenetration(MinA, MaxA, MinB, MaxB)
+			local dist = CalculatePenetration(MinA, MaxA, MinB, MaxB)
 
-				if dist > 0 then 
-					return { false, {} }
-				elseif math.abs(dist) < minDist then
-					minDist = math.abs(dist) 
-					collision.axis = axis
-					collision.edge = edge
-				end	
-			end
+			if dist > 0 then 
+				return { false, {} }
+			elseif math.abs(dist) < minDist then
+				minDist = math.abs(dist) 
+				collision.axis = axis
+				collision.edge = edge
+			end	
 		end
-
-		collision.depth = minDist
-
-		if collision.edge and collision.edge.Parent ~= other then
-			local Temp = other
-			other = self
-			self = Temp
-		end
-
-		local centerDif = self.center - other.center
-		local dot = collision.axis.X * centerDif.x + collision.axis.Y * centerDif.Y
-
-		if dot < 0 then 
-			collision.axis *= -1
-		end	
-
-		local minMag = math.huge 
-
-		for i = 1, #self.vertices, 1 do
-			local dif =  self.vertices[i].pos - other.center
-			local dist = collision.axis.X * dif.X + collision.axis.Y * dif.Y
-
-			if dist < minMag then
-				minMag = dist
-				collision.vertex = self.vertices[i]
-			end
-		end
-
-		return { true, collision }
 	end
 
-	return { false, {} }
+	collision.depth = minDist
+
+	if collision.edge and collision.edge.Parent ~= other then
+		local Temp = other
+		other = self
+		self = Temp
+	end
+
+	local centerDif = self.center - other.center
+	local dot = collision.axis.X * centerDif.x + collision.axis.Y * centerDif.Y
+
+	if dot < 0 then 
+		collision.axis *= -1
+	end	
+
+	local minMag = math.huge 
+
+	for i = 1, #self.vertices, 1 do
+		local dif =  self.vertices[i].pos - other.center
+		local dist = collision.axis.X * dif.X + collision.axis.Y * dif.Y
+
+		if dist < minMag then
+			minMag = dist
+			collision.vertex = self.vertices[i]
+		end
+	end
+
+	return { true, collision }
 end
 
 -- This method is used to apply an external force on the rigid body.
@@ -302,9 +330,11 @@ function RigidBody:Render()
 		self:Destroy()
 	end
 	
+	if self.custom then return end
+	
 	-- Apply rotations and update positions
 	-- Respects the anchor point of the GuiObject
-	if self.anchored then 
+	if self.anchored then
 		self:SetPosition(self.anchorPos.X, self.anchorPos.Y)
 		self:Rotate(self.anchorRotation)
 	else 
@@ -320,6 +350,7 @@ end
 
 -- This method is used to clone the RigidBody while keeping the original one intact.
 function RigidBody:Clone(deepCopy: boolean)
+	restrict(self.custom)
 	if not self.frame then return end
 	
 	local frame = self.frame:Clone()
@@ -357,7 +388,9 @@ function RigidBody:Destroy()
 			self.CanvasEdgeTouched:Destroy()
 			self.Touched = nil 
 			self.CanvasEdgeTouched = nil
-			self.frame:Destroy()
+			if not self.custom then 
+				self.frame:Destroy()
+			end
 			table.clear(self.Collisions.Other)
 			table.remove(self.engine.bodies, i)
 			self.engine.ObjectRemoved:Fire(self)
@@ -368,6 +401,7 @@ end
 -- This method is used to rotate the RigidBody's UI element. 
 -- After rotation the positions of its points and constraints are automatically updated.
 function RigidBody:Rotate(newRotation: number)
+	restrict(self.custom)
 	throwTypeError("newRotation", newRotation, 1, "number")
 	
 	-- Update anchorRotation if the body is anchored
@@ -387,6 +421,7 @@ end
 
 -- This method is used to set a new position of the RigidBody's UI element.
 function RigidBody:SetPosition(PositionX: number, PositionY: number)
+	restrict(self.custom)
 	throwTypeError("PositionX", PositionX, 1, "number")
 	throwTypeError("PositionY", PositionY, 2, "number")
 	
@@ -406,6 +441,7 @@ end
 
 -- This method is used to set a new size of the RigidBody's UI element. 
 function RigidBody:SetSize(SizeX: number, SizeY: number)
+	restrict(self.custom)
 	throwTypeError("SizeX", SizeX, 1, "number")
 	throwTypeError("SizeY", SizeY, 2, "number")	
 	
@@ -422,7 +458,7 @@ end
 -- Its position will no longer change.
 function RigidBody:Anchor()
 	self.anchored = true
-	self.anchorRotation = self.frame.Rotation
+	self.anchorRotation = self.frame and self.frame.Rotation or nil
 	self.anchorPos = self.center
 
 	for _, vertex in ipairs(self.vertices) do

@@ -29,7 +29,8 @@ return {
 			"KeepInCanvas",
 			"Gravity",
 			"Friction",
-			"AirFriction"
+			"AirFriction",
+			"Structure"
 		},
 		must_have = {
 			"Object"
@@ -96,7 +97,8 @@ return {
 		"LifeSpan",
 		"Gravity",
 		"Friction",
-		"AirFriction"
+		"AirFriction",
+		"Structure"
 	},
 	
 	OBJECT_PROPS_TYPES = {
@@ -117,5 +119,6 @@ return {
 		Gravity = "Vector2",
 		Friction = "number",
 		AirFriction = "number",
+		Structure = "table"
 	},
 }
