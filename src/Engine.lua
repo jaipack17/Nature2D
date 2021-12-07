@@ -337,8 +337,8 @@ function Engine:Create(object: string, properties: Types.Properties)
 				if support and typeof(support) ~= "boolean" then error("[Nature2D]: 'support' must be a boolean or nil") end
 				if a == b then error("[Nature2D]: A constraint cannot have the same points.", 2) end
 				
-				local PointA = SearchTable(custom.Vertices, a, function(a, b) return a == b.pos end)
-				local PointB = SearchTable(custom.Vertices, b, function(a, b) return a == b.pos end)
+				local PointA = SearchTable(custom.Vertices, a, function(i, v) return i == v.pos end)
+				local PointB = SearchTable(custom.Vertices, b, function(i, v) return i == v.pos end)
 				
 				if not PointA then 
 					PointA = Point.new(a, self.canvas, self, { 
