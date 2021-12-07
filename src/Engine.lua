@@ -310,9 +310,9 @@ function Engine:Create(object: string, properties: Types.Properties)
 			error("'Object' must be a GuiObject", 2)	
 		end
 		
-		local object = nil
+		local obj = nil
 		if not properties.Structure then 
-			object = properties.Object
+			obj = properties.Object
 		end 
 		
 		local custom: Types.Custom = {
@@ -371,7 +371,7 @@ function Engine:Create(object: string, properties: Types.Properties)
 			end
 		end
 				
-		local newBody = RigidBody.new(object, Globals.universalMass, properties.Collidable, properties.Anchored, self, properties.Structure and custom or nil)
+		local newBody = RigidBody.new(obj, Globals.universalMass, properties.Collidable, properties.Anchored, self, properties.Structure and custom or nil)
 		
 		--Apply properties
 		if properties.LifeSpan then newBody:SetLifeSpan(properties.LifeSpan) end
