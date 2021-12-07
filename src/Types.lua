@@ -111,11 +111,12 @@ export type Properties = {
 	Gravity: Vector2?,
 	Friction: number?,
 	AirFriction: number?,
+	Structure: {}?
 }
 
 export type Custom = {
-	Vertices: {},
-	Edges: {}
+	Vertices: { any },
+	Edges: { any }
 }
 
 return nil
