@@ -77,7 +77,7 @@ end
 
 -- This method is used to update the position and appearance of the constraint on screen.
 function Constraint:Render()
-	if self.render then
+	if self.render and not self.support then
 		if not self.canvas.frame then 
 			throwException("error", "CANVAS_FRAME_NOT_FOUND")
 		end
