@@ -11,7 +11,5 @@ return function ()
 	Canvas.Parent = Tests
 	
 	local TestEZ = require(game.ReplicatedStorage.TestEZ)
-	TestEZ.TestBootstrap:run({
-		script.Utilities
-	})
+	TestEZ.TestBootstrap:run({ script })
 end
