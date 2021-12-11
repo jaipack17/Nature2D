@@ -1,5 +1,17 @@
 # Releases
 
+## v0.5.0 Custom RigidBody Support
+
+* Fixed `Engine:CreateCanvas()` - Canvas' can now be re-initialized. 
+* Fixed `Constraint:Render()` - Prevent support constraints from rendering
+* Added support for custom RigidBodies
+* Added new Valid Property for RigidBodies - `Structure: table`
+* Updated Collision Detection and Response to work with custom RigidBodies
+* Updated `Engine:Create()`
+* Restrict certain methods from being used for custom RigidBodies
+
+You can now create more than just rectangles and squares. You can now define your own point-constraint structures like triangles, irregular quadrilaterals and n-sided polygons and then turn them into RigidBodies! 
+
 ## v0.4.5 - New Events, Methods and Improvements
 
 * Added new events to Engine
