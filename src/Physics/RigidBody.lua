@@ -26,11 +26,15 @@ local function GetCorners(frame: GuiObject, engine)
 	
 	-- Calculate and return all 4 corners of the GuiObject
 	-- Also adheres to the Rotation of the GuiObject
+	local t = math.atan2(size.Y, size.X)
+	local a = rotation + t
+	local b = rotation - t
+	
 	return {
-		center - temp*Vector2.new(math.cos(rotation + math.atan2(size.Y, size.X)), math.sin(rotation + math.atan2(size.Y, size.X))) + offset, -- topleft
-		center + temp*Vector2.new(math.cos(rotation - math.atan2(size.Y, size.X)), math.sin(rotation - math.atan2(size.Y, size.X))) + offset, -- topright
-		center - temp*Vector2.new(math.cos(rotation - math.atan2(size.Y, size.X)), math.sin(rotation - math.atan2(size.Y, size.X))) + offset, -- bottomleft
-		center + temp*Vector2.new(math.cos(rotation + math.atan2(size.Y, size.X)), math.sin(rotation + math.atan2(size.Y, size.X))) + offset, -- bottomright
+		center - temp * Vector2.new(math.cos(a), math.sin(a)) + offset, -- topleft
+		center + temp * Vector2.new(math.cos(b), math.sin(b)) + offset, -- topright
+		center - temp * Vector2.new(math.cos(b), math.sin(b)) + offset, -- bottomleft
+		center + temp * Vector2.new(math.cos(a), math.sin(a)) + offset, -- bottomright
 	}
 end
 
@@ -203,11 +207,11 @@ end
 
 -- This method projects the RigidBody on an axis. Used for collision detection.
 function RigidBody:CreateProjection(Axis: Vector2, Min: number, Max: number) : (number, number)
-	local DotP = Axis.X * self.vertices[1].pos.x + Axis.Y * self.vertices[1].pos.y
+	local DotP = Axis:Dot(self.vertices[1].pos)
 	Min, Max = DotP, DotP
 
-	for I = 2, #self.vertices, 1 do
-		DotP = Axis.X * self.vertices[I].pos.x + Axis.Y * self.vertices[I].pos.y
+	for _, v in ipairs(self.vertices) do
+		DotP = Axis:Dot(v.pos)
 		Min = math.min(DotP, Min)
 		Max = math.max(DotP, Max)
 	end
@@ -243,7 +247,10 @@ function RigidBody:DetectCollision(other)
 		local edge = i <= #self.edges and self.edges[i] or other.edges[i - #self.edges]
 
 		if not edge.support then 
-			local axis = Vector2.new(edge.point1.pos.Y - edge.point2.pos.Y, edge.point2.pos.X - edge.point1.pos.X).Unit
+			local axis = Vector2.new(
+				edge.point1.pos.Y - edge.point2.pos.Y,
+				edge.point2.pos.X - edge.point1.pos.X
+			).Unit
 
 			local MinA, MinB, MaxA, MaxB
 			MinA, MaxA = self:CreateProjection(axis, MinA, MaxA)
@@ -270,7 +277,7 @@ function RigidBody:DetectCollision(other)
 	end
 
 	local centerDif = self.center - other.center
-	local dot = collision.axis.X * centerDif.x + collision.axis.Y * centerDif.Y
+	local dot = collision.axis:Dot(centerDif)
 
 	if dot < 0 then 
 		collision.axis *= -1
@@ -280,7 +287,7 @@ function RigidBody:DetectCollision(other)
 
 	for i = 1, #self.vertices, 1 do
 		local dif =  self.vertices[i].pos - other.center
-		local dist = collision.axis.X * dif.X + collision.axis.Y * dif.Y
+		local dist = collision.axis:Dot(dif)
 
 		if dist < minMag then
 			minMag = dist
@@ -343,8 +350,10 @@ function RigidBody:Render()
 		offset *= self.frame.AbsoluteSize
 		center -= offset
 		
-		self.frame.Rotation = math.deg(math.atan2((self.vertices[2].pos - self.vertices[1].pos).y, (self.vertices[2].pos - self.vertices[1].pos).x))
-		self.frame.Position = UDim2.new(0, center.x, 0, center.y)		
+		local dif: Vector2 = self.vertices[2].pos - self.vertices[1].pos
+		
+		self.frame.Position = UDim2.new(0, center.X, 0, center.Y)
+		self.frame.Rotation = math.deg(math.atan2(dif.Y, dif.X))
 	end
 end
 
@@ -394,6 +403,7 @@ function RigidBody:Destroy()
 			table.clear(self.Collisions.Other)
 			table.remove(self.engine.bodies, i)
 			self.engine.ObjectRemoved:Fire(self)
+			break
 		end
 	end
 end
@@ -544,6 +554,13 @@ function RigidBody:SetGravity(force: Vector2)
 
 	for _, p in ipairs(self.vertices) do
 		p.gravity = force
+	end
+end
+
+-- Sets a new mass for the RigidBody
+function RigidBody:SetMass(mass: number)
+	if self.mass ~= mass and mass >= 1 then 
+		self.mass = mass
 	end
 end
 

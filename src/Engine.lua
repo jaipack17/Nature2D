@@ -38,17 +38,26 @@ local function CollisionResponse(body: Types.RigidBody, other: Types.RigidBody, 
 	end
 	
 	-- Create a lambda
-	local factor: number = 1/(t^2 + (1 - t)^2)
+	local factor: number = 1 / (t^2 + (1 - t)^2)
+	
+	-- Calculate masses
+	local bodyMass = Collision.edge.Parent.mass
+	local m = t * bodyMass + (1 - t) * bodyMass
+	local cMass = 1 / (m + Collision.vertex.Parent.Parent.mass)
+	
+	-- Calculate ratios of collision effects
+	local r1 = Collision.vertex.Parent.Parent.mass * cMass
+	local r2 = m * cMass
 	
 	-- If the body is not anchored, apply forces to the constraint
 	if not Collision.edge.Parent.anchored then 
-		p1.pos -= penetration * ((1 - t) * factor/2)
-		p2.pos -= penetration * (t * factor/2)
+		p1.pos -= penetration * ((1 - t) * factor * r1)
+		p2.pos -= penetration * (t * factor * r1)
 	end
 	
 	-- If the body is not anchored, apply forces to the point
 	if not Collision.vertex.Parent.Parent.anchored then 	
-		Collision.vertex.pos += penetration/2
+		Collision.vertex.pos += penetration * r2
 	end	
 end
 
@@ -371,7 +380,14 @@ function Engine:Create(object: string, properties: Types.Properties)
 			end
 		end
 				
-		local newBody = RigidBody.new(obj, Globals.universalMass, properties.Collidable, properties.Anchored, self, properties.Structure and custom or nil)
+		local newBody = RigidBody.new(
+			obj, 
+			properties.Mass or Globals.universalMass, 
+			properties.Collidable, 
+			properties.Anchored, 
+			self,
+			properties.Structure and custom or nil
+		)
 		
 		--Apply properties
 		if properties.LifeSpan then newBody:SetLifeSpan(properties.LifeSpan) end

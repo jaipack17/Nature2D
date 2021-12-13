@@ -84,6 +84,12 @@ function Point:Update(dt: number)
 		
 		-- Apply friction
 		if body and body.Parent then 
+			local mass = body.Parent.mass
+			
+			if mass then 
+				self.forces /= mass
+			end
+			
 			if body.Parent.Collisions.CanvasEdge or body.Parent.Collisions.Body then 
 				velocity *= self.friction 
 			else 

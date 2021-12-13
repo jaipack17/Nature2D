@@ -30,7 +30,8 @@ return {
 			"Gravity",
 			"Friction",
 			"AirFriction",
-			"Structure"
+			"Structure",
+			"Mass"
 		},
 		must_have = {
 			"Object"
@@ -98,7 +99,8 @@ return {
 		"Gravity",
 		"Friction",
 		"AirFriction",
-		"Structure"
+		"Structure",
+		"Mass"
 	},
 	
 	OBJECT_PROPS_TYPES = {
@@ -119,6 +121,7 @@ return {
 		Gravity = "Vector2",
 		Friction = "number",
 		AirFriction = "number",
-		Structure = "table"
+		Structure = "table",
+		Mass = "number"
 	},
 }
