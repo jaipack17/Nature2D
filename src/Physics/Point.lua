@@ -20,6 +20,7 @@ function Point.new(pos: Vector2, canvas: Types.Canvas, engine: Types.EngineConfi
 		oldPos = pos,
 		pos = pos,
 		forces = Vector2.new(),
+		maxForce = nil,
 		gravity = engine.gravity,
 		friction = engine.friction,
 		airfriction = engine.airfriction,
@@ -97,6 +98,14 @@ function Point:Update(dt: number)
 			end			
 		else 
 			velocity *= self.friction
+		end
+		
+		-- clamp velocity
+		if self.maxForce then 
+			velocity = Vector2.new(
+				math.clamp(velocity.X, -self.maxForce, self.maxForce),
+				math.clamp(velocity.Y, -self.maxForce, self.maxForce)
+			)
 		end
 		
 		-- Update point positions
@@ -227,6 +236,12 @@ function Point:SetPosition(x: number, y: number)
 	local newPosition = Vector2.new(x, y)
 	self.oldPos = newPosition
 	self.pos = newPosition
+end
+
+-- Determines the max force that can be aoplied to the Point.
+function Point:SetMaxForce(maxForce: number)
+	throwTypeError("maxForce", maxForce, 1, "number")
+	self.maxForce = math.abs(maxForce)
 end
 
 return Point
