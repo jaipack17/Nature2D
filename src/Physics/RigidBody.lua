@@ -657,4 +657,12 @@ function RigidBody:GetTouchingRigidBodies()
 	return self.Collisions.Other
 end
 
+-- Determines the max force that can be aoplied to the RigidBody.
+function RigidBody:SetMaxForce(maxForce: number)
+	throwTypeError("maxForce", maxForce, 1, "number")
+	for _, p in ipairs(self.vertices) do 
+		p:SetMaxForce(maxForce)
+	end
+end
+
 return RigidBody
