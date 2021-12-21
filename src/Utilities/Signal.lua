@@ -40,7 +40,7 @@ local function acquireRunnerThreadAndCallEventHandler(fn, ...)
 	freeRunnerThread = acquiredRunnerThread
 end
 
--- Coroutine runner that we create coroutines of. The coroutine can be 
+-- Coroutine runner that we create coroutines of. The coroutine can be
 -- repeatedly resumed with functions to run followed by the argument to run
 -- them with.
 local function runEventHandlerInFreeThread(...)
@@ -58,7 +58,7 @@ Connection.__index = Connection
 
 function Connection.new(signal, fn)
 	return setmetatable({
-		_connected = true,
+		Connected = true,
 		_signal = signal,
 		_fn = fn,
 		_next = false,
@@ -67,8 +67,10 @@ end
 
 
 function Connection:Disconnect()
-	if not self._connected then return end
-	self._connected = false
+	if not self.Connected then
+		return
+	end
+	self.Connected = false
 
 	-- Unhook the node, but DON'T clear it. That way any fire calls that are
 	-- currently sitting on this node will be able to iterate forwards off of
@@ -164,7 +166,7 @@ end
 	@param fn (...any) -> nil
 	@return Connection -- A connection to the signal
 ]=]
-function Signal:Connect(fn)
+function Signal:Connect(fn: (...any) -> ())
 	local connection = Connection.new(self, fn)
 	if self._handlerListHead then
 		connection._next = self._handlerListHead
@@ -187,12 +189,17 @@ function Signal:GetConnections()
 end
 
 
--- Disconnect all handlers. Since we use a linked list it suffices to clear the
--- reference to the head handler.
 --[=[
 	Disconnects all connections from the signal.
 ]=]
 function Signal:DisconnectAll()
+	local item = self._handlerListHead
+	while item do
+		item.Connected = false
+
+		item = item._next
+	end
+
 	self._handlerListHead = false
 end
 
@@ -208,7 +215,7 @@ end
 function Signal:Fire(...)
 	local item = self._handlerListHead
 	while item do
-		if item._connected then
+		if item.Connected then
 			if not freeRunnerThread then
 				freeRunnerThread = coroutine.create(runEventHandlerInFreeThread)
 			end
@@ -237,13 +244,14 @@ end
 	@return ... any -- Arguments passed to the signal when it was fired
 	@yields
 ]=]
-function Signal:Wait()
+function Signal:Wait(): (...any)
 	local waitingCoroutine = coroutine.running()
 	local cn
 	cn = self:Connect(function(...)
 		cn:Disconnect()
 		task.spawn(waitingCoroutine, ...)
 	end)
+
 	return coroutine.yield()
 end
 
