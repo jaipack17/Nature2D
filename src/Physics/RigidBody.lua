@@ -172,7 +172,7 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 		spawnedAt = os.clock(),
 		lifeSpan = nil,
 		anchorRotation = (anchored and not isCustom) and frame.Rotation or nil,
-		anchorPos = (anchored and not isCustom) and frame.AbsolutePosition or nil,
+		anchorPos = (anchored and not isCustom) and frame.AbsolutePosition + frame.AbsoluteSize/2 or nil,
 		Touched = nil,
 		CanvasEdgeTouched = nil,
 		Collisions = {			
@@ -341,17 +341,18 @@ function RigidBody:Render()
 	
 	-- Apply rotations and update positions
 	-- Respects the anchor point of the GuiObject
+	
+	local function CalculateOffset(pos, anchorPoint, size)
+		return (Vector2.new(.5, .5) - anchorPoint) * size
+	end
+
 	if self.anchored then
 		self:SetPosition(self.anchorPos.X, self.anchorPos.Y)
 		self:Rotate(self.anchorRotation)
 	else 
-		local center = self.center
-		local offset = Vector2.new(.5, .5) - self.frame.AnchorPoint
-		offset *= self.frame.AbsoluteSize
-		center -= offset
-		
+		local center = self.center - CalculateOffset(self.center, self.frame.AnchorPoint, self.frame.AbsoluteSize)
 		local dif: Vector2 = self.vertices[2].pos - self.vertices[1].pos
-		
+
 		self.frame.Position = UDim2.new(0, center.X, 0, center.Y)
 		self.frame.Rotation = math.deg(math.atan2(dif.Y, dif.X))
 	end
@@ -388,7 +389,7 @@ end
 
 -- This method is used to destroy the RigidBody. 
 -- The body's UI element is destroyed, its connections are disconnected and the body is removed from the engine.
-function RigidBody:Destroy()
+function RigidBody:Destroy(keepFrame: boolean)
 	for i, body in ipairs(self.engine.bodies) do
 		if self.id == body.id then
 			-- Destroy events
@@ -397,8 +398,15 @@ function RigidBody:Destroy()
 			self.CanvasEdgeTouched:Destroy()
 			self.Touched = nil 
 			self.CanvasEdgeTouched = nil
-			if not self.custom then 
+			if not self.custom and not keepFrame then 
 				self.frame:Destroy()
+			end
+			if self.custom and not keepFrame then 
+				for _, c in ipairs(self.edges) do 
+					if c.frame then 
+						c.frame:Destroy()
+					end
+				end
 			end
 			table.clear(self.Collisions.Other)
 			table.remove(self.engine.bodies, i)
@@ -435,7 +443,7 @@ function RigidBody:SetPosition(PositionX: number, PositionY: number)
 	throwTypeError("PositionX", PositionX, 1, "number")
 	throwTypeError("PositionY", PositionY, 2, "number")
 	
-	-- Update anchorRotation if the body is anchored
+	-- Update anchorPos if the body is anchored
 	if self.anchored and self.anchorPos then 
 		self.anchorPos = Vector2.new(PositionX, PositionY)
 	end
