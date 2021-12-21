@@ -18,7 +18,7 @@ Engine.__index = Engine
 
 -- [PRIVATE]
 -- Search and return an element from a table using a lambda function
-local function SearchTable(t: { any }, a: any,  lambda) : any
+local function SearchTable(t: { any }, a: any,  lambda: (a: any, b: any) -> boolean) : any
 	for _, v in ipairs(t) do 
 		if lambda(a, v) then 
 			return v
