@@ -17,12 +17,25 @@ local Engine = {}
 Engine.__index = Engine
 
 -- [PRIVATE]
+-- Search and return an element from a table using a lambda function
+local function SearchTable(t: { any }, a: any,  lambda) : any
+	for _, v in ipairs(t) do 
+		if lambda(a, v) then 
+			return v
+		end
+	end
+
+	return nil
+end
+
 -- This method is responsible for separating two rigidbodies if they collide with each other.
-local function CollisionResponse(body: Types.RigidBody, other: Types.RigidBody, isColliding: boolean, Collision: Types.Collision, dt: number)
+local function CollisionResponse(body: Types.RigidBody, other: Types.RigidBody, isColliding: boolean, Collision: Types.Collision, dt: number, oldCollidingWith)
 	if not isColliding then return end
 	
 	-- Fire the touched event
-	body.Touched:Fire(other.id)
+	if not SearchTable(oldCollidingWith, other, function(a, b) return a.id == b.id end) then
+		body.Touched:Fire(other.id)
+	end
 	
 	-- Calculate penetration in 2 dimensions
 	local penetration: Vector2 = Collision.axis * Collision.depth
@@ -59,17 +72,6 @@ local function CollisionResponse(body: Types.RigidBody, other: Types.RigidBody, 
 	if not Collision.vertex.Parent.Parent.anchored then 	
 		Collision.vertex.pos += penetration * r2
 	end	
-end
-
--- Search and return an element from a table using a lambda function
-local function SearchTable(t: { any }, a: any,  lambda) : any
-	for _, v in ipairs(t) do 
-		if lambda(a, v) then 
-			return v
-		end
-	end
-	
-	return nil
 end
 
 -- [PUBLIC]
@@ -147,7 +149,7 @@ function Engine:Start()
 				filtered = tree:Search(range, {})				
 			end
 			
-			table.clear(body.Collisions.Other)
+			local OldCollidingWith = body.Collisions.Other
 			local CollidingWith = {}
 			
 			-- Loop through the filtered RigidBodies
@@ -168,7 +170,7 @@ function Engine:Start()
 						other.Collisions.Body = false
 					end
 
-					CollisionResponse(body, other, isColliding, Collision, dt)
+					CollisionResponse(body, other, isColliding, Collision, dt, OldCollidingWith)
 				end
 			end
 			
