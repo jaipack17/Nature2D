@@ -35,7 +35,7 @@ local function CollisionResponse(body: Types.RigidBody, other: Types.RigidBody, 
 	-- Fire the touched event
 	if not SearchTable(oldCollidingWith, other, function(a, b) return a.id == b.id end) then
 		body.Touched:Fire(other.id)
-	end
+	end	
 	
 	-- Calculate penetration in 2 dimensions
 	local penetration: Vector2 = Collision.axis * Collision.depth
@@ -168,6 +168,12 @@ function Engine:Start()
 					else 
 						body.Collisions.Body = false
 						other.Collisions.Body = false
+						
+						-- Fire TouchEnded event
+						
+						if SearchTable(OldCollidingWith, other, function (a, b) return a.id == b.id end) then 
+							body.TouchEnded:Fire(other.id)
+						end
 					end
 
 					CollisionResponse(body, other, isColliding, Collision, dt, OldCollidingWith)

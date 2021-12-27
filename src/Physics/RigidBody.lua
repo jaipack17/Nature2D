@@ -47,6 +47,10 @@ local function CalculatePenetration(minA: number, maxA: number, minB: number, ma
 	end
 end
 
+local function CalculateOffset(pos, anchorPoint, size)
+	return (Vector2.new(.5, .5) - anchorPoint) * size
+end
+
 -- This method is used to calculate the center position of a UI element
 local function CalculateCenter(vertices) : Vector2
 	local center = Vector2.new(0, 0)
@@ -174,6 +178,7 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 		anchorRotation = (anchored and not isCustom) and frame.Rotation or nil,
 		anchorPos = (anchored and not isCustom) and frame.AbsolutePosition + frame.AbsoluteSize/2 or nil,
 		Touched = nil,
+		TouchEnded = nil,
 		CanvasEdgeTouched = nil,
 		Collisions = {			
 			Body = false,
@@ -193,6 +198,7 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 	
 	-- Create events
 	self.Touched = Signal.new()
+	self.TouchEnded = Signal.new()
 	self.CanvasEdgeTouched = Signal.new()
 	
 	-- Set parents of points and constraints
@@ -341,13 +347,10 @@ function RigidBody:Render()
 	
 	-- Apply rotations and update positions
 	-- Respects the anchor point of the GuiObject
-	
-	local function CalculateOffset(pos, anchorPoint, size)
-		return (Vector2.new(.5, .5) - anchorPoint) * size
-	end
 
 	if self.anchored then
-		self:SetPosition(self.anchorPos.X, self.anchorPos.Y)
+		local anchorPos = self.anchorPos - CalculateOffset(self.anchorPos, self.frame.AnchorPoint, self.frame.AbsoluteSize)
+		self.frame.Position = UDim2.fromOffset(anchorPos.X, anchorPos.Y)
 		self:Rotate(self.anchorRotation)
 	else 
 		local center = self.center - CalculateOffset(self.center, self.frame.AnchorPoint, self.frame.AbsoluteSize)
@@ -430,7 +433,9 @@ function RigidBody:Rotate(newRotation: number)
 	-- Apply rotation and update positions
 	-- Update the RigidBody's points
 	local oldRotation = self.frame.Rotation
-	self.frame.Position = self.anchored and UDim2.new(0, self.anchorPos.x, 0, self.anchorPos.y) or UDim2.new(0, self.center.x, 0, self.center.y)
+	local offset = CalculateOffset(self.anchorPos, self.frame.AnchorPoint, self.frame.AbsoluteSize)
+	local position = self.anchorPos - offset
+	self.frame.Position = self.anchored and UDim2.fromOffset(position.X, position.Y)  or UDim2.fromOffset(self.center.x, self.center.y)
 	self.frame.Rotation = newRotation
 	UpdateVertices(self.frame, self.vertices, self.engine)
 
