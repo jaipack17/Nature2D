@@ -308,7 +308,7 @@ function Engine:Create(object: string, properties: Types.Properties)
 				restLength = properties.RestLength or dist, 
 				render = properties.Visible, 
 				thickness = properties.Thickness,
-				support = true,
+				support = false,
 				TYPE = string.upper(properties.Type)
 			}, self)
 			
