@@ -13,14 +13,15 @@ local function draw(hyp: number, origin: Vector2, thickness: number, parent: Ins
 	line.BorderSizePixel = 0
 	line.Position = UDim2.fromOffset(origin.X, origin.Y)
 	line.ZIndex = 1
-	line.Parent = parent
-	
+
 	if image then 
 		line.Image = image
 		line.ImageColor3 = color or Globals.constraint.color
 	else 
 		line.BackgroundColor3 = color or Globals.constraint.color
 	end
+
+	line.Parent = parent
 	
 	return line
 end
