@@ -84,13 +84,14 @@ function Constraint:Render()
 		
 		local thickness = self.thickness or Globals.constraint.thickness
 		local color = self.color or Globals.constraint.color
-
+		local image = self._TYPE == "SPRING" and "rbxassetid://8404350124" or nil
+		
 		if not self.frame then 
-			self.frame = line(self.point1.pos, self.point2.pos, self.canvas.frame, thickness, color)
+			self.frame = line(self.point1.pos, self.point2.pos, self.canvas.frame, thickness, color, nil, image)
 		end
 		
 		-- Draw constraint on screen
-		line(self.point1.pos, self.point2.pos, self.canvas.frame, thickness, color, self.frame)
+		line(self.point1.pos, self.point2.pos, self.canvas.frame, thickness, color, self.frame, image)
 	end
 end
 
