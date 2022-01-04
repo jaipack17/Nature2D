@@ -41,17 +41,17 @@ function Constraint:Constrain()
 	
 	-- Validate constraint types
 	if self._TYPE == "ROPE" then 
-		local restLength
-		if cur > self.restLength then 
-			restLength = self.restLength
-		elseif cur < self.thickness then 
+		local restLength = self.restLength
+		if cur < self.thickness then 
 			restLength = self.thickness
 		end
 		
-		-- Solve rope constraint force
-		local offset = ((restLength - cur)/restLength)/2
-		force = self.point2.pos - self.point1.pos 
-		force *= offset
+		if cur > self.restLength or self.restLength < self.thickness then 
+			-- Solve rope constraint force
+			local offset = ((restLength - cur)/restLength)/2
+			force = self.point2.pos - self.point1.pos 
+			force *= offset
+		end
 	elseif self._TYPE == "ROD" then 
 		-- Solve rod constraint force
 		local offset = self.restLength - cur
