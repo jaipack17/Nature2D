@@ -103,7 +103,8 @@ function Engine.init(screengui: Instance)
 		Started = Signal.new(),
 		Stopped = Signal.new(),
 		ObjectAdded = Signal.new(),
-		ObjectRemoved = Signal.new()
+		ObjectRemoved = Signal.new(),
+		Updated = Signal.new(),
 	}, Engine)
 end
 
@@ -212,6 +213,8 @@ function Engine:Start()
 				point:Render()
 			end
 		end
+		
+		self.Updated:Fire()
 	end)
 
 	self.connection = connection
@@ -399,7 +402,7 @@ function Engine:Create(object: string, properties: Types.Properties)
 		
 		--Apply properties
 		if properties.LifeSpan then newBody:SetLifeSpan(properties.LifeSpan) end
-		if properties.KeepInCanvas then newBody:KeepInCanvas(properties.KeepInCanvas) end
+		if typeof(properties.KeepInCanvas) == "boolean" then newBody:KeepInCanvas(properties.KeepInCanvas) end
 		if properties.Gravity then newBody:SetGravity(properties.Gravity) end
 		if properties.Friction then newBody:SetFriction(properties.Friction) end
 		if properties.AirFriction then newBody:SetAirFriction(properties.AirFriction) end
@@ -516,12 +519,39 @@ function Engine:GetConstraintById(id: string)
 	return 
 end
 
--- Returns current canvas the engine adheres to.
-function Engine:GetCurrentCanvas() : Types.Canvas
-	return self.canvas
+---- Returns current canvas the engine adheres to.
+--function Engine:GetCurrentCanvas() : Types.Canvas
+--	return self.canvas
+--end
+
+function Engine:GetDebugInfo() : Types.DebugInfo
+	return {
+		Objects = { 
+			RigidBodies = #self.bodies,
+			Constraints = #self.constraints,
+			Points = #self.points
+		},
+		Running = not not (self.connection),
+		Physics = {
+			Gravity = self.gravity,
+			Friction = 1 - self.friction,
+			AirFriction = 1 - self.airfriction,
+			CollisionMultiplier = self.bounce,
+			TimeSteps = self.timeSteps,
+			SimulationSpeed = self.speed,
+			UsingQuadtrees = self.quadtrees,
+			FramerateIndependent = self.independent
+		},
+		Path = self.path,
+		Canvas = {
+			Frame = self.canvas.frame,
+			TopLeft = self.canvas.topLeft,
+			Size = self.canvas.size
+		}
+	}
 end
 
--- Determines if Quadtrees will be used in collision detection.
+-- Determines if Quadtrees will be used in collision deteWction.
 -- By default this is set to false
 function Engine:UseQuadtrees(use: boolean)
 	throwTypeError("useQuadtrees", use, 1, "boolean")
