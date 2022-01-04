@@ -32,4 +32,4 @@ jobs:
             token: ${{ secrets.GITHUB_TOKEN }}
 
         - name: Run StyLua on src
-          run: stylua src
+          run: stylua src --check
