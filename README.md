@@ -32,8 +32,7 @@ $ git clone https://github.com/jaipack17/Nature2D.git
 
 https://www.roblox.com/library/7625799164/Nature2D
 
-**Using .rbxm File**
-Head over to the [Releases](https://github.com/jaipack17/Nature2D/releases) page on github, choose a version and download the `Nature2D@x.y.z.rbxm` file from its assets. Now right click in Roblox Studio's explorer, click Insert From File and select the file.
+**Using .rbxm File** - Head over to the [Releases](https://github.com/jaipack17/Nature2D/releases) page on github, choose a version and download the `Nature2D@x.y.z.rbxm` file from its assets. Now right click in Roblox Studio's explorer, click Insert From File and select the file.
 
 **Using wally** - Use [wally](https://github.com/UpliftGames/wally), a package manager for roblox to install Nature2D in your external code editor. This requires wally to be installed on your device. Then, add Nature2D to the dependencies listed in your `wally.toml` file.<br/>
 ```toml
