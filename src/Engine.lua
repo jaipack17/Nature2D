@@ -134,8 +134,6 @@ function Engine:Start()
 		-- Update the body
 		-- Calculate the closest RigidBodies to a given body if neccesary
 		for _, body in ipairs(self.bodies) do 
-			body:Update(dt)
-
 			local filtered = self.bodies
 
 			if self.quadtrees then 
@@ -183,18 +181,8 @@ function Engine:Start()
 			
 			body.Collisions.Other = CollidingWith
 			
-			-- Render vertices of the body
-			for _, vertex in ipairs(body.vertices) do
-				vertex:Render()
-			end
-			
-			if body.custom then 
-				-- Render constraints of the body
-				for _, c in ipairs(body.edges) do 
-					c:Render()
-				end
-			end
-
+			-- Render and Update of the body
+			body:Update(dt)
 			body:Render()
 		end
 		
