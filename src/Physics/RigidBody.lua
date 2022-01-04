@@ -329,9 +329,14 @@ function RigidBody:Update(dt: number)
 		local edge = i > #self.vertices
 
 		if edge then 
-			self.edges[(#self.vertices + #self.edges) + 1 - i]:Constrain()
+			local e = self.edges[(#self.vertices + #self.edges) + 1 - i]
+			e:Constrain()
+			if self.custom then 
+				e:Render()
+			end
 		else 
 			self.vertices[i]:Update(dt)
+			self.vertices[i]:Render()
 		end
 	end	
 end
