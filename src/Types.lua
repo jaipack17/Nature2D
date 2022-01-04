@@ -113,11 +113,43 @@ export type Properties = {
 	AirFriction: number?,
 	Structure: {}?,
 	Mass: number?,
+	CanTouch: boolean?
 }
 
 export type Custom = {
 	Vertices: { any },
 	Edges: { any }
+}
+
+export type Plugins = {
+	Triangle: (a: Vector2, b: Vector2, c: Vector2) -> (),
+	Quad: (a: Vector2, b: Vector2, c: Vector2, d: Vector2) -> (),
+	MouseConstraint: (engine: { any }, range: number, rigidbodies: { any }) -> ()
+}
+
+export type DebugInfo = {
+	Objects: { 
+		RigidBodies: number,
+		Constraints: number,
+		Points: number
+	},
+	Running: boolean,
+	Physics: {
+		Gravity: Vector2,
+		Friction: number,
+		AirFriction: number,
+		CollisionMultiplier: number,
+		TimeSteps: number,
+		SimulationSpeed: number,
+		UsingQuadtrees: boolean,
+		FramerateIndependent: boolean
+	},
+	Path: ScreenGui,
+	Canvas: {
+		Frame: GuiObject,
+		TopLeft: Vector2,
+		Size: Vector2
+	}
 }
 
 return nil
