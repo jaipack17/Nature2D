@@ -33,8 +33,10 @@ local function CollisionResponse(body: Types.RigidBody, other: Types.RigidBody, 
 	if not isColliding then return end
 
 	-- Fire the touched event
-	if not SearchTable(oldCollidingWith, other, function(a, b) return a.id == b.id end) then
-		body.Touched:Fire(other.id)
+	if body.Touched._handlerListHead and body.Touched._handlerListHead.Connected then 
+		if not SearchTable(oldCollidingWith, other, function(a, b) return a.id == b.id end) then
+			body.Touched:Fire(other.id)
+		end		
 	end
 
 	-- Calculate penetration in 2 dimensions
@@ -173,9 +175,11 @@ function Engine:Start()
 							other.Collisions.Body = false
 
 							-- Fire TouchEnded event
-
-							if SearchTable(OldCollidingWith, other, function (a, b) return a.id == b.id end) then
-								body.TouchEnded:Fire(other.id)
+							
+							if body.TouchEnded._handlerListHead and body.TouchEnded._handlerListHead.Connected then
+								if SearchTable(OldCollidingWith, other, function (a, b) return a.id == b.id end) then
+									body.TouchEnded:Fire(other.id)
+								end
 							end
 						end
 
@@ -185,8 +189,8 @@ function Engine:Start()
 			end
 
 			body.Collisions.Other = CollidingWith
-        
-      -- Render and Update of the body
+
+			-- Render and Update of the body
 			body:Update(dt)
 			body:Render()
 		end
@@ -286,7 +290,7 @@ function Engine:Create(object: string, properties: Types.Properties)
 
 		table.insert(self.points, newPoint)
 		newObject = newPoint
-	-- Create the constraint object
+		-- Create the constraint object
 	elseif object == "Constraint" then
 		if not table.find(Globals.constraint.types, string.lower(properties.Type or "")) then
 			throwException("error", "INVALID_CONSTRAINT_TYPE")
@@ -315,7 +319,7 @@ function Engine:Create(object: string, properties: Types.Properties)
 			table.insert(self.constraints, newConstraint)
 			newObject = newConstraint
 		end
-	-- Create the RigidBody object
+		-- Create the RigidBody object
 	elseif object == "RigidBody" then
 		-- Validate custom RigidBody structure
 
