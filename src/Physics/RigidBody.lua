@@ -23,13 +23,13 @@ local function GetCorners(frame: GuiObject, engine)
 	local temp = math.sqrt((size.X/2)^2+(size.Y/2)^2)
 
 	local offset = (engine.path and engine.path.IgnoreGuiInset) and Globals.offset or Vector2.new(0, 0)
-	
+
 	-- Calculate and return all 4 corners of the GuiObject
 	-- Also adheres to the Rotation of the GuiObject
 	local t = math.atan2(size.Y, size.X)
 	local a = rotation + t
 	local b = rotation - t
-	
+
 	return {
 		center - temp * Vector2.new(math.cos(a), math.sin(a)) + offset, -- topleft
 		center + temp * Vector2.new(math.cos(b), math.sin(b)) + offset, -- topright
@@ -40,10 +40,10 @@ end
 
 -- This method is used to calculate the depth/penetration of a collision
 local function CalculatePenetration(minA: number, maxA: number, minB: number, maxB: number) : number
-	if minA < minB then 
-		return minB - maxA 
-	else 
-		return minA - maxB 
+	if minA < minB then
+		return minB - maxA
+	else
+		return minA - maxB
 	end
 end
 
@@ -60,7 +60,7 @@ local function CalculateCenter(vertices) : Vector2
 	local maxX = -math.huge
 	local maxY = -math.huge
 
-	for _, v in ipairs(vertices) do 
+	for _, v in ipairs(vertices) do
 		center += v.pos
 		minX = math.min(minX, v.pos.x)
 		minY = math.min(minY, v.pos.y)
@@ -80,7 +80,7 @@ local function CalculateSize(vertices)
 	local maxX = -math.huge
 	local maxY = -math.huge
 
-	for _, v in ipairs(vertices) do 
+	for _, v in ipairs(vertices) do
 		minX = math.min(minX, v.pos.x)
 		minY = math.min(minY, v.pos.y)
 		maxX = math.max(maxX, v.pos.x)
@@ -93,7 +93,7 @@ end
 -- This method is used to update the positions of each point of a rigidbody to the corners of a UI element.
 local function UpdateVertices(frame: GuiObject, vertices, engine)
 	local corners = GetCorners(frame, engine)
-	for i, vertex in ipairs(vertices) do 
+	for i, vertex in ipairs(vertices) do
 		vertex:SetPosition(corners[i].X, corners[i].Y)
 	end
 end
@@ -102,30 +102,30 @@ end
 -- This method is used to initialize a new RigidBody.
 function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, anchored: boolean?, engine, custom: Types.Custom?)
 	local isCustom = false
-	
-	if custom then 
+
+	if custom then
 		isCustom = true
 	end
-	
+
 	local vertices = isCustom and custom.Vertices or {}
 	local edges = isCustom and custom.Edges or {}
-	
+
 	-- Configurations
 	local pointConfig = {
-		snap = anchored, 
-		selectable = false, 
+		snap = anchored,
+		selectable = false,
 		render = false,
 		keepInCanvas = true
 	}
 
 	local constraintConfig = {
-		restLength = nil, 
-		render = false, 
+		restLength = nil,
+		render = false,
 		thickness = 4,
 		support = false,
 		TYPE = "ROD"
 	}
-	
+
 	-- Point creation method
 	local function addPoint(pos)
 		local newPoint = Point.new(pos, engine.canvas, engine, pointConfig)
@@ -133,7 +133,7 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 
 		return newPoint
 	end
-	
+
 	-- Constraint creation method
 	local function addConstraint(p1, p2, support)
 		constraintConfig.support = support
@@ -143,8 +143,8 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 
 		return newConstraint
 	end
-	
-	if not isCustom then 
+
+	if not isCustom then
 		-- Create Points
 		local corners = GetCorners(frame, engine)
 		local topleft = addPoint(corners[1])
@@ -158,8 +158,8 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 		addConstraint(topright, bottomright, false)
 		addConstraint(bottomleft, bottomright, false)
 		addConstraint(topleft, bottomright, true)
-		addConstraint(topright, bottomleft, true)    	
-	end           
+		addConstraint(topright, bottomleft, true)
+	end
 
 	local self = setmetatable({
 		id = HttpService:GenerateGUID(false),
@@ -180,7 +180,7 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 		Touched = nil,
 		TouchEnded = nil,
 		CanvasEdgeTouched = nil,
-		Collisions = {			
+		Collisions = {
 			Body = false,
 			CanvasEdge = false,
 			Other = {}
@@ -188,19 +188,19 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 		States = {},
 		filtered = {},
 	}, RigidBody)
-	
+
 	-- Apply offsets if ScreenGui's IgnoreGuiInset property is set to true
 	-- Offset = Vector2.new(0, 36)
-	if engine.path and engine.path.IgnoreGuiInset then 
+	if engine.path and engine.path.IgnoreGuiInset then
 		self.anchorPos = self.anchorPos and self.anchorPos + Globals.offset or nil
 		self.center += Globals.offset
 	end
-	
+
 	-- Create events
 	self.Touched = Signal.new()
 	self.TouchEnded = Signal.new()
 	self.CanvasEdgeTouched = Signal.new()
-	
+
 	-- Set parents of points and constraints
 	for _, edge in ipairs(edges) do
 		edge.point1.Parent = edge
@@ -227,13 +227,13 @@ end
 
 -- This method detects collision between two RigidBodies.
 function RigidBody:DetectCollision(other)
-	if not self.custom and (not self.frame and not other.frame) then 
+	if not self.custom and (not self.frame and not other.frame) then
 		return { false, {} }
 	end
-	
+
 	-- Calculate center of the Body
 	self.center = CalculateCenter(self.vertices)
-	
+
 	-- Initialize collision information
 	local minDist = math.huge
 	local collision: Types.Collision = {
@@ -242,7 +242,7 @@ function RigidBody:DetectCollision(other)
 		edge = nil,
 		vertex = nil
 	}
-	
+
 	-- Loop throught both bodies' edges (excluding support edges)
 	-- Calculate an axis and then project both bodies to the axis
 	-- Assign axis and edge of collision to the collision information dictionary
@@ -252,7 +252,7 @@ function RigidBody:DetectCollision(other)
 	for i = 1, #self.edges + #other.edges, 1 do
 		local edge = i <= #self.edges and self.edges[i] or other.edges[i - #self.edges]
 
-		if not edge.support then 
+		if not edge.support then
 			local axis = Vector2.new(
 				edge.point1.pos.Y - edge.point2.pos.Y,
 				edge.point2.pos.X - edge.point1.pos.X
@@ -264,13 +264,13 @@ function RigidBody:DetectCollision(other)
 
 			local dist = CalculatePenetration(MinA, MaxA, MinB, MaxB)
 
-			if dist > 0 then 
+			if dist > 0 then
 				return { false, {} }
 			elseif math.abs(dist) < minDist then
-				minDist = math.abs(dist) 
+				minDist = math.abs(dist)
 				collision.axis = axis
 				collision.edge = edge
-			end	
+			end
 		end
 	end
 
@@ -285,11 +285,11 @@ function RigidBody:DetectCollision(other)
 	local centerDif = self.center - other.center
 	local dot = collision.axis:Dot(centerDif)
 
-	if dot < 0 then 
+	if dot < 0 then
 		collision.axis *= -1
-	end	
+	end
 
-	local minMag = math.huge 
+	local minMag = math.huge
 
 	for i = 1, #self.vertices, 1 do
 		local dif =  self.vertices[i].pos - other.center
@@ -307,15 +307,15 @@ end
 -- This method is used to apply an external force on the rigid body.
 function RigidBody:ApplyForce(force: Vector2, t: number)
 	throwTypeError("force", force, 1, "Vector2")
-	
-	if t then 
+
+	if t then
 		throwTypeError("time", t, 2, "number")
-		if t <= 0 then 
+		if t <= 0 then
 			throwException("error", "INVALID_TIME")
 		end
 	end
-	
-	for _, v in ipairs(self.vertices) do 
+
+	for _, v in ipairs(self.vertices) do
 		v:ApplyForce(force, t)
 	end
 end
@@ -323,33 +323,33 @@ end
 -- This method updates the positions of the RigidBody's points and constraints.
 function RigidBody:Update(dt: number)
 	self.center = CalculateCenter(self.vertices)
-	
+
 	-- Update vertices and edges together
-	for i = 1, #self.vertices + #self.edges do 
+	for i = 1, #self.vertices + #self.edges do
 		local edge = i > #self.vertices
 
-		if edge then 
+		if edge then
 			local e = self.edges[(#self.vertices + #self.edges) + 1 - i]
 			e:Constrain()
-			if self.custom then 
+			if self.custom then
 				e:Render()
 			end
-		else 
+		else
 			self.vertices[i]:Update(dt)
 			self.vertices[i]:Render()
 		end
-	end	
+	end
 end
 
 -- This method updates the positions and appearance of the RigidBody on screen.
 function RigidBody:Render()
 	-- If the RigidBody exceeds its life span, it is destroyed.
-	if self.lifeSpan and os.clock() - self.spawnedAt >= self.lifeSpan then 
+	if self.lifeSpan and os.clock() - self.spawnedAt >= self.lifeSpan then
 		self:Destroy()
 	end
-	
+
 	if self.custom then return end
-	
+
 	-- Apply rotations and update positions
 	-- Respects the anchor point of the GuiObject
 
@@ -357,7 +357,7 @@ function RigidBody:Render()
 		local anchorPos = self.anchorPos - CalculateOffset(self.anchorPos, self.frame.AnchorPoint, self.frame.AbsoluteSize)
 		self.frame.Position = UDim2.fromOffset(anchorPos.X, anchorPos.Y)
 		self:Rotate(self.anchorRotation)
-	else 
+	else
 		local center = self.center - CalculateOffset(self.center, self.frame.AnchorPoint, self.frame.AbsoluteSize)
 		local dif: Vector2 = self.vertices[2].pos - self.vertices[1].pos
 
@@ -370,32 +370,32 @@ end
 function RigidBody:Clone(deepCopy: boolean)
 	restrict(self.custom)
 	if not self.frame then return end
-	
+
 	local frame = self.frame:Clone()
 	frame.Parent = self.frame.Parent
-	
+
 	local copy = RigidBody.new(frame, self.mass, self.collidable, self.anchored, self.engine)
-	
+
 	-- Copy lifespan, states and filtered RigidBodies
-	if deepCopy == true then 
+	if deepCopy == true then
 		copy.States = self.States
-		
-		if self.lifeSpan then 
+
+		if self.lifeSpan then
 			copy:SetLifeSpan(self.lifeSpan)
 		end
-		
+
 		for _, body in ipairs(self.filtered) do
 			copy:FilterCollisionsWith(body)
 		end
 	end
-	
+
 	table.insert(self.engine.bodies, copy)
 	self.engine.ObjectAdded:Fire(copy)
-	
+
 	return copy
 end
 
--- This method is used to destroy the RigidBody. 
+-- This method is used to destroy the RigidBody.
 -- The body's UI element is destroyed, its connections are disconnected and the body is removed from the engine.
 function RigidBody:Destroy(keepFrame: boolean)
 	for i, body in ipairs(self.engine.bodies) do
@@ -404,14 +404,14 @@ function RigidBody:Destroy(keepFrame: boolean)
 			-- Destroy the frame and remove the RigidBody from the Engine.
 			self.Touched:Destroy()
 			self.CanvasEdgeTouched:Destroy()
-			self.Touched = nil 
+			self.Touched = nil
 			self.CanvasEdgeTouched = nil
-			if not self.custom and not keepFrame then 
+			if not self.custom and not keepFrame then
 				self.frame:Destroy()
 			end
-			if self.custom and not keepFrame then 
-				for _, c in ipairs(self.edges) do 
-					if c.frame then 
+			if self.custom and not keepFrame then
+				for _, c in ipairs(self.edges) do
+					if c.frame then
 						c.frame:Destroy()
 					end
 				end
@@ -424,17 +424,17 @@ function RigidBody:Destroy(keepFrame: boolean)
 	end
 end
 
--- This method is used to rotate the RigidBody's UI element. 
+-- This method is used to rotate the RigidBody's UI element.
 -- After rotation the positions of its points and constraints are automatically updated.
 function RigidBody:Rotate(newRotation: number)
 	restrict(self.custom)
 	throwTypeError("newRotation", newRotation, 1, "number")
-	
+
 	-- Update anchorRotation if the body is anchored
-	if self.anchored and self.anchorRotation then 
+	if self.anchored and self.anchorRotation then
 		self.anchorRotation = newRotation
 	end
-	
+
 	-- Apply rotation and update positions
 	-- Update the RigidBody's points
 	local oldRotation = self.frame.Rotation
@@ -452,12 +452,12 @@ function RigidBody:SetPosition(PositionX: number, PositionY: number)
 	restrict(self.custom)
 	throwTypeError("PositionX", PositionX, 1, "number")
 	throwTypeError("PositionY", PositionY, 2, "number")
-	
+
 	-- Update anchorPos if the body is anchored
-	if self.anchored and self.anchorPos then 
+	if self.anchored and self.anchorPos then
 		self.anchorPos = Vector2.new(PositionX, PositionY)
 	end
-	
+
 	-- Update position
 	-- Update the RigidBody's points
 	local oldPosition = self.frame.Position
@@ -467,12 +467,12 @@ function RigidBody:SetPosition(PositionX: number, PositionY: number)
 	return oldPosition, UDim2.fromOffset(PositionX, PositionY)
 end
 
--- This method is used to set a new size of the RigidBody's UI element. 
+-- This method is used to set a new size of the RigidBody's UI element.
 function RigidBody:SetSize(SizeX: number, SizeY: number)
 	restrict(self.custom)
 	throwTypeError("SizeX", SizeX, 1, "number")
-	throwTypeError("SizeY", SizeY, 2, "number")	
-	
+	throwTypeError("SizeY", SizeY, 2, "number")
+
 	-- Update size
 	-- Update the RigidBody's points
 	local oldSize = self.frame.Size
@@ -505,7 +505,7 @@ function RigidBody:Unanchor()
 	end
 end
 
--- This method is used to determine whether the RigidBody will collide with other RigidBodies. 
+-- This method is used to determine whether the RigidBody will collide with other RigidBodies.
 function RigidBody:CanCollide(collidable: boolean)
 	throwTypeError("collidable", collidable, 1, "boolean")
 	self.collidable = collidable
@@ -531,7 +531,7 @@ function RigidBody:GetConstraints()
 	return self.edges
 end
 
---vThis method is used to set the RigidBody's life span. 
+--vThis method is used to set the RigidBody's life span.
 -- Life span is determined by 'seconds'.
 -- After this time in seconds has been passed after the RigidBody is created, the RigidBody is automatically destroyed and removed from the engine.
 function RigidBody:SetLifeSpan(seconds: number)
@@ -539,11 +539,11 @@ function RigidBody:SetLifeSpan(seconds: number)
 	self.lifeSpan = seconds
 end
 
--- This method determines if the RigidBody stays inside the engine's canvas at all times. 
+-- This method determines if the RigidBody stays inside the engine's canvas at all times.
 function RigidBody:KeepInCanvas(keepInCanvas: boolean)
 	throwTypeError("keepInCanvas", keepInCanvas, 1, "boolean")
 
-	for _, p in ipairs(self.vertices) do 
+	for _, p in ipairs(self.vertices) do
 		p.keepInCanvas = keepInCanvas
 	end
 end
@@ -577,7 +577,7 @@ end
 
 -- Sets a new mass for the RigidBody
 function RigidBody:SetMass(mass: number)
-	if self.mass ~= mass and mass >= 1 then 
+	if self.mass ~= mass and mass >= 1 then
 		self.mass = mass
 	end
 end
@@ -586,27 +586,27 @@ end
 function RigidBody:IsInBounds() : boolean
 	local canvas = self.engine.canvas
 	if not canvas then return false end
-	
+
 	-- Check if all vertices lie within the canvas.
-	for _, v in ipairs(self.vertices) do 
-		local pos = v.pos 
-	
-		if not ((pos.X >= canvas.topLeft.X and pos.X <= canvas.topLeft.X + canvas.size.X) and (pos.Y >= canvas.topLeft.Y and pos.Y <= canvas.topLeft.Y + canvas.size.Y)) then 
+	for _, v in ipairs(self.vertices) do
+		local pos = v.pos
+
+		if not ((pos.X >= canvas.topLeft.X and pos.X <= canvas.topLeft.X + canvas.size.X) and (pos.Y >= canvas.topLeft.Y and pos.Y <= canvas.topLeft.Y + canvas.size.Y)) then
 			return false
 		end
 	end
-	
+
 	return true
 end
 
 -- Returns the average of all the velocities of the RigidBody's points
 function RigidBody:AverageVelocity() : Vector2
 	local sum = Vector2.new(0, 0)
-	
+
 	for _, v in ipairs(self.vertices) do
 		sum += v:Velocity()
 	end
-	
+
 	-- Return average
 	return sum/#self.vertices
 end
@@ -632,34 +632,34 @@ function RigidBody:GetCenter()
 end
 
 -- Used to ignore/filter any collisions with the other RigidBody.
-function RigidBody:FilterCollisionsWith(otherBody)	
-	if not otherBody.id or not typeof(otherBody.id) == "string" or not otherBody.filtered then 
+function RigidBody:FilterCollisionsWith(otherBody)
+	if not otherBody.id or not typeof(otherBody.id) == "string" or not otherBody.filtered then
 		throwException("error", "INVALID_RIGIDBODY")
 	end
-	
+
 	if otherBody.id == self.id then throwException("error", "SAME_ID") end
 
 	-- Insert the ids into their respective places
-	if not table.find(self.filtered, otherBody.id) then 
+	if not table.find(self.filtered, otherBody.id) then
 		table.insert(self.filtered, otherBody.id)
 		table.insert(otherBody.filtered, self.id)
 	end
 end
 
--- Used to unfilter collisions with the other RigidBody. 
+-- Used to unfilter collisions with the other RigidBody.
 -- The two bodies will now collide with each other.
 function RigidBody:UnfilterCollisionsWith(otherBody)
-	if not otherBody.id or not typeof(otherBody.id) == "string" or not otherBody.filtered then 
+	if not otherBody.id or not typeof(otherBody.id) == "string" or not otherBody.filtered then
 		throwException("error", "INVALID_RIGIDBODY")
 	end
 
 	if otherBody.id == self.id then throwException("error", "SAME_ID") end
-	
+
 	local i1 = table.find(self.filtered, otherBody.id)
 	local i2 = table.find(otherBody.filtered, self.id)
-	
+
 	-- Remove the ids from their respective places
-	if i1 and i2 then 
+	if i1 and i2 then
 		table.remove(self.filtered, i1)
 		table.remove(otherBody.filtered, i2)
 	end
@@ -678,7 +678,7 @@ end
 -- Determines the max force that can be aoplied to the RigidBody.
 function RigidBody:SetMaxForce(maxForce: number)
 	throwTypeError("maxForce", maxForce, 1, "number")
-	for _, p in ipairs(self.vertices) do 
+	for _, p in ipairs(self.vertices) do
 		p:SetMaxForce(maxForce)
 	end
 end

@@ -57,8 +57,8 @@ export type RigidBody = {
 }
 
 export type SegmentConfig = {
-	restLength: number?, 
-	render: boolean, 
+	restLength: number?,
+	render: boolean,
 	thickness: number?,
 	support: boolean,
 	TYPE: string,
@@ -73,8 +73,8 @@ export type EngineConfig = {
 }
 
 export type PointConfig = {
-	snap: boolean, 
-	selectable: boolean, 
+	snap: boolean,
+	selectable: boolean,
 	render: boolean,
 	keepInCanvas: boolean
 }
@@ -101,11 +101,11 @@ export type Properties = {
 	Type: string?,
 	Point1: Point?,
 	Point2: Point?,
-	Thickness: number?, 
+	Thickness: number?,
 	RestLength: number?,
 	SpringConstant: number?,
-	Object: GuiObject?, 
-	Collidable: boolean?, 
+	Object: GuiObject?,
+	Collidable: boolean?,
 	Anchored: boolean?,
 	LifeSpan: number?,
 	Gravity: Vector2?,
@@ -128,7 +128,7 @@ export type Plugins = {
 }
 
 export type DebugInfo = {
-	Objects: { 
+	Objects: {
 		RigidBodies: number,
 		Constraints: number,
 		Points: number

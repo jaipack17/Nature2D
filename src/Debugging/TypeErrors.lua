@@ -9,7 +9,7 @@ return function (arg: string, param, pos: number, expected: string)
 				expected,
 				arg,
 				typeof(param)
-			),	
+			),
 			2
 		)
 	end

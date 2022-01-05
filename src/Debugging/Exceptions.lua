@@ -17,10 +17,10 @@ local TYPES = {
 }
 
 return function (TASK: string, TYPE: string)
-	if TYPES[TYPE] then 
-		if TASK == "warn" then 
+	if TYPES[TYPE] then
+		if TASK == "warn" then
 			warn(TYPES[TYPE])
-		elseif TASK == "error" then 
+		elseif TASK == "error" then
 			error("[Nature2D]: "..TYPES[TYPE], 2)
 		end
 	end

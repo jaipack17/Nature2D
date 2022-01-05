@@ -94,7 +94,7 @@ Connection.Destroy = Connection.Disconnect
 -- Make Connection strict
 setmetatable(Connection, {
 	__index = function(_tb, key)
-		if key ~= "_handlerListHead" then 
+		if key ~= "_handlerListHead" then
 			error(("Attempt to get Connection::%s (not a valid member)"):format(tostring(key)), 2)
 		end
 	end,
@@ -273,7 +273,7 @@ end
 -- Make signal strict
 setmetatable(Signal, {
 	__index = function(_tb, key)
-		if key ~= "Connected" then 
+		if key ~= "Connected" then
 			error(("Attempt to get Signal::%s (not a valid member)"):format(tostring(key)), 2)
 		end
 	end,
