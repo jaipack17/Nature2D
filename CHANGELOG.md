@@ -1,5 +1,69 @@
 # Releases
 
+## v0.5.7 - Optimizations
+
+* Optimizations to how Rigid bodies are updated. There was a flaw earlier, I was using 2 for loops for the same task but in different locations. This has been cut down to just 1 loop.
+* Extra work for non-collidable rigid bodies is not longer performed. Thanks to @boatbomber for the PR.
+* Events like .Touched and .TouchEnded are fired only if the events are connected using :Connect() somewhere.
+* Prevent memory leaks by:
+   * Disconnecting all Engine events when Engine:Stop() is called.
+   * Warning and returning from Engine:Start() if its already running.
+   * Disconnecting and destroying RigidBody.TouchEnded event when RigidBody:Destoy() is called.
+
+
+## v0.5.6 - Engine:GetDebugInfo(), Engine.Updated and bug fixes
+
+* Added `Engine:GetDebugInfo()`
+* Removed `Engine:GetCurrentCanvas()`
+* Fixed rope constraints and KeepInCanvas property of RigidBodies.
+* Added new event `Engine.Updated`
+
+## v0.5.5 - A new look for Spring Constraints
+
+* Fixed bug where setting Visible to true when creating a custom constraint won't render the constraint on screen.
+* Spring Constraints now use a Coil ImageLabel instead of a straight line when rendered for better visual distinction between springs, ropes and rods.<br/>
+![NUEeFzjp9j__online-video-cutter_com__SparkVideo](https://user-images.githubusercontent.com/74130881/147813007-eec97d76-2546-4468-a3ae-38b0cf006bc6.gif)
+
+## v0.5.4 - TouchEnded Event
+
+* Added `.TouchEnded` event to RigidBodies. This event fires the moment two RigidBodies stop colliding with each other.
+* ```lua
+  SomeRigidBody.TouchEnded:Connect(function(otherID)
+      local OtherRigidBody = Engine:GetBodyById(otherID)
+      print("Touch ended")
+  end)
+  ```
+* Fixed AnchorPoint bug with anchored RigidBodies. Anchored RigidBodies can now have any AnchorPoint, which does not affect how they are positioned on the screen. cc: @Will_Rocks1
+
+## v0.5.3 - Improvements to .Touched Event.
+
+* Improvements to .Touched Event. The event does not fire every frame anymore if two bodies are colliding. It’ll only fire the moment the two bodies collide. Playing collision sounds etc is now possible.
+* `RigidBody:Destroy()` now takes in an optional argument “keepFrame: boolean|nil”. If passed in as true, the RigidBody’s UIElement will not be destroyed. If passed as false or nil, the RigidBody’s UIElement will be destroyed along with it.
+* Changes to Signal utility. Curtsy of @LucasMZ_RBX
+    * Made Connection property .Connected public
+
+## v0.5.2 - Introducing Nature2D Plugins!
+
+* Added new methods to Points
+* Point:SetMaxForce(maxForce: number)
+* Added new methods to RigidBodies
+    * RigidBody:SetMaxForce(maxForce: number)
+* Added Plugins
+    * Quad
+    * Triangle
+    * MouseConstraint
+
+## v0.5.1 - Support for different Masses of RigidBodies
+
+You can now set any mass value you like for different RigidBodies to see changes in Collision Response and how forces are applied to each RigidBody. This paves the way for more accurate physical simulations with guis!
+
+* Added the ability to set a mass value other than 1 for different RigidBodies
+* Added new methods to RigidBodies
+   * `RigidBody:SetMass(mass: number)`
+* Updated Point:ApplyForce() and RigidBody:ApplyForce(). Divides the force by the RigidBody’s mass to calculate acceleration.
+* Updated Collision detection and response to have effects according to the masses of each RigidBody. Now calculates accurate ratios for the force applied to each body after collision.
+* Cleaned some code, replaced bad practices with good ones, used Vector2:Dot() which is slightly faster than calculating the dot product of two vectors from scratch.
+
 ## v0.5.0 Custom RigidBody Support
 
 * Fixed `Engine:CreateCanvas()` - Canvas' can now be re-initialized. 
