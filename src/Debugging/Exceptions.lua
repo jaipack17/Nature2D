@@ -13,7 +13,8 @@ local TYPES = {
 	INVALID_PROPERTY = "Received an Invalid Object Property.",
 	MUST_HAVE_PROPERTY = "Missing must-have properties.",
 	CANVAS_FRAME_NOT_FOUND = "No canvas frame found, initialize the canvas's frame to render custom Points and Constraints!",
-	INVALID_TIME = "Received invalid time to apply force for."
+	INVALID_TIME = "Received invalid time to apply force for.",
+	ALREADY_STARTED = "Engine is already running."
 }
 
 return function (TASK: string, TYPE: string)

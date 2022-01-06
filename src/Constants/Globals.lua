@@ -78,7 +78,7 @@ return {
 		}
 	},
 	offset = Vector2.new(0, 36),
-	
+
 	VALID_OBJECT_PROPS = {
 		"Position",
 		"Visible",
@@ -89,7 +89,7 @@ return {
 		"Type",
 		"Point1",
 		"Point2",
-		"Thickness", 
+		"Thickness",
 		"RestLength",
 		"SpringConstant",
 		"Object",
@@ -102,7 +102,7 @@ return {
 		"Structure",
 		"Mass"
 	},
-	
+
 	OBJECT_PROPS_TYPES = {
 		Position = "Vector2",
 		Visible = "boolean",
@@ -111,7 +111,7 @@ return {
 		Radius = "number",
 		Color = "Color3",
 		Type = "string",
-		Thickness = "number", 
+		Thickness = "number",
 		RestLength = "number",
 		SpringConstant = "number",
 		Object = "Instance",
