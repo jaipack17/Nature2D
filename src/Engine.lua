@@ -114,6 +114,7 @@ end
 function Engine:Start()
 	if not self.canvas then throwException("error", "NO_CANVAS_FOUND") end
 	if #self.bodies == 0 then throwException("warn", "NO_RIGIDBODIES_FOUND") end
+	if self.connection then throwException("warn", "ALREADY_STARTED") return end
 
 	-- Fire Engine.Started event
 	self.Started:Fire()
@@ -224,6 +225,11 @@ function Engine:Stop()
 	if self.connection then
 		self.Stopped:Fire()
 		self.connection:Disconnect()
+		self.Started:Destroy()
+		self.Stopped:Destroy()
+		self.ObjectAdded:Destroy()
+		self.ObjectRemoved:Destroy()
+		self.Updated:Destroy()
 		self.connection = nil
 	end
 end

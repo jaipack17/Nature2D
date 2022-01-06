@@ -404,8 +404,10 @@ function RigidBody:Destroy(keepFrame: boolean)
 			-- Destroy the frame and remove the RigidBody from the Engine.
 			self.Touched:Destroy()
 			self.CanvasEdgeTouched:Destroy()
+			self.TouchEnded:Destroy()
 			self.Touched = nil
 			self.CanvasEdgeTouched = nil
+			self.TouchEnded = nil
 			if not self.custom and not keepFrame then
 				self.frame:Destroy()
 			end
