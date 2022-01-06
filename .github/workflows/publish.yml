@@ -24,6 +24,6 @@ jobs:
         run: |
           mkdir -p ~/.wally
           printf "[tokens]\n\"https://api.wally.run/\" = \"%s\"" "$WALLY_AU" >> ~/.wally/auth.toml
-          git rm -r assets
+          git rm -r assets unit-tests
           wally publish
           git reset --hard
