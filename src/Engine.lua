@@ -400,7 +400,8 @@ function Engine:Create(object: string, properties: Types.Properties)
 			properties.Collidable,
 			properties.Anchored,
 			self,
-			properties.Structure and custom or nil
+			properties.Structure and custom or nil,
+			properties.Structure
 		)
 
 		--Apply properties
@@ -521,11 +522,6 @@ function Engine:GetConstraintById(id: string)
 
 	return
 end
-
----- Returns current canvas the engine adheres to.
---function Engine:GetCurrentCanvas() : Types.Canvas
---	return self.canvas
---end
 
 function Engine:GetDebugInfo() : Types.DebugInfo
 	return {
