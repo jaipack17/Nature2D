@@ -100,7 +100,7 @@ end
 
 -- [PUBLIC]
 -- This method is used to initialize a new RigidBody.
-function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, anchored: boolean?, engine, custom: Types.Custom?)
+function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, anchored: boolean?, engine, custom: Types.Custom?, structure)
 	local isCustom = false
 
 	if custom then
@@ -164,6 +164,7 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 	local self = setmetatable({
 		id = HttpService:GenerateGUID(false),
 		custom = isCustom,
+		structure = structure,
 		vertices = vertices,
 		edges = edges,
 		frame = isCustom and nil or frame,
@@ -368,13 +369,22 @@ end
 
 -- This method is used to clone the RigidBody while keeping the original one intact.
 function RigidBody:Clone(deepCopy: boolean)
-	restrict(self.custom)
-	if not self.frame then return end
+	if not self.custom and not self.frame then return end
+	if not self.engine then return end
 
-	local frame = self.frame:Clone()
-	frame.Parent = self.frame.Parent
+	local frame
+	if not self.custom then
+		frame = self.frame:Clone()
+		frame.Parent = self.frame.Parent
+	end
 
-	local copy = RigidBody.new(frame, self.mass, self.collidable, self.anchored, self.engine)
+	local copy = self.engine:Create("RigidBody", {
+		Mass = self.mass,
+		Object = frame,
+		Structure = self.custom and self.structure or nil,
+		Anchored = self.anchored,
+		Collidable = self.collidable
+	})
 
 	-- Copy lifespan, states and filtered RigidBodies
 	if deepCopy == true then
@@ -388,9 +398,6 @@ function RigidBody:Clone(deepCopy: boolean)
 			copy:FilterCollisionsWith(body)
 		end
 	end
-
-	table.insert(self.engine.bodies, copy)
-	self.engine.ObjectAdded:Fire(copy)
 
 	return copy
 end
