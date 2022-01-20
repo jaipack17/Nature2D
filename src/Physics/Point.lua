@@ -129,8 +129,8 @@ function Point:KeepInCanvas()
 	local collision = false
 	local edge
 
-	if self.pos.y > height then
-		self.pos = Vector2.new(self.pos.x, height)
+	if self.pos.y > self.canvas.topLeft.y + height then
+		self.pos = Vector2.new(self.pos.x, self.canvas.topLeft.y + height)
 		self.oldPos = Vector2.new(self.oldPos.x, self.pos.y + vy * self.bounce)
 		collision = true
 		edge = "Bottom"
@@ -146,8 +146,8 @@ function Point:KeepInCanvas()
 		self.oldPos = Vector2.new(self.pos.x + vx * self.bounce, self.oldPos.y)
 		collision = true
 		edge = "Left"
-	elseif self.pos.x > width then
-		self.pos = Vector2.new(width, self.pos.y)
+	elseif self.pos.x > self.canvas.topLeft.x + width then
+		self.pos = Vector2.new(self.canvas.topLeft.x + width, self.pos.y)
 		self.oldPos = Vector2.new(self.pos.x - vx * self.bounce, self.oldPos.y)
 		collision = true
 		edge = "Right"
