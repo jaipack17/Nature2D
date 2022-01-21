@@ -35,7 +35,7 @@ local function CollisionResponse(body: Types.RigidBody, other: Types.RigidBody, 
 	-- Fire the touched event
 	if body.Touched._handlerListHead and body.Touched._handlerListHead.Connected then
 		if not SearchTable(oldCollidingWith, other, function(a, b) return a.id == b.id end) then
-			body.Touched:Fire(other.id)
+			body.Touched:Fire(other.id, Collision)
 		end
 	end
 
@@ -247,8 +247,14 @@ function Engine:Create(object: string, properties: Types.Properties)
 
 	-- Validate property table
 	for prop, value in pairs(properties) do
-		if not table.find(Globals.VALID_OBJECT_PROPS, prop) or not table.find(Globals[string.lower(object)].props, prop) then
-			throwException("error", "INVALID_PROPERTY")
+		if not table.find(Globals.VALID_OBJECT_PROPS, prop) then
+			throwException("error", "INVALID_PROPERTY", string.format("%q is not a valid property!", prop))
+			return
+		end
+
+		if not table.find(Globals[string.lower(object)].props, prop) then
+			throwException("error", "INVALID_PROPERTY", string.format("%q is not a valid property for a %s!", prop, object))
+			return
 		end
 
 		if Globals.OBJECT_PROPS_TYPES[prop] and typeof(value) ~= Globals.OBJECT_PROPS_TYPES[prop] then
@@ -274,7 +280,8 @@ function Engine:Create(object: string, properties: Types.Properties)
 			end
 
 			if throw then
-				throwException("error", "MUST_HAVE_PROPERTY")
+				throwException("error", "MUST_HAVE_PROPERTY", string.format("You must specify the %q property for a %s!", prop, object))
+				return
 			end
 		end
 	end
@@ -303,8 +310,13 @@ function Engine:Create(object: string, properties: Types.Properties)
 		end
 
 		-- Validate restlength and thickness of the constraint
-		if properties.RestLength and properties.RestLength <= 0 then throwException("error", "INVALID_CONSTRAINT_LENGTH") end
-		if properties.Thickness and properties.Thickness <= 0 then throwException("error", "INVALID_CONSTRAINT_THICKNESS") end
+		if properties.RestLength and properties.RestLength <= 0 then
+			throwException("error", "INVALID_CONSTRAINT_LENGTH")
+		end
+
+		if properties.Thickness and properties.Thickness <= 0 then
+			throwException("error", "INVALID_CONSTRAINT_THICKNESS")
+		end
 
 		if properties.Point1 and properties.Point2 and properties.Type then
 			-- Calculate distance

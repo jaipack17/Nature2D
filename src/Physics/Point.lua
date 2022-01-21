@@ -120,35 +120,35 @@ end
 function Point:KeepInCanvas()
 	-- vx = velocity.X
 	-- vy = velocity.Y
-	local vx = self.pos.x - self.oldPos.x
-	local vy = self.pos.y - self.oldPos.y
+	local vx = self.pos.X - self.oldPos.X
+	local vy = self.pos.Y - self.oldPos.Y
 
-	local width = self.canvas.size.x
-	local height = self.canvas.size.y
+	local boundX = self.canvas.topLeft.X + self.canvas.size.X
+	local boundY = self.canvas.topLeft.Y + self.canvas.size.Y
 
 	local collision = false
 	local edge
 
-	if self.pos.y > height then
-		self.pos = Vector2.new(self.pos.x, height)
-		self.oldPos = Vector2.new(self.oldPos.x, self.pos.y + vy * self.bounce)
+	if self.pos.Y > boundY then
+		self.pos = Vector2.new(self.pos.X, boundY)
+		self.oldPos = Vector2.new(self.oldPos.X, self.pos.Y + vy * self.bounce)
 		collision = true
 		edge = "Bottom"
-	elseif self.pos.y < self.canvas.topLeft.y then
-		self.pos = Vector2.new(self.pos.x, self.canvas.topLeft.y)
-		self.oldPos = Vector2.new(self.oldPos.x, self.pos.y - vy * self.bounce)
+	elseif self.pos.Y < self.canvas.topLeft.Y then
+		self.pos = Vector2.new(self.pos.X, self.canvas.topLeft.Y)
+		self.oldPos = Vector2.new(self.oldPos.X, self.pos.Y - vy * self.bounce)
 		collision = true
 		edge = "Top"
 	end
 
-	if self.pos.x < self.canvas.topLeft.x then
-		self.pos = Vector2.new(self.canvas.topLeft.x, self.pos.y)
-		self.oldPos = Vector2.new(self.pos.x + vx * self.bounce, self.oldPos.y)
+	if self.pos.X < self.canvas.topLeft.X then
+		self.pos = Vector2.new(self.canvas.topLeft.X, self.pos.Y)
+		self.oldPos = Vector2.new(self.pos.X + vx * self.bounce, self.oldPos.Y)
 		collision = true
 		edge = "Left"
-	elseif self.pos.x > width then
-		self.pos = Vector2.new(width, self.pos.y)
-		self.oldPos = Vector2.new(self.pos.x - vx * self.bounce, self.oldPos.y)
+	elseif self.pos.X > boundX then
+		self.pos = Vector2.new(boundX, self.pos.Y)
+		self.oldPos = Vector2.new(self.pos.X - vx * self.bounce, self.oldPos.Y)
 		collision = true
 		edge = "Right"
 	end
@@ -158,8 +158,11 @@ function Point:KeepInCanvas()
 	-- Fire CanvasEdgeTouched event
 	if body and body.Parent then
 		if collision then
+			local prev = body.Parent.Collisions.CanvasEdge
 			body.Parent.Collisions.CanvasEdge = true
-			body.Parent.CanvasEdgeTouched:Fire(edge)
+			if prev == false then
+				body.Parent.CanvasEdgeTouched:Fire(edge)
+			end
 		else
 			body.Parent.Collisions.CanvasEdge = false
 		end
