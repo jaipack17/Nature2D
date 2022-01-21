@@ -43,7 +43,8 @@ return {
 		types = {
 			"rope",
 			"spring",
-			"rod"
+			"rod",
+			"weld"
 		},
 		props = {
 			"Type",
