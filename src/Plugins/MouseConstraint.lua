@@ -29,6 +29,10 @@ return function (engine: { any }, range: number)
 						break
 					end
 				end
+				
+				if held then
+					break
+				end
 			end
 		end
 	end)
