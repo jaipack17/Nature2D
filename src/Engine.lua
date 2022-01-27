@@ -216,9 +216,14 @@ function Engine:Start()
 		-- Render all custom constraints
 		if #self.constraints > 0 then
 			for _, constraint in ipairs(self.constraints) do
-				for i = 1, self.iterations.constraint do
+				if constraint._TYPE ~= "SPRING" then
+					for i = 1, self.iterations.constraint do
+						constraint:Constrain()
+					end
+				else
 					constraint:Constrain()
 				end
+
 				constraint:Render()
 			end
 		end
