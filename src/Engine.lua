@@ -29,11 +29,11 @@ local function SearchTable(t: { any }, a: any,  lambda: (a: any, b: any) -> bool
 end
 
 -- This method is responsible for separating two rigidbodies if they collide with each other.
-local function CollisionResponse(body: Types.RigidBody, other: Types.RigidBody, isColliding: boolean, Collision: Types.Collision, dt: number, oldCollidingWith)
+local function CollisionResponse(body: Types.RigidBody, other: Types.RigidBody, isColliding: boolean, Collision: Types.Collision, dt: number, oldCollidingWith, iteration: number)
 	if not isColliding then return end
 
 	-- Fire the touched event
-	if body.Touched._handlerListHead and body.Touched._handlerListHead.Connected then
+	if iteration == 1 and body.Touched._handlerListHead and body.Touched._handlerListHead.Connected then
 		if not SearchTable(oldCollidingWith, other, function(a, b) return a.id == b.id end) then
 			body.Touched:Fire(other.id, Collision)
 		end
@@ -102,6 +102,10 @@ function Engine.init(screengui: Instance)
 			topLeft = Globals.engineInit.canvas.topLeft,
 			size = Globals.engineInit.canvas.size
 		},
+		iterations = {
+			constraint = 1,
+			collision = 1,
+		},
 		Started = Signal.new(),
 		Stopped = Signal.new(),
 		ObjectAdded = Signal.new(),
@@ -133,6 +137,10 @@ function Engine:Start()
 					tree:Insert(body)
 				end
 			end
+		else
+			if self.iterations.collision ~= 1 then
+				self.iterations.collision = 1
+			end
 		end
 
 		-- Loop through each body
@@ -163,11 +171,23 @@ function Engine:Start()
 				-- Process collision response
 				for _, other in ipairs(filtered) do
 					if body.id ~= other.id and other.collidable and not table.find(body.filtered, other.id) then
-						local result = body:DetectCollision(other)
-						local isColliding = result[1]
-						local Collision = result[2]
+						local result, isColliding, Collision, didCollide
 
-						if isColliding then
+						for i = 1, self.iterations.collision do
+							result = body:DetectCollision(other)
+							isColliding = result[1]
+							Collision = result[2]
+
+							if i == 1 and not isColliding then
+								break
+							end
+
+							didCollide = true
+
+							CollisionResponse(body, other, isColliding, Collision, dt, OldCollidingWith, i)
+						end
+
+						if didCollide then
 							body.Collisions.Body = true
 							other.Collisions.Body = true
 							table.insert(CollidingWith, other)
@@ -176,15 +196,12 @@ function Engine:Start()
 							other.Collisions.Body = false
 
 							-- Fire TouchEnded event
-
 							if body.TouchEnded._handlerListHead and body.TouchEnded._handlerListHead.Connected then
 								if SearchTable(OldCollidingWith, other, function (a, b) return a.id == b.id end) then
 									body.TouchEnded:Fire(other.id)
 								end
 							end
 						end
-
-						CollisionResponse(body, other, isColliding, Collision, dt, OldCollidingWith)
 					end
 				end
 			end
@@ -199,7 +216,9 @@ function Engine:Start()
 		-- Render all custom constraints
 		if #self.constraints > 0 then
 			for _, constraint in ipairs(self.constraints) do
-				constraint:Constrain()
+				for i = 1, self.iterations.constraint do
+					constraint:Constrain()
+				end
 				constraint:Render()
 			end
 		end
@@ -535,6 +554,11 @@ function Engine:GetConstraintById(id: string)
 	return
 end
 
+---- Returns current canvas the engine adheres to.
+--function Engine:GetCurrentCanvas() : Types.Canvas
+--	return self.canvas
+--end
+
 function Engine:GetDebugInfo() : Types.DebugInfo
 	return {
 		Objects = {
@@ -574,6 +598,21 @@ end
 function Engine:FrameRateIndependent(independent: boolean)
 	throwTypeError("independent", independent, 1, "boolean")
 	self.independent = independent
+end
+
+function Engine:SetConstraintIterations(iterations: number)
+	throwTypeError("iterations", iterations, 1, "number")
+	self.iterations.constraint = math.floor(math.clamp(iterations, 1, 10))
+end
+
+function Engine:SetCollisionIterations(iterations: number)
+	throwTypeError("iterations", iterations, 1, "number")
+
+	if self.quadtrees then
+		self.iterations.collision = math.floor(math.clamp(iterations, 1, 10))
+	else
+		throwException("warn", "CANNOT_SET_COLLISION_ITERATIONS")
+	end
 end
 
 return Engine
