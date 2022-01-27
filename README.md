@@ -47,7 +47,11 @@ Require the library and start coding.
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Nature2D = require(ReplicatedStorage.Nature2D)
 
-local engine = Nature2D.init(screenGuiInstance)
+local World = Instance.new("ScreenGui")
+World.IgnoreGuiInset = true
+World.Parent = game.Players.LocalPlayer.PlayerGui
+
+local engine = Nature2D.init(World)
 
 -- code
 ```
