@@ -324,21 +324,17 @@ end
 -- This method updates the positions of the RigidBody's points and constraints.
 function RigidBody:Update(dt: number)
 	self.center = CalculateCenter(self.vertices)
-
-	-- Update vertices and edges together
-	for i = 1, #self.vertices + #self.edges do
-		local edge = i > #self.vertices
-
-		if edge then
-			local e = self.edges[(#self.vertices + #self.edges) + 1 - i]
-			e:Constrain()
-			if self.custom then
-				e:Render()
-			end
-		else
-			self.vertices[i]:Update(dt)
-			self.vertices[i]:Render()
+		
+	for _, vertex in ipairs(self.vertices) do 
+		vertex:Update(dt)
+		vertex:Render()
+	end
+	
+	for _, edge in ipairs(self.edges) do
+		for i = 1, self.engine.iterations.constraint do 
+			edge:Constrain()
 		end
+		edge:Render()
 	end
 end
 
