@@ -1,5 +1,3 @@
--- Handling exceptions
-
 local TYPES = {
 	NO_CANVAS_FOUND = "No canvas found, initialize the engine's canvas using Engine:CreateCanvas().",
 	NO_RIGIDBODIES_FOUND = "No rigid bodies found on start.",
