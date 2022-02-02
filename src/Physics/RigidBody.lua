@@ -172,6 +172,8 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 		anchored = anchored,
 		mass = m,
 		collidable = collidable,
+		canRotate = true,
+		rotationCache = {},
 		center = isCustom and CalculateCenter(vertices) or frame.AbsolutePosition + frame.AbsoluteSize/2,
 		engine = engine,
 		spawnedAt = os.clock(),
@@ -324,14 +326,24 @@ end
 -- This method updates the positions of the RigidBody's points and constraints.
 function RigidBody:Update(dt: number)
 	self.center = CalculateCenter(self.vertices)
-		
-	for _, vertex in ipairs(self.vertices) do 
+
+	if not self.canRotate then
+		for i, info in ipairs(self.rotationCache) do
+			local r = info[1]
+			local t = info[2]
+			local v = self.vertices[i]
+
+			v:ApplyForce((self.center + Vector2.new(math.cos(t), math.sin(t)) * r) - v.pos)
+		end
+	end
+
+	for _, vertex in ipairs(self.vertices) do
 		vertex:Update(dt)
 		vertex:Render()
 	end
-	
+
 	for _, edge in ipairs(self.edges) do
-		for i = 1, self.engine.iterations.constraint do 
+		for i = 1, self.engine.iterations.constraint do
 			edge:Constrain()
 		end
 		edge:Render()
@@ -353,13 +365,17 @@ function RigidBody:Render()
 	if self.anchored then
 		local anchorPos = self.anchorPos - CalculateOffset(self.anchorPos, self.frame.AnchorPoint, self.frame.AbsoluteSize)
 		self.frame.Position = UDim2.fromOffset(anchorPos.X, anchorPos.Y)
-		self:Rotate(self.anchorRotation)
+		if self.canRotate then
+			self:Rotate(self.anchorRotation)
+		end
 	else
 		local center = self.center - CalculateOffset(self.center, self.frame.AnchorPoint, self.frame.AbsoluteSize)
 		local dif: Vector2 = self.vertices[2].pos - self.vertices[1].pos
 
 		self.frame.Position = UDim2.new(0, center.X, 0, center.Y)
-		self.frame.Rotation = math.deg(math.atan2(dif.Y, dif.X))
+		if self.canRotate then
+			self.frame.Rotation = math.deg(math.atan2(dif.Y, dif.X))
+		end
 	end
 end
 
@@ -514,6 +530,20 @@ end
 function RigidBody:CanCollide(collidable: boolean)
 	throwTypeError("collidable", collidable, 1, "boolean")
 	self.collidable = collidable
+end
+
+function RigidBody:CanRotate(canRotate: boolean)
+	restrict(self.custom)
+	throwTypeError("canRotate", canRotate, 1, "boolean")
+	self.canRotate = canRotate
+
+	if not self.canRotate then
+		for _, p in ipairs(self.vertices) do
+			local r = (p.pos - self.center).Magnitude
+			local theta = math.atan2(p.pos.Y - self.center.Y, p.pos.X - self.center.X)
+			table.insert(self.rotationCache, { r, theta })
+		end
+	end
 end
 
 -- The RigidBody's UI Element can be fetched using this method.
