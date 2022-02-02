@@ -93,6 +93,7 @@ function Engine.init(screengui: Instance)
 		airfriction = Globals.engineInit.airfriction,
 		bounce = Globals.engineInit.bounce,
 		timeSteps = Globals.engineInit.timeSteps,
+		mass = Globals.universalMass,
 		path = screengui,
 		speed = Globals.speed,
 		quadtrees = false,
@@ -432,7 +433,7 @@ function Engine:Create(object: string, properties: Types.Properties)
 
 		local newBody = RigidBody.new(
 			obj,
-			properties.Mass or Globals.universalMass,
+			properties.Mass or self.mass,
 			properties.Collidable,
 			properties.Anchored,
 			self,
@@ -446,6 +447,7 @@ function Engine:Create(object: string, properties: Types.Properties)
 		if properties.Gravity then newBody:SetGravity(properties.Gravity) end
 		if properties.Friction then newBody:SetFriction(properties.Friction) end
 		if properties.AirFriction then newBody:SetAirFriction(properties.AirFriction) end
+		if typeof(properties.CanRotate) == "boolean" and not properties.Structure then newBody:CanRotate(properties.CanRotate) end
 
 		table.insert(self.bodies, newBody)
 		newObject = newBody
@@ -513,6 +515,9 @@ function Engine:SetPhysicalProperty(property: string, value: Vector2 | number)
 		elseif string.lower(property) == "airfriction" then
 			throwTypeError("value", value, 2, "number")
 			object.airfriction = math.clamp(1 - value, 0, 1)
+		elseif string.lower(property) == "universalmass" then
+			throwTypeError("value", value, 2, "number")
+			object.mass = math.max(0, value)
 		end
 	end
 
@@ -558,11 +563,6 @@ function Engine:GetConstraintById(id: string)
 
 	return
 end
-
----- Returns current canvas the engine adheres to.
---function Engine:GetCurrentCanvas() : Types.Canvas
---	return self.canvas
---end
 
 function Engine:GetDebugInfo() : Types.DebugInfo
 	return {
