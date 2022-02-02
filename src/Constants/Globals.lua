@@ -3,8 +3,8 @@
 return {
 	engineInit = {
 		gravity = Vector2.new(0, .3),
-		friction = 0.99,
-		airfriction = 0.99,
+		friction = 0.9,
+		airfriction = 0.98,
 		bounce = 0.8,
 		timeSteps = 1,
 		canvas = {
@@ -19,6 +19,7 @@ return {
 		"friction",
 		"collisionmultiplier",
 		"airfriction",
+		"universalmass"
 	},
 	rigidbody = {
 		props = {
@@ -31,7 +32,8 @@ return {
 			"Friction",
 			"AirFriction",
 			"Structure",
-			"Mass"
+			"Mass",
+			"CanRotate"
 		},
 		must_have = {
 			"Object"
@@ -100,7 +102,8 @@ return {
 		"Friction",
 		"AirFriction",
 		"Structure",
-		"Mass"
+		"Mass",
+		"CanRotate"
 	},
 
 	OBJECT_PROPS_TYPES = {
@@ -122,6 +125,7 @@ return {
 		Friction = "number",
 		AirFriction = "number",
 		Structure = "table",
-		Mass = "number"
+		Mass = "number",
+		CanRotate = "boolean"
 	},
 }
