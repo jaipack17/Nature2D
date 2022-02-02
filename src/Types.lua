@@ -113,6 +113,7 @@ export type Properties = {
 	AirFriction: number?,
 	Structure: {}?,
 	Mass: number?,
+	CanRotate: boolean
 }
 
 export type Custom = {
