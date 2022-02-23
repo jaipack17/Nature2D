@@ -567,8 +567,6 @@ function RigidBody:SetScale(scale: number)
 
 		v.pos = self.center + Vector2.new(math.cos(t), math.sin(t)) * r
 		v.oldPos = v.pos
-
-		self.rotationCache[i][1] *= scale
 	end
 
 	for _, edge in ipairs(self.edges) do
