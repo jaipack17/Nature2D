@@ -552,6 +552,10 @@ function RigidBody:SetSize(SizeX: number, SizeY: number)
 	self.frame.Size = UDim2.fromOffset(SizeX, SizeY)
 	UpdateVertices(self.frame, self.vertices, self.engine)
 
+	for _, edge in ipairs(self.edges) do
+		edge.restLength = (edge.point2.pos - edge.point1.pos).Magnitude
+	end
+
 	return oldSize, UDim2.fromOffset(SizeX, SizeY)
 end
 
