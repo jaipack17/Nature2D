@@ -90,6 +90,16 @@ local function CalculateSize(vertices)
 	return Vector2.new(maxX - minX, maxY - minY)
 end
 
+local function CreateRotationCache(cache, center, vertices)
+	table.clear(cache)
+
+	for _, p in ipairs(vertices) do
+		local r = (p.pos - center).Magnitude
+		local theta = math.atan2(p.pos.Y - center.Y, p.pos.X - center.X)
+		table.insert(cache, { r, theta })
+	end
+end
+
 -- This method is used to update the positions of each point of a rigidbody to the corners of a UI element.
 local function UpdateVertices(frame: GuiObject, vertices, engine)
 	local corners = GetCorners(frame, engine)
@@ -196,7 +206,9 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 	-- Offset = Vector2.new(0, 36)
 	if engine.path and engine.path.IgnoreGuiInset then
 		self.anchorPos = self.anchorPos and self.anchorPos + Globals.offset or nil
-		self.center += Globals.offset
+		if not self.custom then
+			self.center += Globals.offset
+		end
 	end
 
 	-- Create events
@@ -209,6 +221,10 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 		edge.point1.Parent = edge
 		edge.point2.Parent = edge
 		edge.Parent = self
+	end
+
+	if #self.rotationCache < 1 then
+		CreateRotationCache(self.rotationCache, self.center, self.vertices)
 	end
 
 	return self
@@ -327,17 +343,15 @@ end
 function RigidBody:Update(dt: number)
 	self.center = CalculateCenter(self.vertices)
 
-	if not self.canRotate then
-		for i, info in ipairs(self.rotationCache) do
+	for i, vertex in ipairs(self.vertices) do
+		if not self.canRotate then
+			local info = self.rotationCache[i]
 			local r = info[1]
 			local t = info[2]
-			local v = self.vertices[i]
 
-			v:ApplyForce((self.center + Vector2.new(math.cos(t), math.sin(t)) * r) - v.pos)
+			vertex:ApplyForce((self.center + Vector2.new(math.cos(t), math.sin(t)) * r) - vertex.pos)
 		end
-	end
 
-	for _, vertex in ipairs(self.vertices) do
 		vertex:Update(dt)
 		vertex:Render()
 	end
@@ -448,7 +462,6 @@ end
 -- This method is used to rotate the RigidBody's UI element.
 -- After rotation the positions of its points and constraints are automatically updated.
 function RigidBody:Rotate(newRotation: number)
-	restrict(self.custom)
 	throwTypeError("newRotation", newRotation, 1, "number")
 
 	-- Update anchorRotation if the body is anchored
@@ -458,19 +471,41 @@ function RigidBody:Rotate(newRotation: number)
 
 	-- Apply rotation and update positions
 	-- Update the RigidBody's points
-	local oldRotation = self.frame.Rotation
-	local offset = CalculateOffset(self.anchorPos, self.frame.AnchorPoint, self.frame.AbsoluteSize)
-	local position = self.anchorPos - offset
-	self.frame.Position = self.anchored and UDim2.fromOffset(position.X, position.Y)  or UDim2.fromOffset(self.center.x, self.center.y)
-	self.frame.Rotation = newRotation
-	UpdateVertices(self.frame, self.vertices, self.engine)
+	local oldRotation
+
+	if self.custom then
+		-- Will need to cache oldRotation somewhere.
+		-- This method will result in weird oldRotations for some custom rigid bodies.
+		local dif = self.vertices[2].pos - self.vertices[1].pos
+		oldRotation = math.deg(math.atan2(dif.Y, dif.X))
+
+		local tempRotationCache = {}
+		CreateRotationCache(tempRotationCache, self.center, self.vertices)
+
+		for i, info in ipairs(tempRotationCache) do
+			local r = info[1]
+			local t = info[2] + math.rad(newRotation)
+			local v = self.vertices[i]
+
+			v.pos = self.center + Vector2.new(math.cos(t), math.sin(t)) * r
+			v.oldPos = v.pos
+		end
+	else
+		oldRotation = self.frame.Rotation
+
+		local offset = CalculateOffset(self.anchorPos, self.frame.AnchorPoint, self.frame.AbsoluteSize)
+		local position = self.anchorPos - offset
+		self.frame.Position = self.anchored and UDim2.fromOffset(position.X, position.Y) or UDim2.fromOffset(self.center.x, self.center.y)
+		self.frame.Rotation = newRotation
+		UpdateVertices(self.frame, self.vertices, self.engine)
+	end
 
 	return oldRotation, newRotation
 end
 
 -- This method is used to set a new position of the RigidBody's UI element.
 function RigidBody:SetPosition(PositionX: number, PositionY: number)
-	restrict(self.custom)
+	--restrict(self.custom)
 	throwTypeError("PositionX", PositionX, 1, "number")
 	throwTypeError("PositionY", PositionY, 2, "number")
 
@@ -479,11 +514,30 @@ function RigidBody:SetPosition(PositionX: number, PositionY: number)
 		self.anchorPos = Vector2.new(PositionX, PositionY)
 	end
 
+	local oldPosition
+
 	-- Update position
 	-- Update the RigidBody's points
-	local oldPosition = self.frame.Position
-	self.frame.Position = UDim2.fromOffset(PositionX, PositionY)
-	UpdateVertices(self.frame, self.vertices, self.engine)
+	if self.custom then
+		oldPosition = UDim2.fromOffset(self.center.X, self.center.Y)
+		local tempRotationCache = {}
+		CreateRotationCache(tempRotationCache, self.center, self.vertices)
+
+		self.center = Vector2.new(PositionX, PositionY)
+
+		for i, info in ipairs(tempRotationCache) do
+			local r = info[1]
+			local t = info[2]
+			local v = self.vertices[i]
+
+			v.pos = self.center + Vector2.new(math.cos(t), math.sin(t)) * r
+			v.oldPos = v.pos
+		end
+	else
+		oldPosition = self.frame.Position
+		self.frame.Position = UDim2.fromOffset(PositionX, PositionY)
+		UpdateVertices(self.frame, self.vertices, self.engine)
+	end
 
 	return oldPosition, UDim2.fromOffset(PositionX, PositionY)
 end
@@ -500,7 +554,30 @@ function RigidBody:SetSize(SizeX: number, SizeY: number)
 	self.frame.Size = UDim2.fromOffset(SizeX, SizeY)
 	UpdateVertices(self.frame, self.vertices, self.engine)
 
+	for _, edge in ipairs(self.edges) do
+		edge.restLength = (edge.point2.pos - edge.point1.pos).Magnitude
+	end
+
 	return oldSize, UDim2.fromOffset(SizeX, SizeY)
+end
+
+function RigidBody:SetScale(scale: number)
+	if not self.custom then return end
+	throwTypeError("scale", scale, 1, "number")
+	scale = math.max(0.00001, scale)
+
+	for i, info in ipairs(self.rotationCache) do
+		local r = info[1] * scale
+		local t = info[2]
+		local v = self.vertices[i]
+
+		v.pos = self.center + Vector2.new(math.cos(t), math.sin(t)) * r
+		v.oldPos = v.pos
+	end
+
+	for _, edge in ipairs(self.edges) do
+		edge.restLength = (edge.point2.pos - edge.point1.pos).Magnitude
+	end
 end
 
 -- This method is used to anchor the RigidBody.
@@ -537,13 +614,7 @@ function RigidBody:CanRotate(canRotate: boolean)
 	throwTypeError("canRotate", canRotate, 1, "boolean")
 	self.canRotate = canRotate
 
-	if not self.canRotate then
-		for _, p in ipairs(self.vertices) do
-			local r = (p.pos - self.center).Magnitude
-			local theta = math.atan2(p.pos.Y - self.center.Y, p.pos.X - self.center.X)
-			table.insert(self.rotationCache, { r, theta })
-		end
-	end
+	CreateRotationCache(self.rotationCache, self.center, self.vertices)
 end
 
 -- The RigidBody's UI Element can be fetched using this method.
