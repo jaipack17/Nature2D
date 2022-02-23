@@ -474,15 +474,17 @@ function RigidBody:Rotate(newRotation: number)
 	local oldRotation
 
 	if self.custom then
+		-- Will need to cache oldRotation somewhere.
+		-- This method will result in weird oldRotations for some custom rigid bodies.
 		local dif = self.vertices[2].pos - self.vertices[1].pos
 		oldRotation = math.deg(math.atan2(dif.Y, dif.X))
 
-		--local tempRotationCache = {}
-		--CreateRotationCache(tempRotationCache, self.center, self.vertices)
+		local tempRotationCache = {}
+		CreateRotationCache(tempRotationCache, self.center, self.vertices)
 
-		for i, info in ipairs(self.rotationCache) do
+		for i, info in ipairs(tempRotationCache) do
 			local r = info[1]
-			local t = info[2] + (math.rad(newRotation))
+			local t = info[2] + math.rad(newRotation)
 			local v = self.vertices[i]
 
 			v.pos = self.center + Vector2.new(math.cos(t), math.sin(t)) * r
