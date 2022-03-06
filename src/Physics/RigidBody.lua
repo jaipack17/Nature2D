@@ -204,10 +204,8 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 	self.TouchEnded = Signal.new()
 	self.CanvasEdgeTouched = Signal.new()
 
-	-- Set parents of points and constraints
+	-- Set parents of constraints
 	for _, edge in ipairs(edges) do
-		edge.point1.Parent = edge
-		edge.point2.Parent = edge
 		edge.Parent = self
 	end
 
