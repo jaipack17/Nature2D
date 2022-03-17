@@ -211,11 +211,7 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 			self.center += Globals.offset
 		end
 	end
-
-	if #self.rotationCache < 1 then
-		CreateRotationCache(self.rotationCache, self.center, self.vertices)
-	end
-
+  
 	-- Create events
 	self.Touched = Signal.new()
 	self.TouchEnded = Signal.new()
@@ -235,6 +231,10 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 	if not self.custom then
 		self._janitor:Add(self.frame, "Destroy")
 		self._janitor:LinkToInstance(self.frame)
+	end
+
+	if #self.rotationCache < 1 then
+		CreateRotationCache(self.rotationCache, self.center, self.vertices)
 	end
 
 	return self

@@ -1,5 +1,62 @@
 # Releases
 
+## v0.6.5 - Custom Rigid Body Manipulation
+
+* Removed restrictions for custom rigid bodies.
+   * `RigidBody:Rotate()`
+   * `RigidBody:SetPosition()`
+* Optimized rigid bodies with CanRotate set to false (Avoided 2 loops in `RigidBody:Update()` and `RigidBody:Anchor()`).
+* Added `RigidBody:SetScale()` method as an alternative to `RigidBody:SetSize()` but only for custom rigid bodies.
+   * `RigidBody:SetScale(scale: number)` - The scale of the default size is 1. Passing in 2 as the scale will double the size of the custom rigid body. Similar to how UDim's scale property works.
+* `RigidBody:SetPosition()` now works with custom rigid bodies.
+* `RigidBody:Rotate()` now works with custom rigid bodies.
+* Fixed bug in `RigidBody:SetSize()`. Earlier `RigidBody:SetSize()` changed only the size of the GuiObject and not the point-constraint structure.
+
+## v0.6.4 - CanRotate Property, UniversalMass and changes to Friction
+
+* Change default friction and airfriction to 0.1 and 0.02.
+* Add CanRotate property as a valid property.
+* Set CanRotate to true by default.
+* Add new methods to RigidBodies
+    * `RigidBody:CanRotate(canRotate: boolean)` - Determines if a rigid body can rotate after collisions or when forces are applied, extremely useful for creating platformer games, top-down games, character controllers etc.
+* Restrict RigidBody:CanRotate() for custom rigidbodies
+* Update RigidBody:Update() and Engine:Create() to adhere to CanRotate
+* Add UniversalMass as a valid physical property of the Engine. By default set to 1
+    * `Engine:SetPhysicalProperty("UniversalMass", 5)`
+
+## v0.6.3 - Implemented Collision and Constraint Iterations
+
+Iterations provide accurate calculations for more rigid and smoother physics. Constraint iterations are applied to `Constraint:Constrain()` method. Constraint iterations are extremely useful of rod constraints and rope constraints. Constraint iterations do not work on spring constraints.
+
+Collision iterations are used to provide accurate and rigid collision detection and resolution. By default both of these iterations are set to 1. Iterations can be in the range of 1-10 only. Collision iterations can be set only if quadtrees are being used in collision detection.
+
+Keep in mind that the higher the number of iterations the more accurate results. But, having more iterations means you'll have to sacrifice performance. The lesser the number of iterations, the better performance but we'll have to sacrifice on accuracy. So be careful where you use them!
+
+* Added constraint and collision iterations and their functionality.
+* Added new methods to Engine
+    * `Engine:SetConstraintIterations(iterations: number)`
+    * `Engine:SetCollisionIterations(iterations: number)`
+* Updated RigidBody:Update() to use constraint iterations.
+* Fixed RigidBody.Touched and RigidBody.TouchEnded after adding iterations.
+* Fixed MouseConstraint plugin bug - Stop looping through the rigid bodies if we have already found one to attach to the mouse.
+
+## v.0.6.1 - Bug fixes, Improvements to Physics Objects and Error Messages
+
+* "CanTouch" is not longer a valid property for rigid bodies.
+* Fixed bug where `Point:KeepInCanvas()` won't calculate collisions accurately.
+* RigidBody.CanvasEdgeTouched event now fires only the moment a rigid body collides with the canvas' edge and not every rendered frame.
+* Improved exception handling code.
+* Improved error messages for `Engine:Create()`
+   * If an invalid property is specified, the error message will now contain the name of the invalid property you specified for debugging.
+   * If properties for completely different physics objects are specified, the error message will now contain the name of the invalid property you specified.
+   * If a must-have property is not specified, the error message will now contain the name of that must-have property.
+* RigidBody.Touched event now returns the rigid body's id as well as the collision information (Collision axis, depth, vertex and edge). This can be beneficial for creating visual effects for visualizing collisions.
+
+## v0.6.0 - Clone() for Custom Rigid Bodies
+
+* RigidBody:Clone() now works for custom rigid bodies.
+* Added Structure parameter to RigidBody.new() to cache the rigid body's structure for the future.
+
 ## v0.5.7 - Optimizations
 
 * Optimizations to how Rigid bodies are updated. There was a flaw earlier, I was using 2 for loops for the same task but in different locations. This has been cut down to just 1 loop.
@@ -20,7 +77,7 @@
 
 ## v0.5.5 - A new look for Spring Constraints
 
-* Fixed bug where setting Visible to true when creating a custom constraint won't render the constraint on screen.
+* Fixed bug where setting Visible to true when creating a custom constraint won't rendcmder the constraint on screen.
 * Spring Constraints now use a Coil ImageLabel instead of a straight line when rendered for better visual distinction between springs, ropes and rods.<br/>
 ![NUEeFzjp9j__online-video-cutter_com__SparkVideo](https://user-images.githubusercontent.com/74130881/147813007-eec97d76-2546-4468-a3ae-38b0cf006bc6.gif)
 
@@ -64,17 +121,17 @@ You can now set any mass value you like for different RigidBodies to see changes
 * Updated Collision detection and response to have effects according to the masses of each RigidBody. Now calculates accurate ratios for the force applied to each body after collision.
 * Cleaned some code, replaced bad practices with good ones, used Vector2:Dot() which is slightly faster than calculating the dot product of two vectors from scratch.
 
-## v0.5.0 Custom RigidBody Support
+## v0.5 - Custom RigidBody Support!
 
-* Fixed `Engine:CreateCanvas()` - Canvas' can now be re-initialized. 
-* Fixed `Constraint:Render()` - Prevent support constraints from rendering
+Major Release.
+
+* Fixed Engine:CreateCanvas() - Canvas’ can now be re-initialized.
+* Fixed Constraint:Render() - Prevent support constraints from rendering
 * Added support for custom RigidBodies
-* Added new Valid Property for RigidBodies - `Structure: table`
+* Added new Valid Property for RigidBodies - Structure: table
 * Updated Collision Detection and Response to work with custom RigidBodies
-* Updated `Engine:Create()`
+* Updated Engine:Create()
 * Restrict certain methods from being used for custom RigidBodies
-
-You can now create more than just rectangles and squares. You can now define your own point-constraint structures like triangles, irregular quadrilaterals and n-sided polygons and then turn them into RigidBodies! 
 
 ## v0.4.5 - New Events, Methods and Improvements
 

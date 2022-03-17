@@ -7,11 +7,11 @@ assignees: jaipack17
 
 ---
 
-## Description
+### Description
 Describe your feature in 30-40 words or more. The more detailed, the better!
 
-## Alternatives
+### Alternatives
 What have you tried so far? (Optional)
 
-## Importance
+### Importance
 How important do you think this feature will be? Does it really improve developer experience?
