@@ -8,6 +8,7 @@ local Constraint = require(script.Parent.Physics.Constraint)
 local Globals = require(script.Parent.Constants.Globals)
 local Signal = require(script.Parent.Utilities.Signal)
 local Quadtree = require(script.Parent.Utilities.Quadtree)
+local Janitor = require(script.Parent.Utilities.Janitor)
 local Types = require(script.Parent.Types)
 local throwException = require(script.Parent.Debugging.Exceptions)
 local throwTypeError = require(script.Parent.Debugging.TypeErrors)
@@ -83,11 +84,12 @@ function Engine.init(screengui: Instance)
 		error("Invalid Argument #1. 'screengui' must be a ScreenGui.", 2)
 	end
 
-	return setmetatable({
+	local self = setmetatable({
 		bodies = {},
 		constraints = {},
 		points = {},
 		connection = nil,
+		_janitor = nil,
 		gravity = Globals.engineInit.gravity,
 		friction = Globals.engineInit.friction,
 		airfriction = Globals.engineInit.airfriction,
@@ -113,6 +115,17 @@ function Engine.init(screengui: Instance)
 		ObjectRemoved = Signal.new(),
 		Updated = Signal.new(),
 	}, Engine)
+
+	local janitor = Janitor.new()
+	janitor:Add(self.Started, "Destroy")
+	janitor:Add(self.Stopped, "Destroy")
+	janitor:Add(self.ObjectAdded, "Destroy")
+	janitor:Add(self.ObjectRemoved, "Destroy")
+	janitor:Add(self.Updated, "Destroy")
+
+	self._janitor = janitor
+
+	return self
 end
 
 -- This method is used to start simulating rigid bodies and constraints.
@@ -241,6 +254,7 @@ function Engine:Start()
 	end)
 
 	self.connection = connection
+	self._janitor:Add(self.connection, "Disconnect", "MainConnection")
 end
 
 -- This method is used to stop simulating rigid bodies and constraints.
@@ -249,12 +263,7 @@ function Engine:Stop()
 	-- Disconnect all connections
 	if self.connection then
 		self.Stopped:Fire()
-		self.connection:Disconnect()
-		self.Started:Destroy()
-		self.Stopped:Destroy()
-		self.ObjectAdded:Destroy()
-		self.ObjectRemoved:Destroy()
-		self.Updated:Destroy()
+		self._janitor:Remove("MainConnection")
 		self.connection = nil
 	end
 end
@@ -320,7 +329,7 @@ function Engine:Create(object: string, properties: Types.Properties)
 			selectable = false,
 			render = properties.Visible,
 			keepInCanvas = properties.KeepInCanvas or true
-		})
+		}, nil)
 
 		-- Apply properties
 		if properties.Radius then newPoint:SetRadius(properties.Radius)	end
@@ -452,6 +461,8 @@ function Engine:Create(object: string, properties: Types.Properties)
 		table.insert(self.bodies, newBody)
 		newObject = newBody
 	end
+
+	self._janitor:Add(newObject, "Destroy")
 
 	self.ObjectAdded:Fire(newObject)
 	return newObject
@@ -618,6 +629,11 @@ function Engine:SetCollisionIterations(iterations: number)
 	else
 		throwException("warn", "CANNOT_SET_COLLISION_ITERATIONS")
 	end
+end
+
+function Engine:Destroy()
+	self._janitor:Destroy()
+	setmetatable(self, nil)
 end
 
 return Engine

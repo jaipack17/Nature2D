@@ -8,6 +8,7 @@ local line = require(script.Parent.Parent.Utilities.Line)
 local Globals = require(script.Parent.Parent.Constants.Globals)
 local throwTypeError = require(script.Parent.Parent.Debugging.TypeErrors)
 local throwException = require(script.Parent.Parent.Debugging.Exceptions)
+local Janitor = require(script.Parent.Parent.Utilities.Janitor)
 local Types = require(script.Parent.Parent.Types)
 local https = game:GetService("HttpService")
 
@@ -15,11 +16,12 @@ local Constraint = {}
 Constraint.__index = Constraint
 
 -- This method is used to initialize a constraint.
-function Constraint.new(p1: Types.Point, p2: Types.Point, canvas: Types.Canvas, config: Types.SegmentConfig, engine)
-	return setmetatable({
+function Constraint.new(p1: Types.Point, p2: Types.Point, canvas: Types.Canvas, config: Types.SegmentConfig, engine, parent)
+	local self = setmetatable({
 		id = https:GenerateGUID(false),
+		_janitor = nil,
 		engine = engine,
-		Parent = nil,
+		Parent = parent,
 		frame = nil,
 		canvas = canvas,
 		point1 = p1,
@@ -32,6 +34,22 @@ function Constraint.new(p1: Types.Point, p2: Types.Point, canvas: Types.Canvas, 
 		k = 0.1,
 		color = nil,
 	}, Constraint)
+
+	local janitor = Janitor.new()
+	janitor:Add(self, "Destroy")
+	janitor:Add(self.point1, "Destroy")
+	janitor:Add(self.point2, "Destroy")
+	if self.Parent then
+		janitor:Add(self.Parent, "Destroy")
+	end
+	self._janitor = janitor
+
+	self.point1.Parent = self
+	self.point2.Parent = self
+	self.point1._janitor:Add(self.point1.Parent, "Destroy")
+	self.point2._janitor:Add(self.point2.Parent, "Destroy")
+
+	return self
 end
 
 -- This method is used to keep uniform distance between the constraint's points, i.e. constrain.
@@ -88,6 +106,7 @@ function Constraint:Render()
 
 		if not self.frame then
 			self.frame = line(self.point1.pos, self.point2.pos, self.canvas.frame, thickness, color, nil, image)
+			self._janitor:Add(self.frame, "Destroy")
 		end
 
 		-- Draw constraint on screen
@@ -122,19 +141,20 @@ end
 -- Its UI element is no longer rendered on screen and the constraint is removed from the engine.
 -- This is irreversible.
 function Constraint:Destroy()
-	if self.engine then
-		if self.frame then
-			self.frame:Destroy()
-		end
+	self._janitor:Cleanup()
 
+	if not self.Parent then
 		for i, c in ipairs(self.engine.constraints) do
 			if c.id == self.id then
 				table.remove(self.engine.constraints, i)
+				self.engine.ObjectRemoved:Fire(self)
+				break
 			end
 		end
-
-		self.engine.ObjectRemoved:Fire(self)
 	end
+
+	self.point1 = nil
+	self.point2 = nil
 end
 
 -- Returns the constraints points.

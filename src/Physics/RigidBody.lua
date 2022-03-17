@@ -6,6 +6,7 @@ local Constraint = require(script.Parent.Constraint)
 local Globals = require(script.Parent.Parent.Constants.Globals)
 local Signal = require(script.Parent.Parent.Utilities.Signal)
 local Types = require(script.Parent.Parent.Types)
+local Janitor = require(script.Parent.Parent.Utilities.Janitor)
 local throwTypeError = require(script.Parent.Parent.Debugging.TypeErrors)
 local throwException = require(script.Parent.Parent.Debugging.Exceptions)
 local restrict = require(script.Parent.Parent.Debugging.Restrict)
@@ -174,7 +175,7 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 	local self = setmetatable({
 		id = HttpService:GenerateGUID(false),
 		custom = isCustom,
-		structure = structure,
+		_janitor = Janitor.new(),		structure = structure,
 		vertices = vertices,
 		edges = edges,
 		frame = isCustom and nil or frame,
@@ -210,7 +211,7 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 			self.center += Globals.offset
 		end
 	end
-
+  
 	-- Create events
 	self.Touched = Signal.new()
 	self.TouchEnded = Signal.new()
@@ -218,9 +219,18 @@ function RigidBody.new(frame: GuiObject?, m: number, collidable: boolean?, ancho
 
 	-- Set parents of points and constraints
 	for _, edge in ipairs(edges) do
-		edge.point1.Parent = edge
-		edge.point2.Parent = edge
 		edge.Parent = self
+		edge._janitor:Add(edge.Parent, "Destroy")
+		self._janitor:Add(edge, "Destroy")
+	end
+
+	self._janitor:Add(self.Touched, "Destroy")
+	self._janitor:Add(self.TouchEnded, "Destroy")
+	self._janitor:Add(self.CanvasEdgeTouched, "Destroy")
+
+	if not self.custom then
+		self._janitor:Add(self.frame, "Destroy")
+		self._janitor:LinkToInstance(self.frame)
 	end
 
 	if #self.rotationCache < 1 then
@@ -431,32 +441,19 @@ end
 -- This method is used to destroy the RigidBody.
 -- The body's UI element is destroyed, its connections are disconnected and the body is removed from the engine.
 function RigidBody:Destroy(keepFrame: boolean)
+	self._janitor:Cleanup()
+
 	for i, body in ipairs(self.engine.bodies) do
 		if self.id == body.id then
-			-- Destroy events
-			-- Destroy the frame and remove the RigidBody from the Engine.
-			self.Touched:Destroy()
-			self.CanvasEdgeTouched:Destroy()
-			self.TouchEnded:Destroy()
-			self.Touched = nil
-			self.CanvasEdgeTouched = nil
-			self.TouchEnded = nil
-			if not self.custom and not keepFrame then
-				self.frame:Destroy()
-			end
-			if self.custom and not keepFrame then
-				for _, c in ipairs(self.edges) do
-					if c.frame then
-						c.frame:Destroy()
-					end
-				end
-			end
 			table.clear(self.Collisions.Other)
 			table.remove(self.engine.bodies, i)
 			self.engine.ObjectRemoved:Fire(self)
 			break
 		end
 	end
+
+	table.clear(self.vertices)
+	table.clear(self.edges)
 end
 
 -- This method is used to rotate the RigidBody's UI element.

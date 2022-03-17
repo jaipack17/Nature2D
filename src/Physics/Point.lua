@@ -6,15 +6,19 @@ local Globals = require(script.Parent.Parent.Constants.Globals)
 local Types = require(script.Parent.Parent.Types)
 local throwTypeError = require(script.Parent.Parent.Debugging.TypeErrors)
 local throwException = require(script.Parent.Parent.Debugging.Exceptions)
+local Janitor = require(script.Parent.Parent.Utilities.Janitor)
+local HttpService = game:GetService("HttpService")
 
 local Point = {}
 Point.__index = Point
 
 -- This method is used to initialize a new Point.
-function Point.new(pos: Vector2, canvas: Types.Canvas, engine: Types.EngineConfig, config: Types.PointConfig)
+function Point.new(pos: Vector2, canvas: Types.Canvas, engine: Types.EngineConfig, config: Types.PointConfig, parent)
 	local self = setmetatable({
-		Parent = nil,
+		id = HttpService:GenerateGUID(false),
+		Parent = parent,
 		frame = nil,
+		_janitor = nil,
 		engine = engine,
 		canvas = canvas,
 		oldPos = pos,
@@ -37,6 +41,13 @@ function Point.new(pos: Vector2, canvas: Types.Canvas, engine: Types.EngineConfi
 			force = Vector2.new()
 		}
 	}, Point)
+
+	local janitor = Janitor.new()
+	janitor:Add(self, "Destroy")
+	if self.Parent then
+		janitor:Add(self.Parent, "Destroy")
+	end
+	self._janitor = janitor
 
 	return self
 end
@@ -191,6 +202,8 @@ function Point:Render()
 			border.Parent = p
 
 			self.frame = p
+
+			self._janitor:Add(self.frame, "Destroy")
 		end
 
 		-- Update the point's instance
@@ -199,6 +212,20 @@ function Point:Render()
 
 	if self.keepInCanvas then
 		self:KeepInCanvas()
+	end
+end
+
+function Point:Destroy()
+	self._janitor:Cleanup()
+
+	if not self.Parent then
+		for i, c in ipairs(self.engine.points) do
+			if c.id == self.id then
+				table.remove(self.engine.points, i)
+				self.engine.ObjectRemoved:Fire(self)
+				break
+			end
+		end
 	end
 end
 
