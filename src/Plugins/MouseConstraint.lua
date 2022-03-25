@@ -2,8 +2,9 @@ local UserInputService = game:GetService("UserInputService")
 
 return function (engine: { any }, range: number)
 	local held = nil
+	local connections = {}
 
-	UserInputService.InputBegan:Connect(function(input, processedEvent)
+	connections.InputBegan = UserInputService.InputBegan:Connect(function(input, processedEvent)
 		if processedEvent then return end
 
 		if input.UserInputType == Enum.UserInputType.MouseButton1 and not held then
@@ -23,7 +24,7 @@ return function (engine: { any }, range: number)
 		end
 	end)
 
-	UserInputService.InputEnded:Connect(function(input, processedEvent)
+	connections.InputEnded = UserInputService.InputEnded:Connect(function(input, processedEvent)
 		if processedEvent then return end
 
 		if input.UserInputType == Enum.UserInputType.MouseButton1 and held then
@@ -32,7 +33,7 @@ return function (engine: { any }, range: number)
 		end
 	end)
 
-	UserInputService.InputChanged:Connect(function(input, processedEvent)
+	connections.InputChanged = UserInputService.InputChanged:Connect(function(input, processedEvent)
 		if processedEvent then return end
 
 		if input.UserInputType == Enum.UserInputType.MouseMovement and held then
@@ -40,4 +41,11 @@ return function (engine: { any }, range: number)
 			held:SetPosition(mouse.X, mouse.Y)
 		end
 	end)
+
+	return function ()
+		held = nil
+		connections.InputBegan:Disconnect()
+		connections.InputEnded:Disconnect()
+		connections.InputChanged:Disconnect()
+	end
 end
