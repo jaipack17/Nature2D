@@ -23,6 +23,7 @@ function Point.new(pos: Vector2, canvas: Types.Canvas, engine: Types.EngineConfi
 		canvas = canvas,
 		oldPos = pos,
 		pos = pos,
+		oldForces = Vector2.new(),
 		forces = Vector2.new(),
 		maxForce = nil,
 		gravity = engine.gravity,
@@ -122,6 +123,7 @@ function Point:Update(dt: number)
 		-- Update point positions
 		self.oldPos = self.pos
 		self.pos += velocity
+		self.oldForces = self.forces
 		self.forces *= 0
 	end
 end
@@ -252,6 +254,10 @@ end
 -- Returns the velocity of the Point
 function Point:Velocity() : Vector2
 	return self.pos - self.oldPos
+end
+
+function Point:GetNetForce() : Vector2
+	return self.oldForces
 end
 
 -- Returns the Parent (Constraint) of the Point if any.
