@@ -12,6 +12,7 @@ return function (engine: { any }, range: number)
 				for _, p in ipairs(b.vertices) do
 					if (p.pos - UserInputService:GetMouseLocation()).Magnitude <= range then
 						p.selectable = true
+						p.snap = true
 						held = p
 						break
 					end
@@ -29,6 +30,7 @@ return function (engine: { any }, range: number)
 
 		if input.UserInputType == Enum.UserInputType.MouseButton1 and held then
 			held.selectable = false
+			held.snap = false
 			held = nil
 		end
 	end)
@@ -43,6 +45,7 @@ return function (engine: { any }, range: number)
 	end)
 
 	return function ()
+		held.snap = false
 		held = nil
 		connections.InputBegan:Disconnect()
 		connections.InputEnded:Disconnect()
