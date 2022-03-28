@@ -88,7 +88,7 @@ function Engine:Start()
 	self.Started:Fire()
 
 	local fixedDeltaTime = 1/60
-	local epsilon = 5/1000
+	local epsilon = 1/1000
 	local accumulator = 0
 	--local framesRenderedBeforeStep = 0
 
@@ -96,18 +96,14 @@ function Engine:Start()
 	connection = RunService.RenderStepped:Connect(function(deltaTime)
 		accumulator += deltaTime
 
-		if accumulator >= fixedDeltaTime - epsilon then
+		while accumulator > 0 do
+			accumulator -= fixedDeltaTime
 			PhysicsRunner.Update(self, deltaTime)
 			PhysicsRunner.Render(self)
+		end
+
+		if accumulator >= -epsilon then
 			accumulator = 0
-
-			--if framesRenderedBeforeStep == 0 then
-			--	framesRenderedBeforeStep = 1
-			--end
-
-			--framesRenderedBeforeStep = 0
-		--else
-		--	framesRenderedBeforeStep += 1
 		end
 	end)
 
