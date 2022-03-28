@@ -85,12 +85,10 @@ function Point:Update(dt: number)
 			end
 		end
 
+
 		-- Calculate velocity
 		local velocity = self.pos
 		velocity -= self.oldPos
-		if self.engine.independent then
-			self.forces *= dt * self.engine.speed
-		end
 		velocity += self.forces
 
 		local body = self.Parent
@@ -114,10 +112,7 @@ function Point:Update(dt: number)
 
 		-- clamp velocity
 		if self.maxForce then
-			velocity = Vector2.new(
-				math.clamp(velocity.X, -self.maxForce, self.maxForce),
-				math.clamp(velocity.Y, -self.maxForce, self.maxForce)
-			)
+			velocity = velocity.Unit * math.min(velocity.Magnitude, self.maxForce)
 		end
 
 		-- Update point positions
