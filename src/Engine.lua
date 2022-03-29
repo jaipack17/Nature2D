@@ -94,16 +94,22 @@ function Engine:Start()
 
 	local connection;
 	connection = RunService.RenderStepped:Connect(function(deltaTime)
-		accumulator += deltaTime
+		if self.independent then
+			accumulator += deltaTime
 
-		while accumulator > 0 do
-			accumulator -= fixedDeltaTime
+			while accumulator > 0 do
+				accumulator -= fixedDeltaTime
+				PhysicsRunner.Update(self, deltaTime)
+				PhysicsRunner.Render(self)
+			end
+
+			if accumulator >= -epsilon then
+				accumulator = 0
+			end
+		else
+			accumulator = 0
 			PhysicsRunner.Update(self, deltaTime)
 			PhysicsRunner.Render(self)
-		end
-
-		if accumulator >= -epsilon then
-			accumulator = 0
 		end
 	end)
 
