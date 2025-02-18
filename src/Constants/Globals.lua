@@ -79,7 +79,7 @@ return {
 			"Position"
 		}
 	},
-	offset = Vector2.new(0, 36),
+	offset = game:GetService("GuiService"):GetGuiInset(),
 
 	VALID_OBJECT_PROPS = {
 		"Position",
