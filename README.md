@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="https://doy2mn9upadnk.cloudfront.net/uploads/default/original/4X/e/7/0/e709b34f89add2336a7d74faee3b2a839a9391b0.png" width="480" /><br/><br/>
+    <img src="https://github.com/user-attachments/assets/571920ff-991a-484a-84d7-ae1834921672" width="480" /><br/><br/>
     <a href="https://github.com/jaipack17/Nature2D/releases"><img alt="version" src="https://img.shields.io/badge/v0.7.1--beta-version-%231FD67F"></img></a>
     <br/>
     <a href="https://devforum.roblox.com/t/physics-library-nature2d-bring-ui-elements-to-life/1510935/"><img alt="devforum" src="https://img.shields.io/badge/topic-devforum-white"></img></a>
